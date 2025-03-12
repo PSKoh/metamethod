@@ -5,70 +5,82 @@
 # Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# R version 4.4.2 #
+# R version 4.4.2 
 # Load packages
-library(metafor)  #version 4.8-0
+library(metafor)  # version 4.8-0
 
 # Display settings (to disable scientific notation)
 options(scipen = 9999, digits = 4)
 
 # Read in data drawn from Majeed et al. 2021
 # Original paper: https://doi.org/10.1002/dys.1677
-tradmeta = read.csv("DYSCRE META Database Search _ Summary Table.csv")
+tradmeta_raw = read.csv("DYSCRE META Database Search _ Summary Table.csv")
 
 ### Prepare Data --------------
 
-tradmeta = escalc(  # escalc function used to compute effect sizes
-  # type of effect size measure
+tradmeta = escalc(  # escalc function is used to compute effect sizes
+  # Type of effect size measure
+  # See ?escalc for more information
   measure = "SMD",
   
-  # Columns for sample of each group
+  # Columns for sample size of each group
   n1i = n_dys, n2i = n_control,
   
-  # Columns for effect size of each group
+  # Columns for means of each group
   m1i = Mean_CRE_dys, m2i = Mean_CRE_control,
   
   # Columns for standard deviation of each group
   sd1i = SD_CRE_dys, sd2i = SD_CRE_control,
   
-  # Specify data file that the information will be extracted from
-  data = tradmeta
+  # Specify data.frame that the information will be extracted from
+  data = tradmeta_raw
 )
 
-# Arrangement of data frame 
+# Fix row order of data frame 
+# For easier plotting later
 tradmeta$Creativity.Measure_type = factor(tradmeta$Creativity.Measure_type, levels = c("Verbal", "Mixed", "Non-verbal")) # Convert Creativity.Measure_type to a factor with specified levels
 tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type), ] # Order data frame based on type of creativity measure 
 
 ### Calculate overall effect size, using the effect size (yi) and sampling variances (vi)  --------------
-tradmetaresults = rma(   # rma function used to estimate the overall effect size
+
+# rma function used to estimate the overall effect size
+tradmetaresults = rma(   
   # Effect size estimates
   yi = yi, 
   # Sampling variance 
   vi = vi,
-  method = "REML",      # REML specifies that the Restricted Maximum Likelihood (REML) method is used to estimate heterogeneity
+  # REML specifies that the Restricted Maximum Likelihood (REML) method is used to estimate heterogeneity
+  method = "REML",      
+  # Specify where to get the data from
   data = tradmeta)
-summary(tradmetaresults) # summary function used to provide detailed results of the meta-analysis
+
+# summary function used to provide detailed results of the meta-analysis
+summary(tradmetaresults) 
 
 ### Forest Plot -------------- ###### 
 
+# pdf function starts the graphics device driver to create PDF files
 # Name the file of the forest plot 
 # Adjust the width and height of the pdf file
-pdf(file = "tradforestplot.pdf", width = 10, height = 10) # pdf function starts the graphics device driver to create PDF files
+pdf(file = "tradforestplot.pdf", width = 10, height = 10) 
 
+# Start creating the forest plot itself
 forest(tradmetaresults, # Specify dataset
        
        # Arrangement of studies
        # "obs" to arrange by effect sizes 
        # To organise by column, replace "obs" with the specific column in the data frame
-       order = "obs",  # order argument used to organise the forest plot
+       order = "obs", 
+       
        # Add y-axis limits 
-       ylim = c(-1,16),
+       ylim = c(-1, 16),
        
        # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
        # Adjust positioning of sample size information with x (horizontal) function
        # cbind function combines the columns indicating the sample size of the groups (dys and control)
        # ilab.xpos specifies the horizontal arrangement of the columns
-       ilab = cbind(n_dys, n_control), ilab.xpos = c(x=-3.7, x=-4.2),  
+       ilab = cbind(n_dys, n_control), 
+       ilab.xpos = c(x = -3.7, x = -4.2),  
     
        # Label studies on the forest plot 
        # Extracts info from the "Paper" and "Study" column of data
@@ -78,37 +90,41 @@ forest(tradmetaresults, # Specify dataset
        slab = paste(Paper, paste("Study", Study), sep=", "),
       
        # Add x-axis limits
-       xlim = c(-8,4),
+       xlim = c(-8, 4),
        
        # Add confidence interval limits 
-       alim = c(-3,2),
+       alim = c(-3, 2),
        
-       # Remove headers (if any), for manual input
+       # Show (TRUE) or hide (FALSE) default headers
+       # Hide when we want to manually specify our own headers
        headers = FALSE)
+
+# For the following lines of code, 
+# use text function to manually include text within the plot
 
 # Add "Author(s) Year" header
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # Adjust font size of header with the font function 
-text(x=-7.2, y=14.5, "Author(s) Year", font=2) # text function includes text within the plot
+text(x = -7.2, y = 14.5, "Author(s) Year", font = 2) 
 
 # Add “Sample Size” header
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # Adjust font size of header with the font function 
-text(x=-3.95, y=15, "Sample Size", font=2) # text function includes text within the plot
+text(x = -3.95, y = 15, "Sample Size", font = 2) # text function includes text within the plot
 
 # Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # Adjust font size of header with the font function 
-text(c(x=-3.7, x=-4.2), y=14.5, c("Dslx", "Ctrl"), font=2) # text function includes text within the plot
+text(c(x = -3.7, x = -4.2), y = 14.5, c("Dslx", "Ctrl"), font=2) 
 
 # Add "SMD [95% CI]" header
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # Adjust font size of header with the font function 
-text(x=3, y=14.5, "SMD [95% CI]", font=2) # text function includes text within the plot
+text(x = 3, y = 14.5, "SMD [95% CI]", font = 2) # text function includes text within the plot
 
 # Close the forest plot and finalise it as a saved file
 dev.off()
@@ -148,6 +164,12 @@ rma(
 
 ### Test of Moderators --------------
 
+##### Continuous variable (i.e., female proportion)
+rma(yi = yi, vi = vi,
+    # Specify continuous moderator (i.e., sex)
+    mods =~ Proportion.of.female,
+    method = "REML", data = tradmeta)
+
 ##### Categorical variable (i.e., type of creativity measure)
 rma(yi = yi, vi = vi,
     # Specify categorical moderator (i.e., verbal)
@@ -155,21 +177,15 @@ rma(yi = yi, vi = vi,
     method = "REML", 
     data = tradmeta)
 rma(yi = yi, vi = vi,
-    # Specify categorical moderator (i.e., non-verbal)
-    subset = (Creativity.Measure_type == "Non-verbal"), 
-    method = "REML", 
-    data = tradmeta)
-rma(yi = yi, vi = vi,
     # Specify categorical moderator (i.e., mixed)
     subset = (Creativity.Measure_type == "Mixed"),  
     method = "REML", 
     data = tradmeta)
-
-##### Continuous variable (i.e., female proportion)
 rma(yi = yi, vi = vi,
-    # Specify continuous moderator (i.e., sex)
-    mods =~ Proportion.of.female,
-    method = "REML", data = tradmeta)
+    # Specify categorical moderator (i.e., non-verbal)
+    subset = (Creativity.Measure_type == "Non-verbal"), 
+    method = "REML", 
+    data = tradmeta)
 
 ### Forest Plot of Moderators -------------- 
 

@@ -62,7 +62,7 @@ summary(tradmetaresults)
 # pdf function starts the graphics device driver to create PDF files
 # Name the file of the forest plot 
 # Adjust the width and height of the pdf file
-pdf(file = "tradforestplot.pdf", width = 10, height = 10) 
+pdf(file = "tradforestplot.pdf", width = 11, height = 9) 
 
 # Start creating the forest plot itself
 forest(tradmetaresults, # Specify dataset
@@ -80,7 +80,7 @@ forest(tradmetaresults, # Specify dataset
        # cbind function combines the columns indicating the sample size of the groups (dys and control)
        # ilab.xpos specifies the horizontal arrangement of the columns
        ilab = cbind(n_dys, n_control), 
-       ilab.xpos = c(x = -3.7, x = -4.2),  
+       ilab.xpos = c(x = -3.8, x = -4.2),  
     
        # Label studies on the forest plot 
        # Extracts info from the "Paper" and "Study" column of data
@@ -92,8 +92,9 @@ forest(tradmetaresults, # Specify dataset
        # Add x-axis limits
        xlim = c(-8, 4),
        
-       # Add confidence interval limits 
-       alim = c(-3, 2),
+       # Add confidence interval limits
+       # Adjust intervals based on the number of steps
+       alim = c(-2.5, 2.5), steps = 11,
        
        # Show (TRUE) or hide (FALSE) default headers
        # Hide when we want to manually specify our own headers
@@ -112,19 +113,19 @@ text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # Adjust font size of header with the font function 
-text(x = -3.95, y = 15, "Sample Size", font = 2) # text function includes text within the plot
+text(x = -4.0, y = 15, "Sample Size", font = 2) # text function includes text within the plot
 
 # Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # Adjust font size of header with the font function 
-text(c(x = -3.7, x = -4.2), y = 14.5, c("Dslx", "Ctrl"), font=2) 
+text(c(x = -3.8, x = -4.2), y = 14.5, c("Dslx", "Ctrl"), font=2) 
 
-# Add "SMD [95% CI]" header
+# Add "g [95% CI]" header
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # Adjust font size of header with the font function 
-text(x = 3, y = 14.5, "SMD [95% CI]", font = 2) # text function includes text within the plot
+text(x = 3.5, y = 14.5, "g [95% CI]", font = 2) # text function includes text within the plot
 
 # Close the forest plot and finalise it as a saved file
 dev.off()
@@ -136,12 +137,13 @@ dev.off()
 # Name the file of the forest plot 
 # Adjust the width and height of the pdf file
 pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
-funnel(tradmetaresults) # funnel argument to create the funnel plot, specify the data to create the plot 
+funnel(tradmetaresults, # funnel argument to create the funnel plot, specify the data to create the plot 
+      legend = TRUE) 
 # Close the funnel plot and finalise it as a saved file 
 dev.off()
 
 # Rank Correlation Test #
-ranktest(tradmetaresults) # ranktest argument to create the funnel plot, specify the data to create the plot 
+ranktest(tradmetaresults) # ranktest argument to compute kendall tau value 
 
 # Egger's Test #
 
@@ -191,7 +193,7 @@ rma(yi = yi, vi = vi,
 
 # Name the file of the forest plot 
 # Adjust the width and height of the pdf file
-pdf(file = "tradforestplotwithmoderators.pdf", width = 15, height = 10) # pdf function starts the graphics device driver to create PDF files
+pdf(file = "tradforestplotwithmoderators.pdf", width = 14, height = 10) # pdf function starts the graphics device driver to create PDF files
 forest(tradmetaresults,
        
        # Manually arrange effect sizes by creativity measure type
@@ -205,7 +207,8 @@ forest(tradmetaresults,
        ylim = c(-1,24),
        
        # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
-       ilab = cbind(n_dys, n_control), ilab.xpos = c(x=-3.8,x=-4.2), 
+       ilab = cbind(n_dys, n_control), 
+       ilab.xpos = c(x=-3.8,x=-4.2), 
        
        # Label studies on the forest plot 
        slab = paste(Paper, paste("Study", Study), sep=", "), 
@@ -213,8 +216,9 @@ forest(tradmetaresults,
        # Add x-axis limits
        xlim = c(-7,4), 
        
-       # Add confidence interval limits 
-       alim = c(-3,2),
+       # Add confidence interval limits
+       # Adjust intervals based on the number of steps
+       alim = c(-2.5, 2.5), steps = 11,
        
        # Remove headers (if any), for manual input
        headers = FALSE)
@@ -250,8 +254,8 @@ text(x=-4.0, y=23.8, "Sample Size", font=2)
 # Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
 text(x=c(-4.2, -3.8), y=23, c("Dslx","Ctrl"), font=2)
 
-# Add "SMD [95% CI]" header
-text(x=3.5, y=23, "SMD [95% CI]", font=2) # text function includes text within the plot
+# Add "g [95% CI]" header
+text(x=3.5, y=23, "g [95% CI]", font=2) # text function includes text within the plot
 
 # Close the forest plot and finalise it as a saved file
 dev.off()

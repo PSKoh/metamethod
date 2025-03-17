@@ -1,4 +1,4 @@
-### START OF CODE --------------
+#### START OF CODE ####
 
 ### Set Up --------------
 
@@ -18,7 +18,8 @@ tradmeta_raw = read.csv("DYSCRE META Database Search _ Summary Table.csv")
 
 ### Prepare Data --------------
 
-tradmeta = escalc(  # escalc function is used to compute effect sizes
+# escalc function is used to compute effect sizes
+tradmeta = escalc(  
   # Type of effect size measure
   # See ?escalc for more information
   measure = "SMD",
@@ -33,13 +34,14 @@ tradmeta = escalc(  # escalc function is used to compute effect sizes
   sd1i = SD_CRE_dys, sd2i = SD_CRE_control,
   
   # Specify data.frame that the information will be extracted from
-  data = tradmeta_raw
-)
+  data = tradmeta_raw)
 
 # Fix row order of data frame 
 # For easier plotting later
-tradmeta$Creativity.Measure_type = factor(tradmeta$Creativity.Measure_type, levels = c("Verbal", "Mixed", "Non-verbal")) # Convert Creativity.Measure_type to a factor with specified levels
-tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type), ] # Order data frame based on type of creativity measure 
+# Convert Creativity.Measure_type to a factor with specified levels
+tradmeta$Creativity.Measure_type = factor(tradmeta$Creativity.Measure_type, levels = c("Verbal", "Mixed", "Non-verbal"))
+# Order data frame based on type of creativity measure 
+tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type), ] 
 
 ### Calculate overall effect size, using the effect size (yi) and sampling variances (vi)  --------------
 
@@ -57,7 +59,7 @@ tradmetaresults = rma(
 # summary function used to provide detailed results of the meta-analysis
 summary(tradmetaresults) 
 
-### Forest Plot -------------- ###### 
+### Forest Plot -------------- 
 
 # pdf function starts the graphics device driver to create PDF files
 # Name the file of the forest plot 
@@ -77,6 +79,7 @@ forest(tradmetaresults, # Specify dataset
        
        # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
        # Adjust positioning of sample size information with x (horizontal) function
+       # x values represents the x-coordinates where the sample size values of the dyslexia and control groups will be placed
        # cbind function combines the columns indicating the sample size of the groups (dys and control)
        # ilab.xpos specifies the horizontal arrangement of the columns
        ilab = cbind(n_dys, n_control), 
@@ -118,6 +121,7 @@ text(x = -4.0, y = 15, "Sample Size", font = 2) # text function includes text wi
 # Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
+# x values represents the x-coordinates of where the "Dslx" and "Ctrl" headers will be placed
 # Adjust font size of header with the font function 
 text(c(x = -3.8, x = -4.2), y = 14.5, c("Dslx", "Ctrl"), font=2) 
 
@@ -132,20 +136,24 @@ dev.off()
 
 ### Checking for Publication Bias -------------- 
 
-# Funnel Plot #
+# Funnel Plot 
 
-# Name the file of the forest plot 
+# pdf function starts the graphics device driver to create PDF files
+# Name the file of the funnel
 # Adjust the width and height of the pdf file
 pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
-funnel(tradmetaresults, # funnel argument to create the funnel plot, specify the data to create the plot 
+# funnel argument to create the funnel plot, specify the data to create the plot 
+funnel(tradmetaresults, 
       legend = TRUE) 
 # Close the funnel plot and finalise it as a saved file 
 dev.off()
 
-# Rank Correlation Test #
-ranktest(tradmetaresults) # ranktest argument to compute kendall tau value 
+# Rank Correlation Test 
 
-# Egger's Test #
+# ranktest argument to compute kendall tau value 
+ranktest(tradmetaresults) 
+
+# Egger's Test 
 
 # Calculate standard error (SE) 
 tradmeta$sei_corrected = with(tradmeta, sqrt((n_dys+n_control)/(n_dys*n_control)))
@@ -166,13 +174,13 @@ rma(
 
 ### Test of Moderators --------------
 
-##### Continuous variable (i.e., female proportion)
+# Continuous variable (i.e., female proportion)
 rma(yi = yi, vi = vi,
     # Specify continuous moderator (i.e., sex)
     mods =~ Proportion.of.female,
     method = "REML", data = tradmeta)
 
-##### Categorical variable (i.e., type of creativity measure)
+# Categorical variable (i.e., type of creativity measure)
 rma(yi = yi, vi = vi,
     # Specify categorical moderator (i.e., verbal)
     subset = (Creativity.Measure_type == "Verbal"),
@@ -193,7 +201,7 @@ rma(yi = yi, vi = vi,
 
 # Name the file of the forest plot 
 # Adjust the width and height of the pdf file
-pdf(file = "tradforestplotwithmoderators.pdf", width = 14, height = 10) # pdf function starts the graphics device driver to create PDF files
+pdf(file = "tradforestplotwithmoderators.pdf", width = 14, height = 10) 
 forest(tradmetaresults,
        
        # Manually arrange effect sizes by creativity measure type

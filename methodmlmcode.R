@@ -189,7 +189,7 @@ rma.mv(yi = yi, V = vi,
        subset=(publication == "Journal article"),
        data = multimmeta)
 rma.mv(yi = yi, V = vi, 
-       random = ~ 1 | lab_id/unique_id,
+       random = ~ 1 | lab_id/ID,
        # Specify categorical moderator (i.e., thesis/dissertation)
        subset=(publication == "Thesis/dissertation"),
        data = multimmeta)

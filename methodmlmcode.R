@@ -109,6 +109,9 @@ forest(mlmmetaresults, # Specify dataset
        # Add confidence interval limits
        # Adjust intervals based on the number of steps
        alim = c(-2, 2), steps = 9,
+
+       # Change size of polygons
+       efac = 0.5,
        
        # Show (TRUE) or hide (FALSE) default headers
        # Hide when we want to manually specify our own headers
@@ -234,6 +237,9 @@ forest(mlmmetaresults,
        # Add confidence interval limits
        # Adjust intervals based on the number of steps
        alim = c(-2.5, 2.5), steps = 11,
+       
+       # Change size of polygons
+       efac = 0.5,
        
        # Remove headers (if any), for manual input
        headers = FALSE)

@@ -8,7 +8,7 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # R version 4.4.2 
 # Load packages
 library("metafor")  # version 4.8-0
-library("lme4")     # version 1.1.35.1
+library("lmerTest") # version 3.1-3
 
 # Display settings (to disable scientific notation)
 options(scipen = 9999, digits = 4)

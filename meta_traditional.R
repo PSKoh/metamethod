@@ -67,7 +67,8 @@ summary(tradmetaresults)
 pdf(file = "tradforestplot.pdf", width = 11, height = 9) 
 
 # Start creating the forest plot itself
-forest(tradmetaresults, # Specify dataset
+# Specify dataset
+forest(tradmetaresults, 
        
        # Arrangement of studies
        # "obs" to arrange by effect sizes 

@@ -42,6 +42,11 @@ tradmeta = escalc(
 tradmeta$Creativity.Measure_type = factor(tradmeta$Creativity.Measure_type, levels = c("Verbal", "Mixed", "Non-verbal"))
 # Order data frame based on type of creativity measure 
 tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type), ] 
+# Order data frame based on effect sizes, within each type of creativity measure
+tradmeta = tradmeta |>
+  group_by(Creativity.Measure_type) |>
+  arrange(yi, .by_group = TRUE) %>%  # 'yi' is the effect size (e.g., Hedges' g)
+  ungroup()
 
 ### Calculate overall effect size, using the effect size (yi) and sampling variances (vi)  --------------
 
@@ -200,8 +205,6 @@ rma(yi = yi, vi = vi,
 
 ### Forest Plot of Moderators -------------- 
 
-# Name the file of the forest plot 
-# Adjust the width and height of the pdf file
 pdf(file = "tradforestplotwithmoderators.pdf", width = 14, height = 10) 
 forest(tradmetaresults,
        
@@ -210,10 +213,10 @@ forest(tradmetaresults,
        # - Verbal: Rows 14 to 10
        # - Non-verbal: Rows 6 to 2
        # The arrangement must consider spacing and must end at row 2 
-       rows = c(20:18, 14:10, 6:2), 
+       rows = c(18:16, 13:9, 6:2), 
        
        # Add y-axis limits 
-       ylim = c(-1,24),
+       ylim = c(-1,22),
        
        # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
        ilab = cbind(n_dys, n_control), 
@@ -239,7 +242,7 @@ forest(tradmetaresults,
 # - "Mixed" at y = 15
 # - "Non-verbal" at y = 21
 # `pos = 4` ensures left alignment of the text
-text(x=-7, pos=4, y=c(7, 15, 21), c("Verbal", "Mixed","Non-verbal"), font=2)
+text(x=-7, pos=4, y=c(7, 14, 19), c("Verbal", "Mixed","Non-verbal"), font=2)
 
 # Moderation analysis
 # subset argument ensures only the relevant rows are used 
@@ -251,22 +254,20 @@ res.m <- rma(yi, vi, subset = (Creativity.Measure_type == "Mixed"), data = tradm
 # addpoly argument adds a summary effect size (diamond shape) for each moderator
 # row argument places the summary at the corresponding position in the plot
 addpoly(res.v, row=1) # summary effect for "verbal" group
-addpoly(res.n, row=9) # summary effect for "non-verbal" group
-addpoly(res.m, row=17) # summary effect for "mixed" group
+addpoly(res.n, row=8) # summary effect for "non-verbal" group
+addpoly(res.m, row=15) # summary effect for "mixed" group
 
 # Add"Author(s) Year" header
-text(x=-6.5, y=23, "Author(s) Year", font=2) # text function includes text within the plot
+text(x=-6.5, y=21, "Author(s) Year", font=2) # text function includes text within the plot
 
 # Add “Sample Size” header
-text(x=-4.0, y=23.8, "Sample Size", font=2)
+text(x=-4.0, y=21.8, "Sample Size", font=2)
 
 # Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
-text(x=c(-4.2, -3.8), y=23, c("Dslx","Ctrl"), font=2)
+text(x=c(-4.2, -3.8), y=21, c("Dslx","Ctrl"), font=2)
 
 # Add "g [95% CI]" header
-text(x=3.5, y=23, "g [95% CI]", font=2) # text function includes text within the plot
+text(x=3.5, y=21, "g [95% CI]", font=2) # text function includes text within the plot
 
 # Close the forest plot and finalise it as a saved file
 dev.off()
-
-#### END OF CODE ####

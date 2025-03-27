@@ -89,15 +89,15 @@ forest(tradmetaresults,
        # cbind function combines the columns indicating the sample size of the groups (dys and control)
        # ilab.xpos specifies the horizontal arrangement of the columns
        ilab = cbind(n_dys, n_control), 
-       ilab.xpos = c(x = -3.8, x = -4.2),  
-    
+       ilab.xpos = c(x = -4.2, x = -3.8),  
+       
        # Label studies on the forest plot 
        # Extracts info from the "Paper" and "Study" column of data
        # slab argument used to label each effect size with its respective study
        # paste function creates the label 
        # sep function used to separate the columns apart with ','
        slab = paste(Paper, paste("Study", Study), sep=", "),
-      
+       
        # Add x-axis limits
        xlim = c(-8, 4),
        
@@ -129,7 +129,7 @@ text(x = -4.0, y = 15, "Sample Size", font = 2) # text function includes text wi
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # x values represents the x-coordinates of where the "Dslx" and "Ctrl" headers will be placed
 # Adjust font size of header with the font function 
-text(c(x = -3.8, x = -4.2), y = 14.5, c("Dslx", "Ctrl"), font=2) 
+text(c(x = -4.2, x = -3.8), y = 14.5, c("Dslx", "Ctrl"), font=2) 
 
 # Add "g [95% CI]" header
 # Include desired text of header within the double prime symbol ""
@@ -205,7 +205,9 @@ rma(yi = yi, vi = vi,
 
 ### Forest Plot of Moderators -------------- 
 
-pdf(file = "tradforestplotwithmoderators.pdf", width = 14, height = 10) 
+# Name the file of the forest plot 
+# Adjust the width and height of the pdf file
+pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 10) # pdf function starts the graphics device driver to create PDF files
 forest(tradmetaresults,
        
        # Manually arrange effect sizes by creativity measure type
@@ -213,14 +215,14 @@ forest(tradmetaresults,
        # - Verbal: Rows 14 to 10
        # - Non-verbal: Rows 6 to 2
        # The arrangement must consider spacing and must end at row 2 
-       rows = c(18:16, 13:9, 6:2), 
+       rows = c(20:18, 14:10, 6:2), 
        
        # Add y-axis limits 
-       ylim = c(-1,22),
+       ylim = c(-1,24),
        
        # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
        ilab = cbind(n_dys, n_control), 
-       ilab.xpos = c(x=-3.8,x=-4.2), 
+       ilab.xpos = c(x=-3.8,x=-3.3), 
        
        # Label studies on the forest plot 
        slab = paste(Paper, paste("Study", Study), sep=", "), 
@@ -242,7 +244,7 @@ forest(tradmetaresults,
 # - "Mixed" at y = 15
 # - "Non-verbal" at y = 21
 # `pos = 4` ensures left alignment of the text
-text(x=-7, pos=4, y=c(7, 14, 19), c("Verbal", "Mixed","Non-verbal"), font=2)
+text(x=-7, pos=4, y=c(7, 15, 21), c("Verbal", "Mixed","Non-verbal"), font=2)
 
 # Moderation analysis
 # subset argument ensures only the relevant rows are used 
@@ -254,20 +256,20 @@ res.m <- rma(yi, vi, subset = (Creativity.Measure_type == "Mixed"), data = tradm
 # addpoly argument adds a summary effect size (diamond shape) for each moderator
 # row argument places the summary at the corresponding position in the plot
 addpoly(res.v, row=1) # summary effect for "verbal" group
-addpoly(res.n, row=8) # summary effect for "non-verbal" group
-addpoly(res.m, row=15) # summary effect for "mixed" group
+addpoly(res.n, row=9) # summary effect for "non-verbal" group
+addpoly(res.m, row=17) # summary effect for "mixed" group
 
 # Add"Author(s) Year" header
-text(x=-6.5, y=21, "Author(s) Year", font=2) # text function includes text within the plot
+text(x=-6.3, y=23, "Author(s) Year", font=2) # text function includes text within the plot
 
 # Add “Sample Size” header
-text(x=-4.0, y=21.8, "Sample Size", font=2)
+text(x=-3.6, y=23.8, "Sample Size", font=2)
 
 # Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
-text(x=c(-4.2, -3.8), y=21, c("Dslx","Ctrl"), font=2)
+text(x=c(-3.8, -3.3), y=23, c("Dslx","Ctrl"), font=2)
 
 # Add "g [95% CI]" header
-text(x=3.5, y=21, "g [95% CI]", font=2) # text function includes text within the plot
+text(x=3.5, y=23, "g [95% CI]", font=2) # text function includes text within the plot
 
 # Close the forest plot and finalise it as a saved file
 dev.off()

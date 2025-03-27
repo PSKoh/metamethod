@@ -89,7 +89,7 @@ forest(tradmetaresults,
        # cbind function combines the columns indicating the sample size of the groups (dys and control)
        # ilab.xpos specifies the horizontal arrangement of the columns
        ilab = cbind(n_dys, n_control), 
-       ilab.xpos = c(x = -4.2, x = -3.8),  
+       ilab.xpos = c(-4.2, -3.8),  
        
        # Label studies on the forest plot 
        # Extracts info from the "Paper" and "Study" column of data
@@ -222,7 +222,7 @@ forest(tradmetaresults,
        
        # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
        ilab = cbind(n_dys, n_control), 
-       ilab.xpos = c(x=-3.8,x=-3.3), 
+       ilab.xpos = c(-3.8, -3.3), 
        
        # Label studies on the forest plot 
        slab = paste(Paper, paste("Study", Study), sep=", "), 

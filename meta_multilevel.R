@@ -212,37 +212,40 @@ rma.mv(yi = yi, V = vi,
 # Name the file of the forest plot 
 # Adjust the width and height of the pdf file
 pdf(file = "mlmforestplotwithmoderators.pdf", width = 15, height = 45) # pdf function starts the graphics device driver to create PDF files
-forest(mlmmetaresults,
-       
+forest(
+       mlmmetaresults,
+
        # Manually arrange effect sizes by creativity measure type
        # - Journal article: Rows 143 to 79
        # - Thesis/Dissertations: Rows 75 to 7
        # - Conference: Rows 3 to 2
-       # The arrangement must consider spacing and must end at row 2 
-       rows = c(143:79, 75:7, 3:2), 
-       
-       # Add y-axis limits 
+       # The arrangement must consider spacing and must end at row 2
+       rows = c(143:79, 75:7, 3:2),
+
+       # Add y-axis limits
        ylim = c(-1, 147),
-       
+
        # Add sample size information for presence of smartphone (n_p) and absence of smartphone (n_a) group into forest plot
-       ilab = cbind(n_p, n_a), 
-       ilab.xpos = c(x=-4.2,x=-3.6), 
-       
-       # Label studies on the forest plot 
-       slab = paste(author, year_published, sep=", "), 
-       
+       ilab = cbind(n_p, n_a),
+       ilab.xpos = c(x = -4.2, x = -3.6),
+
+       # Label studies on the forest plot
+       slab = paste(author, year_published, sep = ", "),
+
        # Add x-axis limits
-       xlim = c(-7,4), 
-       
+       xlim = c(-7, 4),
+
        # Add confidence interval limits
        # Adjust intervals based on the number of steps
-       alim = c(-2.5, 2.5), steps = 11,
-       
+       alim = c(-2.5, 2.5),
+       steps = 11,
+
        # Change size of polygons
        efac = 0.5,
-       
+
        # Remove headers (if any), for manual input
-       headers = FALSE)
+       headers = FALSE
+)
 
 # Add text labels for moderator (type of publication)
 # Adjust the position of the labels with x (horizontal) and y (vertical) function

@@ -15,10 +15,10 @@ options(scipen = 9999, digits = 4)
 
 # Read in data drawn from Hartanto et al. 2024
 # Original paper: https://doi.org/10.1037/tmb0000123
-mlmmeta = read.csv("spc_clean_V2.csv")
+mlmmeta = read.csv("SPC.csv")
 
 # Create new column with unique IDs
-mlmmeta$ID <- 1:nrow(mlmmeta)
+mlmmeta$ID = 1:nrow(mlmmeta)
 
 ### Prepare Data --------------
 
@@ -289,19 +289,24 @@ text(
 
 # Moderation analysis
 # subset argument ensures only the relevant rows are used
-res.j <- rma(
+res.j = rma(
        yi,
        vi,
        subset = (publication == "Journal article"),
        data = multimmeta
 )
-res.t <- rma(
+res.t = rma(
        yi,
        vi,
        subset = (publication == "Thesis/dissertation"),
        data = multimmeta
 )
-res.c <- rma(yi, vi, subset = (publication == "Conference"), data = multimmeta)
+res.c = rma(
+       yi, 
+       vi, 
+       subset = (publication == "Conference"), 
+       data = multimmeta
+)
 
 # Add summary effect sizes for each of the moderators
 # addpoly argument adds a summary effect size (diamond shape) for each moderator

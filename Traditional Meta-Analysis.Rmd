@@ -1,0 +1,72 @@
+---
+title: "Traditional Meta-Analysis Tutorial"
+output: Traditional Meta-Analysis_notebook
+---
+
+# Setting Up
+
+```{r}
+# Set working directory to that of script's current location
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+# R version 4.4.3
+
+# Install packages (if not already installed)
+install.packages("metafor")
+
+# Load packages
+library("metafor") # version 4.8-0
+
+# Display settings (to disable scientific notation)
+options(scipen = 9999, digits = 4)
+
+# Read in data drawn from Majeed et al. 2021
+# Original paper: https://doi.org/10.1002/dys.1677
+tradmeta_raw = read.csv("DYSCRE.csv")
+```
+
+# Prepare Data
+
+```{r}
+# escalc function is used to compute effect sizes
+tradmeta = escalc(
+  # Type of effect size measure
+  # See ?escalc for more information
+  measure = "SMD",
+
+  # Columns for sample size of each group
+  n1i = n_dys,
+  n2i = n_control,
+
+  # Columns for means of each group
+  m1i = Mean_CRE_dys,
+  m2i = Mean_CRE_control,
+
+  # Columns for standard deviation of each group
+  sd1i = SD_CRE_dys,
+  sd2i = SD_CRE_control,
+
+  # Specify data.frame that the information will be extracted from
+  data = tradmeta_raw
+)
+
+# Fix row order of data frame
+# For easier plotting later
+# Convert Creativity.Measure_type to a factor with specified levels
+tradmeta$Creativity.Measure_type = factor(
+  tradmeta$Creativity.Measure_type,
+  levels = c("Verbal", "Mixed", "Non-verbal")
+)
+# Order data frame based on type of creativity measure, and based on effect sizes, within each type of creativity measure
+tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type,tradmeta$yi), ]
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+```{r}
+ 
+```
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.

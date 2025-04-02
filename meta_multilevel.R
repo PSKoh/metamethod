@@ -127,7 +127,7 @@ forest(
 
        # Show (TRUE) or hide (FALSE) default headers
        # Hide when we want to manually specify our own headers
-       headers = FALSE
+       header = FALSE
 )
 
 # For the following lines of code,
@@ -269,7 +269,7 @@ forest(
        efac = 0.5,
 
        # Remove headers (if any), for manual input
-       headers = FALSE
+       header = FALSE
 )
 
 # Add text labels for moderator (type of publication)

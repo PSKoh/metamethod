@@ -4,7 +4,7 @@ This repository contains example datasets and R code to demonstrate how to condu
 If you use or adapt these materials, please provide proper credit by linking back to this repository.
 
 # Repository Contents
-"DYSCRE.csv": This dataset is from Majeed et al. (2011), which investigates the association between clinically diagnosed dyslexia and creativity. For more information, one may refer to https://doi.org/10.1002/dys.1677
+"DYSCRE.csv": This dataset is from Majeed et al. (2021), which investigates the association between clinically diagnosed dyslexia and creativity. For more information, one may refer to https://doi.org/10.1002/dys.1677
 
 "spc_clean_V2.csv": This dataset is from Hartanto et al. (2024), which investigates the effects of smartphone presence on cognitive functions. For more information, one may refer to https://doi.org/10.1037/tmb0000123
 

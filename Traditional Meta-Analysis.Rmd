@@ -2,20 +2,33 @@
 title: "Traditional Meta-Analysis Tutorial"
 output: Traditional Meta-Analysis_notebook
 ---
-The following script is designed to perform a traditional meta-analysis using the `metafor` package in R. 
+
+# Introduction
+
+The following script is designed to perform a traditional meta-analysis using the `metafor` package in R.
+
 The analysis is based on data from Majeed et al. (2021) and focuses on the relationship between dyslexia and creativity. The original paper can be found [here](https://doi.org/10.1002/dys.1677).
+
 The script includes steps for data preparation, effect size calculation, overall effect size computation, forest plot generation, tests for publication bias, and moderation analysis.
+
 The script is structured to be run in RStudio, and it includes comments to guide users through each step of the process.
 
 # Setting Up
+
 This section sets up the working environment, installs necessary packages, loads the required libraries, and reads in the data.
 
 ## Explanation of the Code
-The `setwd()` function sets the working directory to the location of the script, ensuring that all file paths are relative to the script's location.
-The `install.packages()` function installs the `metafor` package if it is not already installed.
-The `library()` function loads the `metafor` package.
-The `options()` function is used to adjust the display settings, specifically to disable scientific notation and set the number of digits displayed.
-The `read.csv()` function reads in the data from a CSV file named "DYSCRE.csv", which contains the data drawn from Majeed et al. (2021).
+
+-   The `setwd()` function sets the working directory to the location of the script, ensuring that all file paths are relative to the script's location.
+
+-   The `install.packages()` function installs the `metafor` package if it is not already installed.
+
+-   The `library()` function loads the `metafor` package.
+
+-   The `options()` function is used to adjust the display settings, specifically to disable scientific notation and set the number of digits displayed.
+
+-   The `read.csv()` function reads in the data from a CSV file named "DYSCRE.csv", which contains the data drawn from Majeed et al. (2021).
+
 ```{r}
 ### Set Up --------------
 
@@ -38,19 +51,27 @@ tradmeta_raw = read.csv("DYSCRE.csv")
 ```
 
 # Prepare Data
+
 This section prepares the data for analysis by computing effect sizes for each study and organizing the data frame.
-The `tradmeta_raw` data frame does not include pre-computed effect sizes for each study. 
-Therefore, the `escalc()` function from `metafor` package is used to calculate them.
+
+The `tradmeta_raw` data frame does not include pre-computed effect sizes for each study. Therefore, the `escalc()` function from `metafor` package is used to calculate them.
+
 For more information on the `escalc()` function, refer to ?escalc in R.
 
 ## Explanation of the Code
-The `measure` argument specifies the type of effect size to be calculated, in this case, "SMD" (Standardized Mean Difference).
-The `n1i` and `n2i` arguments specify the columns for the sample sizes of each group
-The `m1i` and `m2i` arguments specify the columns for the means of each group.
-The `sd1i` and `sd2i` arguments specify the columns for the standard deviations of each group.
-Afterwards, the `escalc()` function computes the effect sizes (yi) and their corresponding sampling variances (vi) for each study.
 
-The `tradmeta_raw` data frame is then sorted by the type of creativity measure and corresponding effect sizes to facilitate clearer visualization in the forest plot.
+-   The `measure` argument specifies the type of effect size to be calculated, in this case, "SMD" (Standardized Mean Difference).
+
+-   The `n1i` and `n2i` arguments specify the columns for the sample sizes of each group
+
+-   The `m1i` and `m2i` arguments specify the columns for the means of each group.
+
+-   The `sd1i` and `sd2i` arguments specify the columns for the standard deviations of each group.
+
+-   Afterwards, the `escalc()` function computes the effect sizes (yi) and their corresponding sampling variances (vi) for each study.
+
+-   The `tradmeta_raw` data frame is then sorted by the type of creativity measure and corresponding effect sizes to facilitate clearer visualization in the forest plot.
+
 ```{r}
 ### Prepare Data --------------
 
@@ -80,22 +101,32 @@ tradmeta$Creativity.Measure_type = factor(
   tradmeta$Creativity.Measure_type,
   levels = c("Verbal", "Mixed", "Non-verbal")
 )
+
 # Order the data frame by Creativity.Measure_type and effect sizes (yi)
 tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type, tradmeta$yi), ]
 ```
 
 # Computing the Overall Effect size
+
 This section estimates the overall effect size using the `rma()` function from the `metafor` package, based on the computed effect sizes (yi) and their corresponding sampling variances (vi).
+
 For more information on the `rma()` function, refer to ?rma in R.
+
 The results are summarized to provide detailed information about the meta-analysis.
 
 ## Explanation of the Code
-The `tradmeta` data frame contains the computed effect sizes (yi) and their corresponding sampling variances (vi).
-The `yi` column represents the effect size estimates, while the `vi` column represents the sampling variance for each effect size. 
-The `rma()` function is used to perform a random-effects meta-analysis, which accounts for the variability between studies.
-The `method` argument specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
-The `summary()` function is used to provide detailed results of the meta-analysis, including the overall effect size estimate, confidence intervals, and heterogeneity statistics.
-```{r} 
+
+-   The `tradmeta` data frame contains the computed effect sizes (yi) and their corresponding sampling variances (vi).
+
+-   The `yi` column represents the effect size estimates, while the `vi` column represents the sampling variance for each effect size.
+
+-   The `rma()` function is used to perform a random-effects meta-analysis, which accounts for the variability between studies.
+
+-   The `method` argument specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
+
+-   The `summary()` function is used to provide detailed results of the meta-analysis, including the overall effect size estimate, confidence intervals, and heterogeneity statistics.
+
+```{r}
 ### Compute Overall Effect size --------------
 
 # Estimate the overall effect size using the rma() function
@@ -115,32 +146,50 @@ summary(tradmetaresults)
 ```
 
 # Forest Plot
-This section generates a forest plot to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis. 
+
+This section generates a forest plot to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
+
 The forest plot is created using the `forest()` function from the `metafor` package.
+
 The plot includes the following features:
-- Arrangement of studies by effect sizes
-- Sample size information for both dyslexia and control groups
-- Custom headers for the plot
-- Custom labels for the studies
+
+-   Arrangement of studies by effect sizes
+
+-   Sample size information for both dyslexia and control groups
+
+-   Custom headers for the plot
+
+-   Custom labels for the studies
+
 Saving the forest plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
 
-## Explanation of the Code  
-The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-The `width` and `height` arguments adjust the dimensions of the PDF file.
-The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
-The `order` argument specifies the arrangement of studies, with "obs" indicating that the studies should be arranged by effect sizes. 
-To organise by column, replace "obs" with the specific column in the data frame.
-The `ylim` argument sets the y-axis limits for the plot.
-The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
-The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
-The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
-the `slab` argument is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns.
-The `paste()` function creates the label, and the `sep` argument specifies the separator between the columns.
-The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
-The `header` argument is set to FALSE to allow for manual specification of headers.
-The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
-The `x` and `y` arguments in the `text()` function adjust the position of the headers, while the `font` argument adjusts the font size.
-The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
+## Explanation of the Code
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file. The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
+
+-   The `order` argument specifies the arrangement of studies, with "obs" indicating that the studies should be arranged by effect sizes. To organise by column, replace "obs" with the specific column in the data frame.
+
+-   The `ylim` argument sets the y-axis limits for the plot.
+
+-   The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
+
+-   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
+
+-   The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
+
+-   The `slab` argument is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns. The `paste()` function creates the label, and the `sep` argument specifies the separator between the columns.
+
+-   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
+
+-   The `header` argument is set to FALSE to allow for manual specification of headers.
+
+-   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
+
+-   The `x` and `y` arguments in the `text()` function adjust the position of the headers, while the `font` argument adjusts the font size.
+
+-   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r}
 ### Forest Plot --------------
@@ -203,26 +252,37 @@ text(x = 3.5, y = 14.5, "g [95% CI]", font = 2)
 dev.off()
 ```
 
-# Tests for Publication Bias 
+# Tests for Publication Bias
+
 This section performs tests for publication bias, including a funnel plot, rank correlation test and Egger's test.
-The funnel plot visually represents the distribution of effect sizes and their standard errors, allowing for the identification of potential publication bias.
-Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+
+The funnel plot visually represents the distribution of effect sizes and their standard errors, allowing for the identification of potential publication bias. Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+
 The rank correlation test serves as a complementary method to the funnel plot in assessing publication bias by examining the correlation between effect sizes and their standard errors.
+
 The Egger's test is a statistical test that quantifies the degree of asymmetry in the funnel plot, providing a more formal assessment of publication bias.
 
 ## Explanation of the Code
-The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-The `width` and `height` arguments adjust the dimensions of the PDF file.
-The `funnel()` function is used to create the funnel plot, and the `tradmetaresults` object contains the results of the meta-analysis.
-The `legend` argument specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
-The `ranktest()` function computes the Kendall tau value, which indicates the strength and direction of the association between the ranks of effect sizes and their standard errors.
-The `sei_corrected` variable is calculated to adjust the standard error for the effect sizes, and the `rma()` function is used to perform Egger's test.
-The `mods` argument specifies the moderator variable, which is the corrected standard error in this case.
-The `weights` argument specifies the weight for each effect size, which is the inverse of the corrected standard error squared.
-The `data` argument specifies the dataset to be used for the analysis.
-The `summary()` function provides the results of the Egger's test, including the slope estimate and its significance.
-The `rma()` function is used to perform Egger's test, which assesses the presence of publication bias by examining the relationship between effect sizes and their standard errors.
-The `summary()` function provides the results of the Egger's test, including the slope estimate and its significance.
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   The `funnel()` function is used to create the funnel plot, and the `tradmetaresults` object contains the results of the meta-analysis.
+
+-   The `legend` argument specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
+
+-   The `ranktest()` function computes the Kendall tau value, which indicates the strength and direction of the association between the ranks of effect sizes and their standard errors.
+
+-   The `sei_corrected` variable is calculated to adjust the standard error for the effect sizes, and the `rma()` function is used to perform Egger's test.
+
+-   The `mods` argument specifies the moderator variable, which is the corrected standard error in this case.
+
+-   The `weights` argument specifies the weight for each effect size, which is the inverse of the corrected standard error squared.
+
+-   The `data` argument specifies the dataset to be used for the analysis.
+
+-   The `summary()` function provides the results of the Egger's test, including the slope estimate and its significance.
 
 ```{r}
 ### Tests for Publication Bias --------------
@@ -266,14 +326,21 @@ rma(
 ```
 
 # Moderation Analysis
+
 This section performs moderation analysis to explore the influence of different moderators on the effect sizes. It includes both continuous and categorical moderators.
 
 ## Explanation of the Code
-The `rma()` function is used to perform the moderation analysis, and the `yi` and `vi` arguments specify the effect size estimates and their corresponding sampling variances.
-The `mods` argument specifies the moderator variable, which can be either continuous or categorical.
-The `method` argument specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
-The `data` argument specifies the dataset to be used for the analysis.
-The `subset` argument is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
+
+-   The `rma()` function is used to perform the moderation analysis, and the `yi` and `vi` arguments specify the effect size estimates and their corresponding sampling variances.
+
+-   The `mods` argument specifies the moderator variable, which can be either continuous or categorical.
+
+-   The `method` argument specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
+
+-   The `data` argument specifies the dataset to be used for the analysis.
+
+-   The `subset` argument is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
+
 ```{r}
 ### Moderation Analysis --------------
 
@@ -315,32 +382,56 @@ rma(
 ```
 
 # Forest Plot with Moderators
-This section generates a forest plot that includes moderators to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis. 
-The forest plot includes the following features:
-- Arrangement of studies by effect sizes and types of moderators
-- Sample size information for both dyslexia and control groups
-- Custom headers for the plot
-- Custom labels for the studies 
-- Summary effect sizes for each moderator
+
+This section generates a forest plot that includes moderators to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
+
 The plot is saved as a PDF file for easy sharing and presentation.
 
+The forest plot includes the following features:
+
+-   Arrangement of studies by effect sizes and types of moderators
+
+-   Sample size information for both dyslexia and control groups
+
+-   Custom headers for the plot
+
+-   Custom labels for the studies
+
+-   Summary effect sizes for each moderator
+
 ## Explanation of the Code
-The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-The `width` and `height` arguments adjust the dimensions of the PDF file.
-The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
-The `rows` argument specifies the arrangement of studies by creativity measure type, with the rows arranged in a specific order.
-The `ylim` argument sets the y-axis limits for the plot.
-The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
-The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
-The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
-The `slab` argument is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns.
-The `paste()` function creates the label, and the `sep` argument specifies the separator between the columns.
-The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
-The `header` argument is set to FALSE to allow for manual specification of headers.
-The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
-The `x` and `y` arguments in the `text()` function adjust the position of the headers, while the `font` argument adjusts the font size.
-The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` argument specifying the position of the summary in the plot.
-The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
+
+-   The `rows` argument specifies the arrangement of studies by creativity measure type, with the rows arranged in a specific order.
+
+-   The `ylim` argument sets the y-axis limits for the plot.
+
+-   The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
+
+-   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
+
+-   The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
+
+-   The `slab` argument is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns.
+
+-   The `paste()` function creates the label, and the `sep` argument specifies the separator between the columns.
+
+-   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
+
+-   The `header` argument is set to FALSE to allow for manual specification of headers.
+
+-   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
+
+-   The `x` and `y` arguments in the `text()` function adjust the position of the headers, while the `font` argument adjusts the font size.
+
+-   The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` argument specifying the position of the summary in the plot.
+
+-   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r}
 ### Forest Plot with Moderators --------------
@@ -355,8 +446,8 @@ forest(
   tradmetaresults,
 
   # Manually arrange effect sizes by creativity measure type
-  # - Mixed: Rows 20 to 18
-  # - Verbal: Rows 14 to 10
+  # - Verbal: Rows 20 to 18
+  # - Mixed: Rows 14 to 10
   # - Non-verbal: Rows 6 to 2
   # The arrangement must consider spacing and must end at row 2
   rows = c(20:18, 14:10, 6:2),
@@ -388,15 +479,15 @@ forest(
 
 # Add text labels for moderator (type of creativity task)
 # Labels for different creativity task types (Moderator Analysis)
-# - "Verbal" at y = 7
+# - "Non-verbal" at y = 7
 # - "Mixed" at y = 15
-# - "Non-verbal" at y = 21
+# - "Verbal" at y = 21
 # `pos = 4` ensures left alignment of the text
 text(
   x = -7,
   y = c(7, 15, 21),
   pos = 4,
-  c("Verbal", "Mixed", "Non-verbal"),
+  c("Non-verbal", "Mixed", "Verbal"),
   font = 2
 )
 
@@ -421,9 +512,9 @@ res.m = rma(
 )
 
 # Add summary effect sizes for each of the moderators
-addpoly(res.v, row = 1) # summary effect for "verbal" group
-addpoly(res.n, row = 9) # summary effect for "non-verbal" group
-addpoly(res.m, row = 17) # summary effect for "mixed" group
+addpoly(res.n, row = 1) # summary effect for "non-verbal" group
+addpoly(res.m, row = 9) # summary effect for "mixed" group
+addpoly(res.v, row = 17) # summary effect for "verbal" group
 
 # Add"Author(s) Year" header
 text(x = -6.3, y = 23, "Author(s) Year", font = 2) 
@@ -443,3 +534,5 @@ text(x = 3.5, y = 23, "g [95% CI]", font = 2)
 # Close the forest plot and finalise it as a saved file
 dev.off()
 ```
+
+# End of Code

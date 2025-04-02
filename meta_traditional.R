@@ -137,7 +137,10 @@ text(x = -4.0, y = 15, "Sample Size", font = 2) # text function includes text wi
 # Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
-# x values represents the x-coordinates of where the "Dslx" and "Ctrl" headers will be placed
+# x coordinates for the respective sample size columns
+# x = -4.2 for Dslx (Dyslexia Group)
+# x = -3.8 for Ctrl (Control Group)
+# y = 14.5 for both
 # Adjust font size of header with the font function
 text(c(x = -4.2, x = -3.8), y = 14.5, c("Dslx", "Ctrl"), font = 2)
 
@@ -155,7 +158,7 @@ dev.off()
 # Funnel Plot
 
 # pdf function starts the graphics device driver to create PDF files
-# Name the file of the funnel
+# Name the file of the funnel plot
 # Adjust the width and height of the pdf file
 pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
 # funnel argument to create the funnel plot, specify the data to create the plot
@@ -230,15 +233,16 @@ rma(
 
 ### Forest Plot of Moderators --------------
 
+# pdf function starts the graphics device driver to create PDF files
 # Name the file of the forest plot
 # Adjust the width and height of the pdf file
-pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 10) # pdf function starts the graphics device driver to create PDF files
+pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 10) 
 forest(
   tradmetaresults,
 
   # Manually arrange effect sizes by creativity measure type
-  # - Mixed: Rows 20 to 18
-  # - Verbal: Rows 14 to 10
+  # - Verbal: Rows 20 to 18
+  # - Mixed: Rows 14 to 10
   # - Non-verbal: Rows 6 to 2
   # The arrangement must consider spacing and must end at row 2
   rows = c(20:18, 14:10, 6:2),
@@ -264,37 +268,38 @@ forest(
   # Remove headers (if any), for manual input
   header = FALSE
 )
-
+# For the following lines of code,
+# use text function to manually include text within the plot
 # Add text labels for moderator (type of creativity task)
 # Adjust the position of the labels with x (horizontal) and y (vertical) function
 # Labels for different creativity task types (Moderator Analysis)
-# - "Verbal" at y = 7
+# - "Non-verbal" at y = 7
 # - "Mixed" at y = 15
-# - "Non-verbal" at y = 21
+# - "Verbal" at y = 21
 # `pos = 4` ensures left alignment of the text
 text(
   x = -7,
-  pos = 4,
   y = c(7, 15, 21),
-  c("Verbal", "Mixed", "Non-verbal"),
+  pos = 4,
+  c("Non-verbal", "Mixed", "Verbal"),
   font = 2
 )
 
 # Moderation analysis
 # subset argument ensures only the relevant rows are used
-res.v <- rma(
+res.v = rma(
   yi,
   vi,
   subset = (Creativity.Measure_type == "Verbal"),
   data = tradmeta
 )
-res.n <- rma(
+res.n = rma(
   yi,
   vi,
   subset = (Creativity.Measure_type == "Non-verbal"),
   data = tradmeta
 )
-res.m <- rma(
+res.m = rma(
   yi,
   vi,
   subset = (Creativity.Measure_type == "Mixed"),
@@ -304,22 +309,23 @@ res.m <- rma(
 # Add summary effect sizes for each of the moderators
 # addpoly argument adds a summary effect size (diamond shape) for each moderator
 # row argument places the summary at the corresponding position in the plot
-addpoly(res.v, row = 1) # summary effect for "verbal" group
-addpoly(res.n, row = 9) # summary effect for "non-verbal" group
-addpoly(res.m, row = 17) # summary effect for "mixed" group
+addpoly(res.n, row = 1) # summary effect for "non-verbal" group
+addpoly(res.m, row = 9) # summary effect for "mixed" group
+addpoly(res.v, row = 17) # summary effect for "verbal" group
 
 # Add"Author(s) Year" header
-text(x = -6.3, y = 23, "Author(s) Year", font = 2) # text function includes text within the plot
-
+text(x = -6.3, y = 23, "Author(s) Year", font = 2) 
 # Add “Sample Size” header
 text(x = -3.6, y = 23.8, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
-text(x = c(-3.8, -3.3), y = 23, c("Dslx", "Ctrl"), font = 2)
+# x = -3.8 for Dslx (Dyslexia Group)
+# x = -3.3 for Ctrl (Control Group)
+# y = 23 for both
+text(c(x = -3.8, x = -3.3), y = 23, c("Dslx", "Ctrl"), font = 2)
 
 # Add "g [95% CI]" header
-text(x = 3.5, y = 23, "g [95% CI]", font = 2) # text function includes text within the plot
-
+text(x = 3.5, y = 23, "g [95% CI]", font = 2) 
 # Close the forest plot and finalise it as a saved file
 dev.off()
 

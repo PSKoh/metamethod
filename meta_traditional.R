@@ -116,7 +116,7 @@ forest(
 
   # Show (TRUE) or hide (FALSE) default headers
   # Hide when we want to manually specify our own headers
-  headers = FALSE
+  header = FALSE
 )
 
 # For the following lines of code,

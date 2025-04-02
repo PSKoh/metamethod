@@ -262,7 +262,7 @@ forest(
   steps = 11,
 
   # Remove headers (if any), for manual input
-  headers = FALSE
+  header = FALSE
 )
 
 # Add text labels for moderator (type of creativity task)

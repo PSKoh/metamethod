@@ -59,6 +59,7 @@ mlmmeta$publication = factor(
 mlmmeta = mlmmeta[order(mlmmeta$publication), ]
 
 ### Calculate overall effect size, using the effect size (yi) and sampling variances (vi)  --------------
+
 # Using traditional meta code (refer to meta_traditional.R), which is not recommended for multilevel meta-analysis
 usingsimplemetacode = rma(
        yi = yi,
@@ -147,14 +148,14 @@ text(x = -4.6, y = 139, "Author(s) Year", font = 2)
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # Adjust font size of header with the font function
-text(-2.8, y = 140, "Sample Size", font = 2)
+text(x = -2.8, y = 140, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Presence” and “Absence”
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # x values represents the x-coordinates of where the "Presence" and "Absence" headers will be placed
 # Adjust font size of header with the font function
-text(c(-3, -2.5), y = 139, c("Presence", "Absence"), font = 2)
+text(c(x = -3, x = -2.5), y = 139, c("Presence", "Absence"), font = 2)
 
 # Add "g [95% CI]" header
 # Include desired text of header within the double prime symbol ""
@@ -203,7 +204,7 @@ rma.mv(
        yi = yi,
        V = vi,
        random = ~ 1 | lab_id / ID,
-       # Specify categorical moderator (i.e., journal article)
+       # Specify categorical moderator (i.e., Journal Article)
        subset = (publication == "Journal article"),
        data = multimmeta
 )
@@ -211,7 +212,7 @@ rma.mv(
        yi = yi,
        V = vi,
        random = ~ 1 | lab_id / ID,
-       # Specify categorical moderator (i.e., thesis/dissertation)
+       # Specify categorical moderator (i.e., Thesis/dissertation)
        subset = (publication == "Thesis/dissertation"),
        data = multimmeta
 )
@@ -219,7 +220,7 @@ rma.mv(
        yi = yi,
        V = vi,
        random = ~ 1 | lab_id / ID,
-       # Specify categorical moderator (i.e., conference)
+       # Specify categorical moderator (i.e., Conference)
        subset = (publication == "Conference"),
        data = multimmeta
 )

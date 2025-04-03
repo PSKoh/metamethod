@@ -1,6 +1,6 @@
 ---
 title: "Traditional Meta-Analysis Tutorial"
-output: Traditional Meta-Analysis_notebook
+output: pdf_document
 ---
 
 # Introduction
@@ -21,8 +21,6 @@ This section sets up the working environment, installs necessary packages, loads
 
 -   The `setwd()` function sets the working directory to the location of the script, ensuring that all file paths are relative to the script's location.
 
--   The `install.packages()` function installs the `metafor` package if it is not already installed.
-
 -   The `library()` function loads the `metafor` package.
 
 -   The `options()` function is used to adjust the display settings, specifically to disable scientific notation and set the number of digits displayed.
@@ -36,9 +34,6 @@ This section sets up the working environment, installs necessary packages, loads
 
 # Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-# Install packages (if not already installed)
-install.packages("metafor")
 
 # Load packages
 library("metafor") # version 4.8-0

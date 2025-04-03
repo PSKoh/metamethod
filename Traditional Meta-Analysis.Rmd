@@ -32,10 +32,10 @@ This section sets up the working environment, installs necessary packages, loads
 ```{r}
 ### Set Up --------------
 
+# R version 4.4.3
+
 # Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-# R version 4.4.3
 
 # Install packages (if not already installed)
 install.packages("metafor")

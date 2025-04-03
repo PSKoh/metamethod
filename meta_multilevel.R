@@ -296,18 +296,21 @@ text(
 res.j = rma(
        yi,
        vi,
+       random = ~ 1 | lab_id / ID,
        subset = (publication == "Journal article"),
        data = multimmeta
 )
 res.t = rma(
        yi,
        vi,
+       random = ~ 1 | lab_id / ID,
        subset = (publication == "Thesis/dissertation"),
        data = multimmeta
 )
 res.c = rma(
        yi, 
        vi, 
+       random = ~ 1 | lab_id / ID,
        subset = (publication == "Conference"), 
        data = multimmeta
 )

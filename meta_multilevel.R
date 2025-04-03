@@ -59,7 +59,7 @@ mlmmeta$publication = factor(
 mlmmeta = mlmmeta[order(mlmmeta$publication), ]
 
 ### Calculate overall effect size, using the effect size (yi) and sampling variances (vi)  --------------
-# Using traditional meta code (refer to meta_traditional.R)
+# Using traditional meta code (refer to meta_traditional.R), which is not recommended for multilevel meta-analysis
 usingsimplemetacode = rma(
        yi = yi,
        vi = vi,
@@ -238,9 +238,10 @@ rma.mv(
 
 ### Forest Plot of Moderators --------------
 
+# pdf function starts the graphics device driver to create PDF files
 # Name the file of the forest plot
 # Adjust the width and height of the pdf file
-pdf(file = "mlmforestplotwithmoderators.pdf", width = 15, height = 45) # pdf function starts the graphics device driver to create PDF files
+pdf(file = "mlmforestplotwithmoderators.pdf", width = 15, height = 45) 
 forest(
        mlmmetaresults,
 
@@ -329,7 +330,7 @@ text(x = -6.5, y = 146, "Author(s) Year", font = 2) # text function includes tex
 text(x = -3.9, y = 147, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Presence” (Presence of Smartphones Group) and “Absence” (Absence of Smartphones Group)
-text(x = c(x = -4.2, x = -3.6), y = 146, c("Presence", "Absence"), font = 2)
+text(c(x = -4.2, x = -3.6), y = 146, c("Presence", "Absence"), font = 2)
 
 # Add "g [95% CI]" header
 text(x = 3.6, y = 146, "g [95% CI]", font = 2) # text function includes text within the plot

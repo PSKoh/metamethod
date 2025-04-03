@@ -6,6 +6,10 @@
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # R version 4.4.3
+
+# Install packages (if not already installed)
+install.packages("metafor")
+
 # Load packages
 library("metafor") # version 4.8-0
 library("lmerTest") # version 3.1-3

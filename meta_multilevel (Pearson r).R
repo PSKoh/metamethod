@@ -1,23 +1,28 @@
-##########################################################################
-##                                                                      ##
-##            NEED FOR COGNITION AND WELLBEING META-ANALYSIS            ##
-##                                                                      ##
-##########################################################################
+### START OF CODE ####
 
+### Set Up --------------
 
-########## admin ########## 
-
-# set wd to where current R script is located at
-
+# Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# load library
+# R version 4.4.3
 
-library(metafor)
+# Install packages (if not already installed)
+install.packages("metafor")
 
-# read raw data file
+# Load packages
+library("metafor") # version 4.8-0
+library("lmerTest") # version 3.1-3
 
-d = read.csv("NFCWB_Data_Final_0923.csv")
+# Display settings (to disable scientific notation)
+options(scipen = 9999, digits = 4)
+
+# Read in data drawn from Lua et al. (2023)
+# Original paper: https://doi.org/10.1007/s11031-023-10047-w
+
+mlmmeta = read.csv("NFCWB.csv")
+
+### Prepare Data --------------
 
 
 # clean data file (reverse correlation for negative well-being and calculate sei)

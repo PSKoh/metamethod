@@ -1,0 +1,471 @@
+---
+title: "Multilevel Meta-Analaysis Notebook"
+output: pdf_notebook
+---
+
+# Introduction
+
+The following script is designed to perform a traditional meta-analysis using the `metafor` package in R.
+
+The analysis is based on data from Hartanto et al. (2024) and focuses on the relationship between smartphone presence and cognitive functions. The original paper can be found [here](https://doi.org/10.1037/tmb0000123).
+
+The script includes steps for data preparation, effect size calculation, overall effect size computation, forest plot generation, tests for publication bias, and moderation analysis.
+
+The script is structured to be run in RStudio, and it includes comments to guide users through each step of the process.
+
+# Setting Up
+
+This section sets up the working environment, installs necessary packages, loads the required libraries, and reads in the data.
+
+## Explanation of the Code
+
+-   The `setwd()` function sets the working directory to the location of the script, ensuring that all file paths are relative to the script's location.
+
+-   The `library()` function loads the `metafor` package.
+
+-   The `options()` function is used to adjust the display settings, specifically to disable scientific notation and set the number of digits displayed.
+
+-   The `read.csv()` function reads in the data from a CSV file named "SPC.csv", which contains the data drawn from Hartanto et al. (2024).
+
+-   A new column named "ID" is created in the data frame to assign unique IDs to each row of data.
+
+```{r}
+### Set Up --------------
+
+# Set working directory to that of script's current location
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+# R version 4.4.3
+
+# Install packages (if not already installed)
+install.packages("metafor")
+install.packages("lmerTest")
+
+# Load packages
+library("metafor") # version 4.8-0
+library("lmerTest") # version 3.1-3
+
+# Display settings (to disable scientific notation)
+options(scipen = 9999, digits = 4)
+
+# Read in data drawn from Hartanto et al. 2024
+# Original paper: https://doi.org/10.1037/tmb0000123
+multilevelmeta_raw <- read.csv("SPC.csv")
+
+# Create new column with unique IDs
+multilevelmeta_raw$ID = 1:nrow(multilevelmeta_raw)
+```
+
+# Prepare Data
+
+This section prepares the data for analysis by computing effect sizes for each study and organizing the data frame.
+
+The `multimeta_raw` data frame does not include pre-computed effect sizes for each study. Therefore, the `escalc()` function from `metafor` package is used to calculate them.
+
+For more information on the `escalc()` function, refer to ?escalc in R.
+
+## Explanation of the Code
+
+-   The `measure` argument specifies the type of effect size to be calculated, in this case, "SMD" (Standardized Mean Difference).
+
+-   The `n1i` and `n2i` arguments specify the columns for the sample sizes of each group
+
+-   The `m1i` and `m2i` arguments specify the columns for the means of each group.
+
+-   The `sd1i` and `sd2i` arguments specify the columns for the standard deviations of each group.
+
+-   Afterwards, the `escalc()` function computes the effect sizes (yi) and their corresponding sampling variances (vi) for each study.
+
+-   The `tradmeta_raw` data frame is then sorted by the type of creativity measure and corresponding effect sizes to facilitate clearer visualization in the forest plot.
+
+```{r}
+### Prepare Data --------------
+
+# escalc function is used to compute effect sizes
+multilevelmmeta = escalc(
+       # Type of effect size measure
+       # See ?escalc for more information
+       measure = "SMD",
+
+       # Columns for sample size of each group
+       n1i = n_p,
+       n2i = n_a,
+
+       # Columns for means of each group
+       m1i = cog_M_p,
+       m2i = cog_M_a,
+
+       # Columns for standard deviation of each group
+       sd1i = cog_SD_p,
+       sd2i = cog_SD_a,
+
+       # Specify data.frame that the information will be extracted from
+       data = multilevelmeta_raw
+)
+
+# Fix row order of data frame
+# For easier plotting later
+# Convert Publication to a factor with specified levels
+multilevelmmeta$publication <- factor(
+       multilevelmmeta$publication,
+       levels = c("Journal article", "Thesis/dissertation", "Conference")
+)
+# Order data frame based on publication
+multilevelmmeta = multilevelmmeta[order(multilevelmeta$publication), ]
+```
+# Computer Overall Effect Size
+This section computes the overall effect size using the `rma.mv()` function from the `metafor` package.
+Specifically, we demonstrate the difference in calculating the overall effect size using a traditional meta-analysis approach versus a multilevel meta-analysis approach.
+The traditional meta-analysis approach is not recommended for multilevel data, as it does not account for the nested structure of the data (i.e., studies nested within labs).
+The multilevel meta-analysis approach is more appropriate for this type of data, as it accounts for the hierarchical structure and allows for the inclusion of random effects.
+## Explanation of the Multilevel Meta-Analysis Code
+-   The `rma.mv()` function is used to compute the overall effect size, accounting for the nested structure of the data.
+-   The `random` argument specifies the random effects structure, where `~ 1 | lab_id / ID` indicates that random intercepts are included for both the lab and individual studies.
+-   The `yi` and `vi` arguments specify the effect size estimates and their corresponding sampling variances, respectively.
+-   The `data` argument specifies the data frame containing the effect size estimates and variances.
+-   The `summary()` function is used to display the results of the meta-analysis, including the overall effect size estimate and its confidence interval.
+```{r}
+### Compute Overall Effect size --------------
+
+# Using traditional meta code (refer to meta_traditional.R)
+# The code below is for demonstration purposes only
+# The code below is not recommended for multilevel meta-analysis
+usingsimplemetacode = rma(
+       yi = yi,
+       vi = vi,
+       data = multimmeta
+)
+summary(usingsimplemetacode)
+
+# Using multilevel code
+mlmmetaresults = rma.mv(
+       # Effect size estimates
+       yi = yi,
+       # Sampling variances
+       V = vi,
+       # Include random effects for grouping variable (i.e., lab)
+       random = ~ 1 | lab_id / ID,
+       # Specify where to get the data from
+       data = multimmeta
+)
+
+# summary function used to provide detailed results of the meta-analysis
+summary(mlmmetaresults)
+```
+# Forest Plot
+
+This section generates a forest plot to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
+
+The forest plot is created using the `forest()` function from the `metafor` package.
+
+The plot includes the following features:
+
+-   Arrangement of studies by effect sizes
+
+-   Sample size information for both dyslexia and control groups
+
+-   Custom headers for the plot
+
+-   Custom labels for the studies
+
+Saving the forest plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+
+## Explanation of the Code
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file. The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
+
+-   The `order` argument specifies the arrangement of studies, with "obs" indicating that the studies should be arranged by effect sizes. To organise by column, replace "obs" with the specific column in the data frame.
+
+-   The `ylim` argument sets the y-axis limits for the plot.
+
+-   The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
+
+-   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
+
+-   The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
+
+-   The `slab` argument is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns. The `paste()` function creates the label, and the `sep` argument specifies the separator between the columns.
+
+-   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
+
+-   The `efac` argument adjusts the size of the effect size polygons in the plot.
+
+-   The `header` argument is set to FALSE to allow for manual specification of headers.
+
+-   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
+
+-   The `x` and `y` arguments in the `text()` function adjust the position of the headers, while the `font` argument adjusts the font size.
+
+-   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
+
+```{r}
+### Forest Plot --------------
+
+# Save the forest plot as a PDF file
+# Name the file of the forest plot
+pdf(file = "mlmforestplot.pdf", width = 15, height = 40)
+
+# Start creating the forest plot itself
+forest(
+        mlmmetaresults, # Specify dataset
+
+       # Arrangement of studies
+       order = "obs",
+
+       # Add y-axis limits
+       ylim = c(-1, 140),
+
+       # Add sample size information for presence of smartphones (n_p) and absence of smartphones(n_a) group
+       ilab = cbind(n_p, n_a),
+       ilab.xpos = c(x = -3, x = -2.5),
+
+       # Label studies on the forest plot
+       slab = paste(author, year_published, sep = ", "),
+
+       # Add x-axis limits
+       xlim = c(-5, 3),
+
+       # Add confidence interval limits
+       # Adjust intervals based on the number of steps
+       alim = c(-2, 2),
+       steps = 9,
+
+       # Change size of effect size polygons
+       efac = 0.5,
+
+       # Show (TRUE) or hide (FALSE) default headers
+       # Hide when we want to manually specify our own headers
+       header = FALSE
+)
+
+# For the following lines of code,
+# use text function to manually include text within the plot
+
+# Add "Author(s) Year" header
+text(x = -4.6, y = 139, "Author(s) Year", font = 2)
+
+# Add "Sample Size" header
+text(x = -2.8, y = 140, "Sample Size", font = 2)
+
+# Add specific sample size column headers, “Presence” and “Absence”
+text(c(x = -3, x = -2.5), y = 139, c("Presence", "Absence"), font = 2)
+
+# Add "g [95% CI]" header
+text(x = 2.7, y = 139, "g [95% CI]", font = 2) 
+
+# Close the forest plot and finalise it as a saved file
+dev.off()
+```
+# Tests for Publication Bias
+
+This section performs tests for publication bias, including a funnel plot, rank correlation test and Egger's test.
+
+The funnel plot visually represents the distribution of effect sizes and their standard errors, allowing for the identification of potential publication bias. Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+
+The rank correlation test serves as a complementary method to the funnel plot in assessing publication bias by examining the correlation between effect sizes and their standard errors.
+
+The Egger's test is a statistical test that quantifies the degree of asymmetry in the funnel plot, providing a more formal assessment of publication bias.
+
+## Explanation of the Code
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   The `funnel()` function is used to create the funnel plot, and the `tradmetaresults` object contains the results of the meta-analysis.
+
+-   The `legend` argument specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
+
+-   The `ranktest()` function computes the Kendall tau value, which indicates the strength and direction of the association between the ranks of effect sizes and their standard errors.
+
+-   The `sei_corrected` variable is calculated to adjust the standard error for the effect sizes, and the `rma()` function is used to perform Egger's test.
+
+-   The `mods` argument specifies the moderator variable, which is the corrected standard error in this case.
+
+-   The `weights` argument specifies the weight for each effect size, which is the inverse of the corrected standard error squared.
+
+-   The `data` argument specifies the dataset to be used for the analysis.
+
+-   The `summary()` function provides the results of the Egger's test, including the slope estimate and its significance.
+```{r}
+### Checking for Publication Bias --------------
+
+# Funnel Plot
+
+# pdf function starts the graphics device driver to create PDF files
+# Name the file of the funnel
+# Adjust the width and height of the pdf file
+pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
+# funnel argument to create the funnel plot, specify the data to create the plot
+funnel(mlmmetaresults, legend = TRUE)
+#Close the funnel plot and finalise it as a saved file
+dev.off()
+
+# Rank Correlation Test
+
+# ranktest argument to compute kendall tau value
+ranktest(mlmmetaresults)
+
+# Egger' Test
+
+# Calculate standard error (SE)
+multimmeta$sei_corrected = with(multimmeta, sqrt((n_p + n_a) / (n_p * n_a)))
+lmer(
+       # g weighted by SE is predicted by intercept and inverse SE
+       # with random intercept by sample
+       I(yi / sei_corrected) ~ 1 + I(1 / sei_corrected) + (1 | lab_id),
+       data = multimmeta
+) |>
+       # estimate of interest is the intercept
+       summary(correlation = FALSE)
+```
+
+```{r}
+## Test of Moderators --------------
+
+# Categorical variable (i.e., publication)
+rma.mv(
+       yi = yi,
+       V = vi,
+       random = ~ 1 | lab_id / ID,
+       # Specify categorical moderator (i.e., Journal Article)
+       subset = (publication == "Journal article"),
+       data = multimmeta
+)
+rma.mv(
+       yi = yi,
+       V = vi,
+       random = ~ 1 | lab_id / ID,
+       # Specify categorical moderator (i.e., Thesis/dissertation)
+       subset = (publication == "Thesis/dissertation"),
+       data = multimmeta
+)
+rma.mv(
+       yi = yi,
+       V = vi,
+       random = ~ 1 | lab_id / ID,
+       # Specify categorical moderator (i.e., Conference)
+       subset = (publication == "Conference"),
+       data = multimmeta
+)
+
+# Continuous variable (i.e., female proportion)
+rma.mv(
+       yi = yi,
+       V = vi,
+       random = ~ 1 | lab_id / ID,
+       # Specify categorical moderator (i.e., sex)
+       mods = ~female_proportion,
+       method = "REML",
+       data = multimmeta
+) |>
+       summary()
+```
+
+```{r}
+### Forest Plot of Moderators --------------
+
+# pdf function starts the graphics device driver to create PDF files
+# Name the file of the forest plot
+# Adjust the width and height of the pdf file
+pdf(file = "mlmforestplotwithmoderators.pdf", width = 15, height = 45) 
+forest(
+       mlmmetaresults,
+
+       # Manually arrange effect sizes by creativity measure type
+       # - Journal article: Rows 143 to 79
+       # - Thesis/Dissertations: Rows 75 to 7
+       # - Conference: Rows 3 to 2
+       # The arrangement must consider spacing and must end at row 2
+       rows = c(143:79, 75:7, 3:2),
+
+       # Add y-axis limits
+       ylim = c(-1, 147),
+
+       # Add sample size information for presence of smartphone (n_p) and absence of smartphone (n_a) group into forest plot
+       ilab = cbind(n_p, n_a),
+       ilab.xpos = c(x = -4.2, x = -3.6),
+
+       # Label studies on the forest plot
+       slab = paste(author, year_published, sep = ", "),
+
+       # Add x-axis limits
+       xlim = c(-7, 4),
+
+       # Add confidence interval limits
+       # Adjust intervals based on the number of steps
+       alim = c(-2.5, 2.5),
+       steps = 11,
+
+       # Change size of polygons
+       efac = 0.5,
+
+       # Remove headers (if any), for manual input
+       header = FALSE
+)
+
+# Add text labels for moderator (type of publication)
+# Adjust the position of the labels with x (horizontal) and y (vertical) function
+# Labels for different creativity task types (Moderator Analysis)
+# - "Journal article" at y = 7
+# - "Thesis/Dissertations" at y = 15
+# - "Non-Conference" at y = 21
+# `pos = 4` ensures left alignment of the text
+text(
+       x = -7,
+       pos = 4,
+       y = c(4, 76, 144),
+       c("Conference", "Thesis/dissertation", "Journal article"),
+       font = 2
+)
+
+# Moderation analysis
+# subset argument ensures only the relevant rows are used
+res.j = rma(
+       yi,
+       vi,
+       random = ~ 1 | lab_id / ID,
+       subset = (publication == "Journal article"),
+       data = multimmeta
+)
+res.t = rma(
+       yi,
+       vi,
+       random = ~ 1 | lab_id / ID,
+       subset = (publication == "Thesis/dissertation"),
+       data = multimmeta
+)
+res.c = rma(
+       yi, 
+       vi, 
+       random = ~ 1 | lab_id / ID,
+       subset = (publication == "Conference"), 
+       data = multimmeta
+)
+
+# Add summary effect sizes for each of the moderators
+# addpoly argument adds a summary effect size (diamond shape) for each moderator
+# row argument places the summary at the corresponding position in the plot
+addpoly(res.c, row = 1) # summary effect for "Conference" group
+addpoly(res.t, row = 6) # summary effect for "Thesis/Dissertation" group
+addpoly(res.j, row = 78) # summary effect for "Journal article" group
+
+# Add"Author(s) Year" header
+text(x = -6.5, y = 146, "Author(s) Year", font = 2) # text function includes text within the plot
+
+# Add “Sample Size” header
+text(x = -3.9, y = 147, "Sample Size", font = 2)
+
+# Add specific sample size column headers, “Presence” (Presence of Smartphones Group) and “Absence” (Absence of Smartphones Group)
+text(c(x = -4.2, x = -3.6), y = 146, c("Presence", "Absence"), font = 2)
+
+# Add "g [95% CI]" header
+text(x = 3.6, y = 146, "g [95% CI]", font = 2) # text function includes text within the plot
+
+# Close the forest plot and finalise it as a saved file
+dev.off()
+```
+
+# End of Code

@@ -9,6 +9,7 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 # Install packages (if not already installed)
 install.packages("metafor")
+install.packages("lmerTest")
 
 # Load packages
 library("metafor") # version 4.8-0
@@ -26,10 +27,8 @@ multilevelmeta_raw$ID = 1:nrow(multilevelmeta_raw)
 
 ### Prepare Data --------------
 
-# escalc function is used to compute effect sizes
 multilevelmmeta = escalc(
        # Type of effect size measure
-       # See ?escalc for more information
        measure = "SMD",
 
        # Columns for sample size of each group
@@ -48,18 +47,19 @@ multilevelmmeta = escalc(
        data = multilevelmeta_raw
 )
 
-# Order data frame based on publication
-# For easier plotting later
 # Convert Publication to a factor with specified levels
 multilevelmmeta$publication = factor(
        multilevelmmeta$publication,
        levels = c("Journal article", "Thesis/dissertation", "Conference")
 )
+# Order data frame based on publication
 multilevelmmeta = multilevelmmeta[order(multilevelmeta$publication), ]
 
-### Calculate overall effect size
+### Compute Overall Effect size --------------
 
-# Using traditional meta code (refer to meta_traditional.R), which is not recommended for multilevel meta-analysis
+# Using traditional meta code (refer to meta_traditional.R)
+# The code below is for demonstration purposes only
+# The code below is not recommended for multilevel meta-analysis
 usingsimplemetacode = rma(
        yi = yi,
        vi = vi,
@@ -84,12 +84,8 @@ summary(mlmmetaresults)
 
 ### Forest Plot --------------
 
-# pdf function starts the graphics device driver to create PDF files
+# Save the forest plot as a PDF file
 # Name the file of the forest plot
-# Adjust the width and height of the pdf file
-# pdf function starts the graphics device driver to create PDF files
-# Name the file of the forest plot
-# Adjust the width and height of the pdf file
 pdf(file = "mlmforestplot.pdf", width = 15, height = 40)
 
 # Start creating the forest plot itself
@@ -97,25 +93,17 @@ forest(
        mlmmetaresults, # Specify dataset
 
        # Arrangement of studies
-       # "obs" to arrange by effect sizes
        order = "obs",
 
        # Add y-axis limits
        ylim = c(-3, 140),
 
-       # Add sample size information for presence of smartphones (n_p) and absence of smartphones(n_a) group into forest plot
+       # Add sample size information for presence of smartphones (n_p) and absence of smartphones(n_a) group
        # Adjust positioning of sample size information with x (horizontal) function
-       # x values represents the x-coordinates where the sample size values of the experimental and control groups will be placed
-       # cbind function combines the columns indicating the sample size of the groups (n_p and n_a)
-       # ilab.xpos specifies the horizontal arrangement of the columns
        ilab = cbind(n_p, n_a),
        ilab.xpos = c(x = -3, x = -2.55),
 
        # Label studies on the forest plot
-       # Extracts info from the "author" and "year_published" column of data
-       # slab argument used to label each effect size with its respective study
-       # paste function creates the label
-       # sep function used to separate the columns apart with ','
        slab = paste(author, year_published, sep = ", "),
 
        # Add x-axis limits
@@ -141,28 +129,20 @@ forest(
 # use text function to manually include text within the plot
 
 # Add "Author(s) Year" header
-# Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
-# Adjust font size of header with the font function
 text(x = -4.6, y = 139, "Author(s) Year", font = 2)
 
 # Add "Sample Size" header
-# Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
-# Adjust font size of header with the font function
 text(x = -2.8, y = 139.6, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Presence” and “Absence”
-# Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # x values represents the x-coordinates of where the "Presence" and "Absence" headers will be placed
-# Adjust font size of header with the font function
 text(c(x = -3, x = -2.55), y = 139, c("Presence", "Absence"), font = 2)
 
 # Add "g [95% CI]" header
-# Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
-# Adjust font size of header with the font function
 text(x = 2.7, y = 139, "g [95% CI]", font = 2) 
 
 # Close the forest plot and finalise it as a saved file
@@ -173,12 +153,12 @@ dev.off()
 # Funnel Plot
 
 # pdf function starts the graphics device driver to create PDF files
-# Name the file of the funnel
+# Name the pdf file
 # Adjust the width and height of the pdf file
 pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
 # funnel argument to create the funnel plot, specify the data to create the plot
 funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
-#Close the funnel plot and finalise it as a saved file
+# Close the funnel plot and finalise it as a saved file
 dev.off()
 
 # Rank Correlation Test
@@ -242,7 +222,7 @@ rma.mv(
 ### Forest Plot of Moderators --------------
 
 # pdf function starts the graphics device driver to create PDF files
-# Name the file of the forest plot
+# Name the pdf file
 # Adjust the width and height of the pdf file
 pdf(file = "mlmforestplotwithmoderators.pdf", width = 15, height = 45) 
 forest(
@@ -345,4 +325,3 @@ text(x = 3.6, y = 146, "g [95% CI]", font = 2)
 dev.off()
 
 #### END OF CODE ####
-

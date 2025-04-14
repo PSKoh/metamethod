@@ -91,6 +91,7 @@ tradmeta = escalc(
   data = tradmeta_raw
 )
 
+
 # Convert Creativity.Measure_type to a factor with specified levels
 tradmeta$Creativity.Measure_type = factor(
   tradmeta$Creativity.Measure_type,
@@ -190,7 +191,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 ### Forest Plot --------------
 
 # Save the forest plot as a PDF file
-# Name the file of the forest plot
+# Name the pdf file of the forest plot
 pdf(file = "tradforestplot.pdf", width = 11, height = 8)
 
 # Start creating the forest plot itself
@@ -241,7 +242,7 @@ text(x = -4.0, y = 15, "Sample Size", font = 2)
 # x = -4.2 for Dslx (dyslexia Group)
 # x = -3.8 for Ctrl (control Group)
 # y = 14.5 for both
-text(c(x = -4.2, x = -3.8), y = 14.5, c("Dslx", "Ctrl"), font = 2)
+text(c(x = -4.2, x = -3.7), y = 14.5, c("Dslx", "Ctrl"), font = 2)
 
 # Add "g [95% CI]" header
 text(x = 3.5, y = 14.5, "g [95% CI]", font = 2)
@@ -273,8 +274,8 @@ The funnel plot visually represents the distribution of effect sizes and their s
 
 # Funnel Plot
 
-# Save the funnel plot as a PDF file
-# Name the file of the funnel plot
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
 pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
 # funnel argument to create the funnel plot, specify the data to create the plot
 funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
@@ -485,7 +486,7 @@ forest(
 
   # Add confidence interval limits
   # Adjust intervals based on the number of steps
-  alim = c(-2.5, 2.5),
+  alim = c(-1.5, 1.5),
   steps = 11,
 
   # Remove headers (if any), for manual input

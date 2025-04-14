@@ -22,10 +22,9 @@ tradmeta_raw = read.csv("DYSCRE.csv")
 
 ### Prepare Data --------------
 
-# escalc function is used to compute effect sizes
+# Compute effect sizes for each study
 tradmeta = escalc(
   # Type of effect size measure
-  # See ?escalc for more information
   measure = "SMD",
 
   # Columns for sample size of each group
@@ -44,14 +43,12 @@ tradmeta = escalc(
   data = tradmeta_raw
 )
 
-# Fix row order of data frame
-# For easier plotting later
 # Convert Creativity.Measure_type to a factor with specified levels
 tradmeta$Creativity.Measure_type = factor(
   tradmeta$Creativity.Measure_type,
   levels = c("Verbal", "Mixed", "Non-verbal")
 )
-# Order data frame based on type of creativity measure, and based on effect sizes, within each type of creativity measure
+# Order the data frame by Creativity.Measure_type and effect sizes (yi)
 tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type,tradmeta$yi), ]
 
 ### Calculate overall effect size --------------
@@ -62,7 +59,7 @@ tradmetaresults = rma(
   yi = yi,
   # Sampling variance
   vi = vi,
-  # REML specifies that the Restricted Maximum Likelihood (REML) method is used to estimate heterogeneity
+  # Specify method to estimate heterogeneity
   method = "REML",
   # Specify where to get the data from
   data = tradmeta
@@ -73,9 +70,8 @@ summary(tradmetaresults)
 
 ### Forest Plot --------------
 
-# pdf function starts the graphics device driver to create PDF files
-# Name the file of the forest plot
-# Adjust the width and height of the pdf file
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
 pdf(file = "tradforestplot.pdf", width = 11, height = 8)
 
 # Start creating the forest plot itself
@@ -84,8 +80,6 @@ forest(
   tradmetaresults,
 
   # Arrangement of studies
-  # "obs" to arrange by effect sizes
-  # To organise by column, replace "obs" with the specific column in the data frame
   order = "obs",
 
   # Add y-axis limits
@@ -94,16 +88,10 @@ forest(
   # Add sample size information for dyslexia (n_dys) and control (n_control) group 
   # Adjust positioning of sample size information with x (horizontal) function
   # x values represents the x-coordinates where the sample size values of the dyslexia and control groups will be placed
-  # cbind function combines the columns indicating the sample size of the groups (dys and control)
-  # ilab.xpos specifies the horizontal arrangement of the columns
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-4.2, -3.7),
 
   # Label studies on the forest plot
-  # Extracts info from the "Paper" and "Study" column of data
-  # slab argument used to label each effect size with its respective study
-  # paste function creates the label
-  # sep function used to separate the columns apart with ','
   slab = paste(Paper, paste("Study", Study), sep = ", "),
 
   # Add x-axis limits
@@ -126,32 +114,20 @@ forest(
 # use text function to manually include text within the plot
 
 # Add "Author(s) Year" header
-# Include desired text of header within the double prime symbol ""
-# Adjust the position of the header with the x (horizontal) and y (vertical) function
-# Adjust font size of header with the font function
 text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
 
 # Add “Sample Size” header
-# Include desired text of header within the double prime symbol ""
-# Adjust the position of the header with the x (horizontal) and y (vertical) function
-# Adjust font size of header with the font function
-text(x = -4.0, y = 15, "Sample Size", font = 2) # text function includes text within the plot
+text(x = -4.0, y = 15, "Sample Size", font = 2)
 
-# Add specific sample size column headers, “Dslx” (dyslexia Group) and “Ctrl” (control Group)
-# Include desired text of header within the double prime symbol ""
-# Adjust the position of the header with the x (horizontal) and y (vertical) function
+# Add specific sample size column headers for dyslexia and control groups
 # x coordinates for the respective sample size columns
 # x = -4.2 for Dslx (dyslexia Group)
 # x = -3.8 for Ctrl (control Group)
 # y = 14.5 for both
-# Adjust font size of header with the font function
 text(c(x = -4.2, x = -3.7), y = 14.5, c("Dslx", "Ctrl"), font = 2)
 
 # Add "g [95% CI]" header
-# Include desired text of header within the double prime symbol ""
-# Adjust the position of the header with the x (horizontal) and y (vertical) function
-# Adjust font size of header with the font function
-text(x = 3.5, y = 14.5, "g [95% CI]", font = 2) # text function includes text within the plot
+text(x = 3.5, y = 14.5, "g [95% CI]", font = 2)
 
 # Close the forest plot and finalise it as a saved file
 dev.off()
@@ -160,9 +136,8 @@ dev.off()
 
 # Funnel Plot
 
-# pdf function starts the graphics device driver to create PDF files
-# Name the file of the funnel plot
-# Adjust the width and height of the pdf file
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
 pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
 # funnel argument to create the funnel plot, specify the data to create the plot
 funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
@@ -171,7 +146,6 @@ dev.off()
 
 # Rank Correlation Test
 
-# ranktest argument to compute kendall tau value
 ranktest(tradmetaresults)
 
 # Egger's Test
@@ -236,9 +210,8 @@ rma(
 
 ### Forest Plot of Moderators --------------
 
-# pdf function starts the graphics device driver to create PDF files
-# Name the file of the forest plot
-# Adjust the width and height of the pdf file
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
 pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 9) 
 forest(
   tradmetaresults,
@@ -272,7 +245,7 @@ forest(
   header = FALSE,
 
   # Add label for confidence interval, in this case, "Hedge's g" 
-  xlab = "Hedge's g",
+  xlab = "Hedge's g"
 )
 # For the following lines of code,
 # use text function to manually include text within the plot
@@ -292,7 +265,6 @@ text(
 )
 
 # Moderation analysis
-# subset argument ensures only the relevant rows are used
 res.v = rma(
   yi,
   vi,
@@ -313,8 +285,6 @@ res.m = rma(
 )
 
 # Add summary effect sizes for each of the moderators
-# addpoly argument adds a summary effect size (diamond shape) for each moderator
-# row argument places the summary at the corresponding position in the plot
 addpoly(res.n, row = 1) # summary effect for "non-verbal" group
 addpoly(res.m, row = 9) # summary effect for "mixed" group
 addpoly(res.v, row = 17) # summary effect for "verbal" group
@@ -324,9 +294,9 @@ text(x = -6.3, y = 23, "Author(s) Year", font = 2)
 # Add “Sample Size” header
 text(x = -3.6, y = 23.7, "Sample Size", font = 2)
 
-# Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
-# x = -3.8 for Dslx (Dyslexia Group)
-# x = -3.3 for Ctrl (Control Group)
+# Add specific sample size column headers for dyslexia and control groups
+# x = -3.8 for Dslx (dyslexia Group)
+# x = -3.3 for Ctrl (control Group)
 # y = 23 for both
 text(c(x = -3.8, x = -3.3), y = 23, c("Dslx", "Ctrl"), font = 2)
 

@@ -1,8 +1,6 @@
 # Meta-Analysis in R — Traditional & Multilevel Approaches
 This repository contains example datasets and R code to demonstrate how to conduct both traditional meta-analysis and multilevel meta-analysis in R. These materials are intended for educational and non-commercial purposes.
 
-If you use or adapt these materials, please provide proper credit by linking back to this repository.
-
 Each folder corresponds to a specific meta-analytic approach:
 
 - DYSCRE contains files related to the traditional meta-analysis.
@@ -10,6 +8,8 @@ Each folder corresponds to a specific meta-analytic approach:
 - SPC includes files for the multilevel meta-analysis using Hedge’s g as the effect size.
 
 - NFCWB holds files for the multilevel meta-analysis using Pearson’s r as the effect size.
+
+If you use or adapt these materials, please provide proper credit by linking back to this repository.
 
 # Repository Contents
 "DYSCRE.csv": This dataset is from Majeed et al. (2021), which investigates the association between clinically diagnosed dyslexia and creativity. For more information, one may refer [here](https://doi.org/10.1002/dys.1677).

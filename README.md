@@ -3,6 +3,14 @@ This repository contains example datasets and R code to demonstrate how to condu
 
 If you use or adapt these materials, please provide proper credit by linking back to this repository.
 
+Each folder corresponds to a specific meta-analytic approach:
+
+- DYSCRE contains files related to the traditional meta-analysis.
+
+- SPC includes files for the multilevel meta-analysis using Hedge’s g as the effect size.
+
+- NFCWB holds files for the multilevel meta-analysis using Pearson’s r as the effect size.
+
 # Repository Contents
 "DYSCRE.csv": This dataset is from Majeed et al. (2021), which investigates the association between clinically diagnosed dyslexia and creativity. For more information, one may refer [here](https://doi.org/10.1002/dys.1677).
 

@@ -8,6 +8,7 @@ Each folder corresponds to a specific meta-analytic approach:
 - SPC includes files for the multilevel meta-analysis using Hedge’s g as the effect size.
 
 - NFCWB holds files for the multilevel meta-analysis using Pearson’s r as the effect size.
+  
 
 If you use or adapt these materials, please provide proper credit by linking back to this repository.
 

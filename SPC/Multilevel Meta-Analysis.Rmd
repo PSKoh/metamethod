@@ -1,5 +1,6 @@
-title: "Multilevel Meta-Analaysis Notebook"
-output: pdf_notebook
+---
+title: "Multilevel Meta-Analysis Notebook"
+output: pdf_document
 ---
 
 # Introduction

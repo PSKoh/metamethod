@@ -236,10 +236,10 @@ text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
 # Add “Sample Size” header
 text(x = -4.0, y = 15, "Sample Size", font = 2) 
 
-# Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
+# Add specific sample size column headers for dyslexia and control groups
 # x coordinates for the respective sample size columns
-# x = -4.2 for Dslx (Dyslexia Group)
-# x = -3.8 for Ctrl (Control Group)
+# x = -4.2 for Dslx (dyslexia Group)
+# x = -3.8 for Ctrl (control Group)
 # y = 14.5 for both
 text(c(x = -4.2, x = -3.8), y = 14.5, c("Dslx", "Ctrl"), font = 2)
 
@@ -254,13 +254,11 @@ dev.off()
 
 This section performs tests for publication bias, including a funnel plot, rank correlation test and Egger's test.
 
+## Funnel Plot
+
 The funnel plot visually represents the distribution of effect sizes and their standard errors, allowing for the identification of potential publication bias. Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
 
-The rank correlation test serves as a complementary method to the funnel plot in assessing publication bias by examining the correlation between effect sizes and their standard errors.
-
-The Egger's test is a statistical test that quantifies the degree of asymmetry in the funnel plot, providing a more formal assessment of publication bias.
-
-## Explanation of the Code
+### Explanation of the Code
 
 -   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
 
@@ -269,18 +267,6 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 -   The `funnel()` function is used to create the funnel plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
 -   The `legend` argument specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
-
--   The `ranktest()` function computes the Kendall tau value, which indicates the strength and direction of the association between the ranks of effect sizes and their standard errors.
-
--   The `sei_corrected` variable is calculated to adjust the standard error for the effect sizes, and the `rma()` function is used to perform Egger's test.
-
--   The `mods` argument specifies the moderator variable, which is the corrected standard error in this case.
-
--   The `weights` argument specifies the weight for each effect size, which is the inverse of the corrected standard error squared.
-
--   The `data` argument specifies the dataset to be used for the analysis.
-
--   The `summary()` function provides the results of the Egger's test, including the slope estimate and its significance.
 
 ```{r}
 ### Tests for Publication Bias --------------
@@ -294,11 +280,43 @@ pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
 funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
+```
+
+## Rank Correlation Test
+The rank correlation test serves as a complementary method to the funnel plot in assessing publication bias by examining the correlation between effect sizes and their standard errors.
+
+### Explanation of the Code
+-   The `ranktest()` function computes the Kendall tau value, which indicates the strength and direction of the association between the ranks of effect sizes and their standard errors.
+
+-   The `tradmetaresults` object contains the results of the meta-analysis, and the function returns the Kendall tau value and its significance level.
+
+```{r}
+### Tests for Publication Bias --------------
 
 # Rank Correlation Test
-
-# ranktest argument to compute kendall tau value
 ranktest(tradmetaresults)
+```
+
+## Egger's Test
+
+The Egger's test is a statistical test that quantifies the degree of asymmetry in the funnel plot, providing a more formal assessment of publication bias.
+
+### Explanation of the Code
+
+-   The `tradmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula \(\sqrt{\frac{(n_{dys} + n_{control})}{(n_{dys} \cdot n_{control})}}\).
+
+-   The `rma()` function is used to perform Egger's test, with the `yi` and `vi` arguments specifying the effect size estimates and their corresponding sampling variances.
+
+-   The `mods` argument specifies the moderator variable, which is the corrected standard error in this case.
+
+-   The `weights` argument specifies the weight for each effect size, which is the inverse of the corrected standard error squared.
+
+-   The `data` argument specifies the dataset to be used for the analysis.
+
+-   The `summary()` function provides the results of the Egger's test, including the slope estimate and its significance.
+
+```{r}
+### Tests for Publication Bias --------------
 
 # Egger's Test
 
@@ -525,9 +543,9 @@ text(x = -6.3, y = 23, "Author(s) Year", font = 2)
 # Add “Sample Size” header
 text(x = -3.6, y = 23.7, "Sample Size", font = 2)
 
-# Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
-# x = -3.8 for Dslx (Dyslexia Group)
-# x = -3.3 for Ctrl (Control Group)
+# Add specific sample size column headers for dyslexia and control groups
+# x = -3.8 for Dslx (dyslexia Group)
+# x = -3.3 for Ctrl (control Group)
 # y = 23 for both
 text(c(x = -3.8, x = -3.3), y = 23, c("Dslx", "Ctrl"), font = 2)
 

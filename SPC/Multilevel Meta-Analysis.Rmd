@@ -50,7 +50,7 @@ options(scipen = 9999, digits = 4)
 
 # Read in data drawn from Hartanto et al. 2024
 # Original paper: https://doi.org/10.1037/tmb0000123
-multilevelmeta_raw <- read.csv("SPC.csv")
+multilevelmeta_raw = read.csv("SPC.csv")
 
 # Create new column with unique IDs
 multilevelmeta_raw$ID = 1:nrow(multilevelmeta_raw)
@@ -103,10 +103,10 @@ multilevelmmeta = escalc(
        data = multilevelmeta_raw
 )
 
-# Fix row order of data frame
+# Order data frame based on publication
 # For easier plotting later
 # Convert Publication to a factor with specified levels
-multilevelmmeta$publication <- factor(
+multilevelmmeta$publication = factor(
        multilevelmmeta$publication,
        levels = c("Journal article", "Thesis/dissertation", "Conference")
 )
@@ -115,14 +115,22 @@ multilevelmmeta = multilevelmmeta[order(multilevelmeta$publication), ]
 ```
 # Computer Overall Effect Size
 This section computes the overall effect size using the `rma.mv()` function from the `metafor` package.
+
 Specifically, we demonstrate the difference in calculating the overall effect size using a traditional meta-analysis approach versus a multilevel meta-analysis approach.
+
 The traditional meta-analysis approach is not recommended for multilevel data, as it does not account for the nested structure of the data (i.e., studies nested within labs).
+
 The multilevel meta-analysis approach is more appropriate for this type of data, as it accounts for the hierarchical structure and allows for the inclusion of random effects.
+
 ## Explanation of the Multilevel Meta-Analysis Code
 -   The `rma.mv()` function is used to compute the overall effect size, accounting for the nested structure of the data.
+
 -   The `random` argument specifies the random effects structure, where `~ 1 | lab_id / ID` indicates that random intercepts are included for both the lab and individual studies.
+
 -   The `yi` and `vi` arguments specify the effect size estimates and their corresponding sampling variances, respectively.
+
 -   The `data` argument specifies the data frame containing the effect size estimates and variances.
+
 -   The `summary()` function is used to display the results of the meta-analysis, including the overall effect size estimate and its confidence interval.
 ```{r}
 ### Compute Overall Effect size --------------
@@ -133,7 +141,7 @@ The multilevel meta-analysis approach is more appropriate for this type of data,
 usingsimplemetacode = rma(
        yi = yi,
        vi = vi,
-       data = multimmeta
+       data = multilevelmmeta
 )
 summary(usingsimplemetacode)
 
@@ -146,7 +154,7 @@ mlmmetaresults = rma.mv(
        # Include random effects for grouping variable (i.e., lab)
        random = ~ 1 | lab_id / ID,
        # Specify where to get the data from
-       data = multimmeta
+       data = multilevelmmeta
 )
 
 # summary function used to provide detailed results of the meta-analysis
@@ -215,11 +223,11 @@ forest(
        order = "obs",
 
        # Add y-axis limits
-       ylim = c(-1, 140),
+       ylim = c(-3, 140),
 
        # Add sample size information for presence of smartphones (n_p) and absence of smartphones(n_a) group
        ilab = cbind(n_p, n_a),
-       ilab.xpos = c(x = -3, x = -2.5),
+       ilab.xpos = c(x = -3, x = -2.55),
 
        # Label studies on the forest plot
        slab = paste(author, year_published, sep = ", "),
@@ -233,11 +241,14 @@ forest(
        steps = 9,
 
        # Change size of effect size polygons
-       efac = 0.5,
+       efac = 0.3,
 
        # Show (TRUE) or hide (FALSE) default headers
        # Hide when we want to manually specify our own headers
-       header = FALSE
+       header = FALSE,
+
+       # Add label for confidence interval, in this case, "Hedge's g"
+       xlab = "Hedge's g"
 )
 
 # For the following lines of code,
@@ -247,10 +258,10 @@ forest(
 text(x = -4.6, y = 139, "Author(s) Year", font = 2)
 
 # Add "Sample Size" header
-text(x = -2.8, y = 140, "Sample Size", font = 2)
+text(x = -2.8, y = 139.6, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Presence” and “Absence”
-text(c(x = -3, x = -2.5), y = 139, c("Presence", "Absence"), font = 2)
+text(c(x = -3, x = -2.55), y = 139, c("Presence", "Absence"), font = 2)
 
 # Add "g [95% CI]" header
 text(x = 2.7, y = 139, "g [95% CI]", font = 2) 
@@ -299,7 +310,7 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 # Adjust the width and height of the pdf file
 pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
 # funnel argument to create the funnel plot, specify the data to create the plot
-funnel(mlmmetaresults, legend = TRUE)
+funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
 #Close the funnel plot and finalise it as a saved file
 dev.off()
 
@@ -311,16 +322,37 @@ ranktest(mlmmetaresults)
 # Egger' Test
 
 # Calculate standard error (SE)
-multimmeta$sei_corrected = with(multimmeta, sqrt((n_p + n_a) / (n_p * n_a)))
+multilevelmmeta$sei_corrected = with(multilevelmmeta, sqrt((n_p + n_a) / (n_p * n_a)))
 lmer(
        # g weighted by SE is predicted by intercept and inverse SE
        # with random intercept by sample
        I(yi / sei_corrected) ~ 1 + I(1 / sei_corrected) + (1 | lab_id),
-       data = multimmeta
+       data = multilevelmmeta
 ) |>
        # estimate of interest is the intercept
        summary(correlation = FALSE)
 ```
+# Moderation Analysis
+This section performs moderation analysis to examine the influence of categorical and continuous moderators on the effect sizes.
+
+# Explanation of the Code
+
+-   The `rma.mv()` function is used to compute the multilevel meta-analysis with moderators.
+
+-   The `yi` and `vi` arguments specify the effect size estimates and their corresponding sampling variances, respectively.
+
+-   The `random` argument specifies the random effects structure, where `~ 1 | lab_id / ID` indicates that random intercepts are included for both the lab and individual studies, accounting for the nested structure of the data.
+
+-   The `mods` argument specifies the moderator variable, which can be either categorical or continuous.
+
+-   The `method` argument specifies the method for estimating the model parameters, in this case, "REML" (Restricted Maximum Likelihood). 
+
+-   The `subset` argument is used to specify the subset of data for each moderator analysis.
+
+-   The `data` argument specifies the data frame containing the effect size estimates and variances.
+
+-   The `summary()` function is used to display the results of the meta-analysis, including the overall effect size estimate and its confidence interval.
+
 
 ```{r}
 ## Test of Moderators --------------
@@ -332,7 +364,7 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Journal Article)
        subset = (publication == "Journal article"),
-       data = multimmeta
+       data = multilevelmmeta
 )
 rma.mv(
        yi = yi,
@@ -340,7 +372,7 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Thesis/dissertation)
        subset = (publication == "Thesis/dissertation"),
-       data = multimmeta
+       data = multilevelmmeta
 )
 rma.mv(
        yi = yi,
@@ -348,7 +380,7 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Conference)
        subset = (publication == "Conference"),
-       data = multimmeta
+       data = multilevelmmeta
 )
 
 # Continuous variable (i.e., female proportion)
@@ -359,10 +391,48 @@ rma.mv(
        # Specify categorical moderator (i.e., sex)
        mods = ~female_proportion,
        method = "REML",
-       data = multimmeta
+       data = multilevelmmeta
 ) |>
        summary()
 ```
+# Forest Plot of Moderators
+This section generates a forest plot to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis, with a focus on the moderators.
+
+# Explanation of the Code
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file. 
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
+-   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
+
+-   The `rows` argument specifies the arrangement of studies, with the order of rows adjusted to group studies by publication type.
+
+-   The `ylim` argument sets the y-axis limits for the plot.
+
+-   The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
+
+-   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
+
+-   The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
+
+-   The `slab` argument is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns. 
+
+-   The `paste()` function creates the label, and the `sep` argument specifies the separator between the columns.
+
+-   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
+
+-   The `efac` argument adjusts the size of the effect size polygons in the plot.
+
+-   The `header` argument is set to FALSE to allow for manual specification of headers.
+
+-   The `xlab` argument specifies the confidence intervals label, in this case, "Hedge's g".
+
+-   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
+
+-   The `x` and `y` arguments in the `text()` function adjust the position of the headers, while the `font` argument adjusts the font size.
+
+-   The `addpoly()` function adds summary effect sizes for each of the moderators, with the `row` argument specifying the position of the summary in the plot.
+
+-   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r}
 ### Forest Plot of Moderators --------------
@@ -382,9 +452,9 @@ forest(
        rows = c(143:79, 75:7, 3:2),
 
        # Add y-axis limits
-       ylim = c(-1, 147),
+       ylim = c(-3, 147),
 
-       # Add sample size information for presence of smartphone (n_p) and absence of smartphone (n_a) group into forest plot
+       # Add sample size information for presence of smartphone (n_p) and absence of smartphone (n_a) group 
        ilab = cbind(n_p, n_a),
        ilab.xpos = c(x = -4.2, x = -3.6),
 
@@ -396,14 +466,17 @@ forest(
 
        # Add confidence interval limits
        # Adjust intervals based on the number of steps
-       alim = c(-2.5, 2.5),
+       alim = c(-1.5, 1.5),
        steps = 11,
 
-       # Change size of polygons
-       efac = 0.5,
+       # Change size of effect size polygons
+       efac = 0.3,
 
        # Remove headers (if any), for manual input
-       header = FALSE
+       header = FALSE,
+
+       # Add label for confidence interval, in this case, "Hedge's g"
+       xlab = "Hedge's g"
 )
 
 # Add text labels for moderator (type of publication)
@@ -428,21 +501,21 @@ res.j = rma(
        vi,
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Journal article"),
-       data = multimmeta
+       data = multilevelmmeta
 )
 res.t = rma(
        yi,
        vi,
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Thesis/dissertation"),
-       data = multimmeta
+       data = multilevelmmeta
 )
 res.c = rma(
        yi, 
        vi, 
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Conference"), 
-       data = multimmeta
+       data = multilevelmmeta
 )
 
 # Add summary effect sizes for each of the moderators
@@ -453,16 +526,16 @@ addpoly(res.t, row = 6) # summary effect for "Thesis/Dissertation" group
 addpoly(res.j, row = 78) # summary effect for "Journal article" group
 
 # Add"Author(s) Year" header
-text(x = -6.5, y = 146, "Author(s) Year", font = 2) # text function includes text within the plot
+text(x = -6.5, y = 146, "Author(s) Year", font = 2) 
 
 # Add “Sample Size” header
-text(x = -3.9, y = 147, "Sample Size", font = 2)
+text(x = -3.9, y = 146.7, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Presence” (Presence of Smartphones Group) and “Absence” (Absence of Smartphones Group)
 text(c(x = -4.2, x = -3.6), y = 146, c("Presence", "Absence"), font = 2)
 
 # Add "g [95% CI]" header
-text(x = 3.6, y = 146, "g [95% CI]", font = 2) # text function includes text within the plot
+text(x = 3.6, y = 146, "g [95% CI]", font = 2) 
 
 # Close the forest plot and finalise it as a saved file
 dev.off()

@@ -19,15 +19,15 @@ options(scipen = 9999, digits = 4)
 
 # Read in data drawn from Hartanto et al. 2024
 # Original paper: https://doi.org/10.1037/tmb0000123
-mlmmeta = read.csv("SPC.csv")
+multilevelmeta_raw = read.csv("SPC.csv")
 
 # Create new column with unique IDs
-mlmmeta$ID = 1:nrow(mlmmeta)
+multilevelmeta_raw$ID = 1:nrow(multilevelmeta_raw)
 
 ### Prepare Data --------------
 
 # escalc function is used to compute effect sizes
-multimmeta = escalc(
+multilevelmmeta = escalc(
        # Type of effect size measure
        # See ?escalc for more information
        measure = "SMD",
@@ -45,26 +45,25 @@ multimmeta = escalc(
        sd2i = cog_SD_a,
 
        # Specify data.frame that the information will be extracted from
-       data = mlmmeta
+       data = multilevelmeta_raw
 )
 
-# Fix row order of data frame
+# Order data frame based on publication
 # For easier plotting later
 # Convert Publication to a factor with specified levels
-mlmmeta$publication = factor(
-       mlmmeta$publication,
+multilevelmmeta$publication = factor(
+       multilevelmmeta$publication,
        levels = c("Journal article", "Thesis/dissertation", "Conference")
 )
-# Order data frame based on publication
-mlmmeta = mlmmeta[order(mlmmeta$publication), ]
+multilevelmmeta = multilevelmmeta[order(multilevelmeta$publication), ]
 
-### Calculate overall effect size, using the effect size (yi) and sampling variances (vi)  --------------
+### Calculate overall effect size
 
 # Using traditional meta code (refer to meta_traditional.R), which is not recommended for multilevel meta-analysis
 usingsimplemetacode = rma(
        yi = yi,
        vi = vi,
-       data = multimmeta
+       data = multilevelmmeta
 )
 summary(usingsimplemetacode)
 
@@ -77,13 +76,13 @@ mlmmetaresults = rma.mv(
        # Include random effects for grouping variable (i.e., lab)
        random = ~ 1 | lab_id / ID,
        # Specify where to get the data from
-       data = multimmeta
+       data = multilevelmmeta
 )
 
 # summary function used to provide detailed results of the meta-analysis
 summary(mlmmetaresults)
 
-###### Forest Plot ###### ### Forest Plot --------------
+### Forest Plot --------------
 
 # pdf function starts the graphics device driver to create PDF files
 # Name the file of the forest plot
@@ -102,7 +101,7 @@ forest(
        order = "obs",
 
        # Add y-axis limits
-       ylim = c(-1, 140),
+       ylim = c(-3, 140),
 
        # Add sample size information for presence of smartphones (n_p) and absence of smartphones(n_a) group into forest plot
        # Adjust positioning of sample size information with x (horizontal) function
@@ -110,7 +109,7 @@ forest(
        # cbind function combines the columns indicating the sample size of the groups (n_p and n_a)
        # ilab.xpos specifies the horizontal arrangement of the columns
        ilab = cbind(n_p, n_a),
-       ilab.xpos = c(x = -3, x = -2.5),
+       ilab.xpos = c(x = -3, x = -2.55),
 
        # Label studies on the forest plot
        # Extracts info from the "author" and "year_published" column of data
@@ -127,12 +126,15 @@ forest(
        alim = c(-2, 2),
        steps = 9,
 
-       # Change size of polygons
-       efac = 0.5,
+       # Change size of effect size polygons
+       efac = 0.3,
 
        # Show (TRUE) or hide (FALSE) default headers
        # Hide when we want to manually specify our own headers
-       header = FALSE
+       header = FALSE,
+
+       # Add label for confidence interval, in this case, "Hedge's g"
+       xlab = "Hedge's g"
 )
 
 # For the following lines of code,
@@ -148,20 +150,20 @@ text(x = -4.6, y = 139, "Author(s) Year", font = 2)
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # Adjust font size of header with the font function
-text(x = -2.8, y = 140, "Sample Size", font = 2)
+text(x = -2.8, y = 139.6, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Presence” and “Absence”
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # x values represents the x-coordinates of where the "Presence" and "Absence" headers will be placed
 # Adjust font size of header with the font function
-text(c(x = -3, x = -2.5), y = 139, c("Presence", "Absence"), font = 2)
+text(c(x = -3, x = -2.55), y = 139, c("Presence", "Absence"), font = 2)
 
 # Add "g [95% CI]" header
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # Adjust font size of header with the font function
-text(x = 2.7, y = 139, "g [95% CI]", font = 2) # text function includes text within the plot
+text(x = 2.7, y = 139, "g [95% CI]", font = 2) 
 
 # Close the forest plot and finalise it as a saved file
 dev.off()
@@ -175,7 +177,7 @@ dev.off()
 # Adjust the width and height of the pdf file
 pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
 # funnel argument to create the funnel plot, specify the data to create the plot
-funnel(mlmmetaresults, legend = TRUE)
+funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
 #Close the funnel plot and finalise it as a saved file
 dev.off()
 
@@ -187,12 +189,12 @@ ranktest(mlmmetaresults)
 # Egger' Test
 
 # Calculate standard error (SE)
-multimmeta$sei_corrected = with(multimmeta, sqrt((n_p + n_a) / (n_p * n_a)))
+multilevelmmeta$sei_corrected = with(multilevelmmeta, sqrt((n_p + n_a) / (n_p * n_a)))
 lmer(
        # g weighted by SE is predicted by intercept and inverse SE
        # with random intercept by sample
        I(yi / sei_corrected) ~ 1 + I(1 / sei_corrected) + (1 | lab_id),
-       data = multimmeta
+       data = multilevelmmeta
 ) |>
        # estimate of interest is the intercept
        summary(correlation = FALSE)
@@ -206,7 +208,7 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Journal Article)
        subset = (publication == "Journal article"),
-       data = multimmeta
+       data = multilevelmmeta
 )
 rma.mv(
        yi = yi,
@@ -214,7 +216,7 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Thesis/dissertation)
        subset = (publication == "Thesis/dissertation"),
-       data = multimmeta
+       data = multilevelmmeta
 )
 rma.mv(
        yi = yi,
@@ -222,7 +224,7 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Conference)
        subset = (publication == "Conference"),
-       data = multimmeta
+       data = multilevelmmeta
 )
 
 # Continuous variable (i.e., female proportion)
@@ -233,7 +235,7 @@ rma.mv(
        # Specify categorical moderator (i.e., sex)
        mods = ~female_proportion,
        method = "REML",
-       data = multimmeta
+       data = multilevelmmeta
 ) |>
        summary()
 
@@ -254,9 +256,9 @@ forest(
        rows = c(143:79, 75:7, 3:2),
 
        # Add y-axis limits
-       ylim = c(-1, 147),
+       ylim = c(-3, 147),
 
-       # Add sample size information for presence of smartphone (n_p) and absence of smartphone (n_a) group into forest plot
+       # Add sample size information for presence of smartphone (n_p) and absence of smartphone (n_a) group
        ilab = cbind(n_p, n_a),
        ilab.xpos = c(x = -4.2, x = -3.6),
 
@@ -268,14 +270,17 @@ forest(
 
        # Add confidence interval limits
        # Adjust intervals based on the number of steps
-       alim = c(-2.5, 2.5),
+       alim = c(-1.5, 1.5),
        steps = 11,
 
-       # Change size of polygons
-       efac = 0.5,
+       # Change size of effect size polygons
+       efac = 0.3,
 
        # Remove headers (if any), for manual input
-       header = FALSE
+       header = FALSE,
+
+       # Add label for confidence interval, in this case, "Hedge's g"
+       xlab = "Hedge's g"
 )
 
 # Add text labels for moderator (type of publication)
@@ -300,21 +305,21 @@ res.j = rma(
        vi,
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Journal article"),
-       data = multimmeta
+       data = multilevelmmeta
 )
 res.t = rma(
        yi,
        vi,
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Thesis/dissertation"),
-       data = multimmeta
+       data = multilevelmmeta
 )
 res.c = rma(
        yi, 
        vi, 
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Conference"), 
-       data = multimmeta
+       data = multilevelmmeta
 )
 
 # Add summary effect sizes for each of the moderators
@@ -325,18 +330,19 @@ addpoly(res.t, row = 6) # summary effect for "Thesis/Dissertation" group
 addpoly(res.j, row = 78) # summary effect for "Journal article" group
 
 # Add"Author(s) Year" header
-text(x = -6.5, y = 146, "Author(s) Year", font = 2) # text function includes text within the plot
+text(x = -6.5, y = 146, "Author(s) Year", font = 2) 
 
 # Add “Sample Size” header
-text(x = -3.9, y = 147, "Sample Size", font = 2)
+text(x = -3.9, y = 146.7, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Presence” (Presence of Smartphones Group) and “Absence” (Absence of Smartphones Group)
 text(c(x = -4.2, x = -3.6), y = 146, c("Presence", "Absence"), font = 2)
 
 # Add "g [95% CI]" header
-text(x = 3.6, y = 146, "g [95% CI]", font = 2) # text function includes text within the plot
+text(x = 3.6, y = 146, "g [95% CI]", font = 2) 
 
 # Close the forest plot and finalise it as a saved file
 dev.off()
 
 #### END OF CODE ####
+

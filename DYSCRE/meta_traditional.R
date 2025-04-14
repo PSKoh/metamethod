@@ -76,7 +76,7 @@ summary(tradmetaresults)
 # pdf function starts the graphics device driver to create PDF files
 # Name the file of the forest plot
 # Adjust the width and height of the pdf file
-pdf(file = "tradforestplot.pdf", width = 11, height = 9)
+pdf(file = "tradforestplot.pdf", width = 11, height = 8)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -97,7 +97,7 @@ forest(
   # cbind function combines the columns indicating the sample size of the groups (dys and control)
   # ilab.xpos specifies the horizontal arrangement of the columns
   ilab = cbind(n_dys, n_control),
-  ilab.xpos = c(-4.2, -3.8),
+  ilab.xpos = c(-4.2, -3.7),
 
   # Label studies on the forest plot
   # Extracts info from the "Paper" and "Study" column of data
@@ -116,7 +116,10 @@ forest(
 
   # Show (TRUE) or hide (FALSE) default headers
   # Hide when we want to manually specify our own headers
-  header = FALSE
+  header = FALSE,
+  
+  # Add label for confidence interval, in this case, "Hedge's g"
+  xlab = "Hedge's g"
 )
 
 # For the following lines of code,
@@ -142,7 +145,7 @@ text(x = -4.0, y = 15, "Sample Size", font = 2) # text function includes text wi
 # x = -3.8 for Ctrl (Control Group)
 # y = 14.5 for both
 # Adjust font size of header with the font function
-text(c(x = -4.2, x = -3.8), y = 14.5, c("Dslx", "Ctrl"), font = 2)
+text(c(x = -4.2, x = -3.7), y = 14.5, c("Dslx", "Ctrl"), font = 2)
 
 # Add "g [95% CI]" header
 # Include desired text of header within the double prime symbol ""
@@ -162,7 +165,7 @@ dev.off()
 # Adjust the width and height of the pdf file
 pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
 # funnel argument to create the funnel plot, specify the data to create the plot
-funnel(tradmetaresults, legend = TRUE)
+funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 
@@ -236,7 +239,7 @@ rma(
 # pdf function starts the graphics device driver to create PDF files
 # Name the file of the forest plot
 # Adjust the width and height of the pdf file
-pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 10) 
+pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 9) 
 forest(
   tradmetaresults,
 
@@ -262,11 +265,14 @@ forest(
 
   # Add confidence interval limits
   # Adjust intervals based on the number of steps
-  alim = c(-2.5, 2.5),
+  alim = c(-1.5, 1.5),
   steps = 11,
 
   # Remove headers (if any), for manual input
-  header = FALSE
+  header = FALSE,
+
+  # Add label for confidence interval, in this case, "Hedge's g" 
+  xlab = "Hedge's g",
 )
 # For the following lines of code,
 # use text function to manually include text within the plot
@@ -316,7 +322,7 @@ addpoly(res.v, row = 17) # summary effect for "verbal" group
 # Add"Author(s) Year" header
 text(x = -6.3, y = 23, "Author(s) Year", font = 2) 
 # Add “Sample Size” header
-text(x = -3.6, y = 23.8, "Sample Size", font = 2)
+text(x = -3.6, y = 23.7, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
 # x = -3.8 for Dslx (Dyslexia Group)

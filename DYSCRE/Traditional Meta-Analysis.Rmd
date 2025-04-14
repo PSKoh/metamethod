@@ -191,7 +191,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 # Save the forest plot as a PDF file
 # Name the file of the forest plot
-pdf(file = "tradforestplot.pdf", width = 11, height = 9)
+pdf(file = "tradforestplot.pdf", width = 11, height = 8)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -206,7 +206,7 @@ forest(
 
   # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
   ilab = cbind(n_dys, n_control),
-  ilab.xpos = c(-4.2, -3.8),
+  ilab.xpos = c(-4.2, -3.7),
 
   # Label studies on the forest plot
   slab = paste(Paper, paste("Study", Study), sep = ", "),
@@ -221,7 +221,10 @@ forest(
 
   # Show (TRUE) or hide (FALSE) default headers
   # Hide when we want to manually specify our own headers
-  header = FALSE
+  header = FALSE,
+
+  # Add label for confidence interval, in this case, "Hedge's g"
+  xlab = "Hedge's g"
 )
 
 # For the following lines of code,
@@ -288,7 +291,7 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 # Name the file of the funnel plot
 pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
 # funnel argument to create the funnel plot, specify the data to create the plot
-funnel(tradmetaresults, legend = TRUE)
+funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 
@@ -420,6 +423,8 @@ The forest plot includes the following features:
 
 -   The `header` argument is set to FALSE to allow for manual specification of headers.
 
+-   The `xlab` argument specifies the label for the confidence interval, in this case, "Hedge's g".
+
 -   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
 
 -   The `x` and `y` arguments in the `text()` function adjust the position of the headers, while the `font` argument adjusts the font size.
@@ -433,7 +438,7 @@ The forest plot includes the following features:
 
 # Save the forest plot as a PDF file
 # Name the file of the forest plot
-pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 10) 
+pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 9) 
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -466,7 +471,10 @@ forest(
   steps = 11,
 
   # Remove headers (if any), for manual input
-  header = FALSE
+  header = FALSE,
+
+  # Add label for confidence interval, in this case, "Hedge's g" 
+  xlab = "Hedge's g"
 )
 
 # For the following lines of code,
@@ -515,7 +523,7 @@ addpoly(res.v, row = 17) # summary effect for "verbal" group
 text(x = -6.3, y = 23, "Author(s) Year", font = 2) 
 
 # Add “Sample Size” header
-text(x = -3.6, y = 23.8, "Sample Size", font = 2)
+text(x = -3.6, y = 23.7, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
 # x = -3.8 for Dslx (Dyslexia Group)

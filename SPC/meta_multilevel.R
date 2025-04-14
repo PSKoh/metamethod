@@ -27,7 +27,7 @@ multilevelmeta_raw$ID = 1:nrow(multilevelmeta_raw)
 
 ### Prepare Data --------------
 
-multilevelmmeta = escalc(
+multilevelmeta = escalc(
        # Type of effect size measure
        measure = "SMD",
 
@@ -48,12 +48,12 @@ multilevelmmeta = escalc(
 )
 
 # Convert Publication to a factor with specified levels
-multilevelmmeta$publication = factor(
-       multilevelmmeta$publication,
+multilevelmeta$publication = factor(
+       multilevelmeta$publication,
        levels = c("Journal article", "Thesis/dissertation", "Conference")
 )
 # Order data frame based on publication
-multilevelmmeta = multilevelmmeta[order(multilevelmeta$publication), ]
+multilevelmeta = multilevelmeta[order(multilevelmeta$publication), ]
 
 ### Compute Overall Effect size --------------
 
@@ -63,7 +63,7 @@ multilevelmmeta = multilevelmmeta[order(multilevelmeta$publication), ]
 usingsimplemetacode = rma(
        yi = yi,
        vi = vi,
-       data = multilevelmmeta
+       data = multilevelmeta
 )
 summary(usingsimplemetacode)
 
@@ -76,7 +76,7 @@ mlmmetaresults = rma.mv(
        # Include random effects for grouping variable (i.e., lab)
        random = ~ 1 | lab_id / ID,
        # Specify where to get the data from
-       data = multilevelmmeta
+       data = multilevelmeta
 )
 
 # summary function used to provide detailed results of the meta-analysis
@@ -169,12 +169,12 @@ ranktest(mlmmetaresults)
 # Egger' Test
 
 # Calculate standard error (SE)
-multilevelmmeta$sei_corrected = with(multilevelmmeta, sqrt((n_p + n_a) / (n_p * n_a)))
+multilevelmeta$sei_corrected = with(multilevelmeta, sqrt((n_p + n_a) / (n_p * n_a)))
 lmer(
        # g weighted by SE is predicted by intercept and inverse SE
        # with random intercept by sample
        I(yi / sei_corrected) ~ 1 + I(1 / sei_corrected) + (1 | lab_id),
-       data = multilevelmmeta
+       data = multilevelmeta
 ) |>
        # estimate of interest is the intercept
        summary(correlation = FALSE)
@@ -188,7 +188,7 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Journal Article)
        subset = (publication == "Journal article"),
-       data = multilevelmmeta
+       data = multilevelmeta
 )
 rma.mv(
        yi = yi,
@@ -196,7 +196,7 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Thesis/dissertation)
        subset = (publication == "Thesis/dissertation"),
-       data = multilevelmmeta
+       data = multilevelmeta
 )
 rma.mv(
        yi = yi,
@@ -204,7 +204,7 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Conference)
        subset = (publication == "Conference"),
-       data = multilevelmmeta
+       data = multilevelmeta
 )
 
 # Continuous variable (i.e., female proportion)
@@ -215,7 +215,7 @@ rma.mv(
        # Specify categorical moderator (i.e., sex)
        mods = ~female_proportion,
        method = "REML",
-       data = multilevelmmeta
+       data = multilevelmeta
 ) |>
        summary()
 
@@ -285,21 +285,21 @@ res.j = rma(
        vi,
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Journal article"),
-       data = multilevelmmeta
+       data = multilevelmeta
 )
 res.t = rma(
        yi,
        vi,
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Thesis/dissertation"),
-       data = multilevelmmeta
+       data = multilevelmeta
 )
 res.c = rma(
        yi, 
        vi, 
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Conference"), 
-       data = multilevelmmeta
+       data = multilevelmeta
 )
 
 # Add summary effect sizes for each of the moderators

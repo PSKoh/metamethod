@@ -204,7 +204,7 @@ forest(
   # Add y-axis limits
   ylim = c(-2, 16),
 
-  # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
+  # Add sample size information for dyslexia (n_dys) and control (n_control) group 
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-4.2, -3.7),
 
@@ -455,7 +455,7 @@ forest(
   # Add y-axis limits
   ylim = c(-2, 24),
 
-  # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
+  # Add sample size information for dyslexia (n_dys) and control (n_control) group 
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-3.8, -3.3),
 

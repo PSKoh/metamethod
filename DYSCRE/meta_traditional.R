@@ -54,7 +54,7 @@ tradmeta$Creativity.Measure_type = factor(
 # Order data frame based on type of creativity measure, and based on effect sizes, within each type of creativity measure
 tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type,tradmeta$yi), ]
 
-### Calculate overall effect size, using the effect size (yi) and sampling variances (vi)  --------------
+### Calculate overall effect size --------------
 
 # rma function used to estimate the overall effect size
 tradmetaresults = rma(
@@ -91,7 +91,7 @@ forest(
   # Add y-axis limits
   ylim = c(-2, 16),
 
-  # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
+  # Add sample size information for dyslexia (n_dys) and control (n_control) group 
   # Adjust positioning of sample size information with x (horizontal) function
   # x values represents the x-coordinates where the sample size values of the dyslexia and control groups will be placed
   # cbind function combines the columns indicating the sample size of the groups (dys and control)
@@ -137,12 +137,12 @@ text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
 # Adjust font size of header with the font function
 text(x = -4.0, y = 15, "Sample Size", font = 2) # text function includes text within the plot
 
-# Add specific sample size column headers, “Dslx” (Dyslexia Group) and “Ctrl” (Control Group)
+# Add specific sample size column headers, “Dslx” (dyslexia Group) and “Ctrl” (control Group)
 # Include desired text of header within the double prime symbol ""
 # Adjust the position of the header with the x (horizontal) and y (vertical) function
 # x coordinates for the respective sample size columns
-# x = -4.2 for Dslx (Dyslexia Group)
-# x = -3.8 for Ctrl (Control Group)
+# x = -4.2 for Dslx (dyslexia Group)
+# x = -3.8 for Ctrl (control Group)
 # y = 14.5 for both
 # Adjust font size of header with the font function
 text(c(x = -4.2, x = -3.7), y = 14.5, c("Dslx", "Ctrl"), font = 2)
@@ -253,7 +253,7 @@ forest(
   # Add y-axis limits
   ylim = c(-2, 24),
 
-  # Add sample size information for dyslexia (n_dys) and control (n_control) group into forest plot
+  # Add sample size information for dyslexia (n_dys) and control (n_control) group
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-3.8, -3.3),
 

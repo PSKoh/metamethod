@@ -11,7 +11,7 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 install.packages("metafor")
 
 # Load packages
-library("metafor") # version 4.8-0
+library(metafor) # version 4.8-0
 
 # Display settings (to disable scientific notation)
 options(scipen = 9999, digits = 4)

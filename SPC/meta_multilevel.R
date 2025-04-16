@@ -12,8 +12,8 @@ install.packages("metafor")
 install.packages("lmerTest")
 
 # Load packages
-library("metafor") # version 4.8-0
-library("lmerTest") # version 3.1-3
+library(metafor) # version 4.8-0
+library(lmerTest) # version 3.1-3
 
 # Display settings (to disable scientific notation)
 options(scipen = 9999, digits = 4)
@@ -285,7 +285,8 @@ res.j = rma(
        vi,
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Journal article"),
-       data = multilevelmeta
+       data = multilevelmeta,
+       control=list(rel.tol=1e-8) # to address convergence issues (if it exists)
 )
 res.t = rma(
        yi,

@@ -5,7 +5,7 @@
 # Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# R version 4.4.3
+# R version 4.5.0
 
 # Install packages (if not already installed)
 install.packages("metafor")
@@ -50,10 +50,9 @@ tradmeta$Creativity.Measure_type = factor(
 )
 # Order the data frame by Creativity.Measure_type and effect sizes (yi)
 tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type,tradmeta$yi), ]
+### Compute overall effect size --------------
 
-### Calculate overall effect size --------------
-
-# rma function used to estimate the overall effect size
+# Estimate the overall effect size using the rma() function
 tradmetaresults = rma(
   # Effect size estimates
   yi = yi,
@@ -85,9 +84,10 @@ forest(
   # Add y-axis limits
   ylim = c(-2, 16),
 
-  # Add sample size information for dyslexia (n_dys) and control (n_control) group 
-  # Adjust positioning of sample size information with x (horizontal) function
-  # x values represents the x-coordinates where the sample size values of the dyslexia and control groups will be placed
+  # Add sample size information for dyslexia (n_dys) and control (n_control) group
+  # Values indicate the x-axis position of the sample size columns  
+  # -4.2 for Dslx (dyslexia Group)
+  # -3.7 for Ctrl (control Group)
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-4.2, -3.7),
 
@@ -111,7 +111,7 @@ forest(
 )
 
 # For the following lines of code,
-# use text function to manually include text within the plot
+# Use text function to manually include text within the plot
 
 # Add "Author(s) Year" header
 text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
@@ -120,9 +120,10 @@ text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
 text(x = -4.0, y = 15, "Sample Size", font = 2)
 
 # Add specific sample size column headers for dyslexia and control groups
-# x coordinates for the respective sample size columns
+# x values indicate the horizontal arrangement of the columns
 # x = -4.2 for Dslx (dyslexia Group)
 # x = -3.8 for Ctrl (control Group)
+# y values indicate the vertical arrangement of the columns
 # y = 14.5 for both
 text(c(x = -4.2, x = -3.7), y = 14.5, c("Dslx", "Ctrl"), font = 2)
 
@@ -131,15 +132,15 @@ text(x = 3.5, y = 14.5, "g [95% CI]", font = 2)
 
 # Close the forest plot and finalise it as a saved file
 dev.off()
-
-### Checking for Publication Bias --------------
+### Tests for Publication Bias --------------
 
 # Funnel Plot
 
-# Save the forest plot as a PDF file
-# Name the pdf file of the forest plot
+# Save the funnel plot as a PDF file
+# Name the pdf file of the funnel plot
+# Adjust the width and height of the pdf file
 pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
-# funnel argument to create the funnel plot, specify the data to create the plot
+# funnel function to create the funnel plot, specify the data to create the plot
 funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
@@ -169,8 +170,7 @@ rma(
 ) |>
   # Estimate of interest is the slope
   summary()
-
-### Test of Moderators --------------
+### Moderation Analysis --------------
 
 # Continuous variable (i.e., female proportion)
 rma(
@@ -208,11 +208,15 @@ rma(
   data = tradmeta
 )
 
-### Forest Plot of Moderators --------------
+### Forest Plot with Moderators --------------
 
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot
-pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 9) 
+# Adjust the width and height of the pdf file
+pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 9)
+
+# Start creating the forest plot itself
+# Specify dataset
 forest(
   tradmetaresults,
 
@@ -227,6 +231,9 @@ forest(
   ylim = c(-2, 24),
 
   # Add sample size information for dyslexia (n_dys) and control (n_control) group
+  # Values indicate the x-axis position of the sample size columns
+  # -3.8 for Dslx (dyslexia Group)
+  # -3.3 for Ctrl (control Group)
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-3.8, -3.3),
 
@@ -248,10 +255,12 @@ forest(
   xlab = "Hedge's g"
 )
 # For the following lines of code,
-# use text function to manually include text within the plot
+# Use text function to manually include text within the plot
+
 # Add text labels for moderator (type of creativity task)
-# Adjust the position of the labels with x (horizontal) and y (vertical) function
+# x values to indicate the horizontal arrangement of the text
 # Labels for different creativity task types (Moderator Analysis)
+# y values indicate the vertical arrangement of the text
 # - "Non-verbal" at y = 7
 # - "Mixed" at y = 15
 # - "Verbal" at y = 21
@@ -295,8 +304,10 @@ text(x = -6.3, y = 23, "Author(s) Year", font = 2)
 text(x = -3.6, y = 23.7, "Sample Size", font = 2)
 
 # Add specific sample size column headers for dyslexia and control groups
+# x values indicate the horizontal arrangement of the columns
 # x = -3.8 for Dslx (dyslexia Group)
 # x = -3.3 for Ctrl (control Group)
+# y values indicate the vertical arrangement of the columns
 # y = 23 for both
 text(c(x = -3.8, x = -3.3), y = 23, c("Dslx", "Ctrl"), font = 2)
 

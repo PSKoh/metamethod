@@ -5,7 +5,7 @@
 # Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# R version 4.4.3
+# R version 4.5.0
 
 # Install packages (if not already installed)
 install.packages("metafor")
@@ -54,7 +54,6 @@ multilevelmeta$publication = factor(
 )
 # Order data frame based on publication
 multilevelmeta = multilevelmeta[order(multilevelmeta$publication), ]
-
 ### Compute Overall Effect size --------------
 
 # Using traditional meta code (refer to meta_traditional.R)
@@ -68,6 +67,7 @@ usingsimplemetacode = rma(
 summary(usingsimplemetacode)
 
 # Using multilevel code
+# The code below is the recommended approach for multilevel meta-analysis
 mlmmetaresults = rma.mv(
        # Effect size estimates
        yi = yi,
@@ -85,12 +85,13 @@ summary(mlmmetaresults)
 ### Forest Plot --------------
 
 # Save the forest plot as a PDF file
-# Name the file of the forest plot
+# Name the pdf file of the forest plot
 pdf(file = "mlmforestplot.pdf", width = 15, height = 40)
 
 # Start creating the forest plot itself
+# Specify dataset
 forest(
-       mlmmetaresults, # Specify dataset
+       mlmmetaresults, 
 
        # Arrangement of studies
        order = "obs",
@@ -99,9 +100,11 @@ forest(
        ylim = c(-3, 140),
 
        # Add sample size information for presence of smartphones (n_p) and absence of smartphones(n_a) group
-       # Adjust positioning of sample size information with x (horizontal) function
+       # Values indicate the x-axis position of the sample size columns  
+       # -3 for presence of smartphones
+       # -2.55 for absence of smartphones
        ilab = cbind(n_p, n_a),
-       ilab.xpos = c(x = -3, x = -2.55),
+       ilab.xpos = c(-3, -2.55),
 
        # Label studies on the forest plot
        slab = paste(author, year_published, sep = ", "),
@@ -126,57 +129,58 @@ forest(
 )
 
 # For the following lines of code,
-# use text function to manually include text within the plot
+# Use text function to manually include text within the plot
 
 # Add "Author(s) Year" header
-# Adjust the position of the header with the x (horizontal) and y (vertical) function
 text(x = -4.6, y = 139, "Author(s) Year", font = 2)
 
 # Add "Sample Size" header
-# Adjust the position of the header with the x (horizontal) and y (vertical) function
 text(x = -2.8, y = 139.6, "Sample Size", font = 2)
 
 # Add specific sample size column headers, “Presence” and “Absence”
-# Adjust the position of the header with the x (horizontal) and y (vertical) function
-# x values represents the x-coordinates of where the "Presence" and "Absence" headers will be placed
+# x values indicate the horizontal arrangement of the columns
+# x = -3 for for presence of smartphones
+# x = -2.55 for absence of smartphones
+# y values indicate the vertical arrangement of the columns
+# y = 139 for both
 text(c(x = -3, x = -2.55), y = 139, c("Presence", "Absence"), font = 2)
 
 # Add "g [95% CI]" header
-# Adjust the position of the header with the x (horizontal) and y (vertical) function
 text(x = 2.7, y = 139, "g [95% CI]", font = 2) 
 
 # Close the forest plot and finalise it as a saved file
 dev.off()
 
-### Checking for Publication Bias --------------
+### Tests for Publication Bias --------------
 
 # Funnel Plot
 
-# pdf function starts the graphics device driver to create PDF files
-# Name the pdf file
+# Save the funnel plot as a PDF file
+# Name the pdf file of the funnel plot
 # Adjust the width and height of the pdf file
 pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
-# funnel argument to create the funnel plot, specify the data to create the plot
+# funnel function to create the funnel plot, specify the data to create the plot
 funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 
 # Rank Correlation Test
 
-# ranktest argument to compute kendall tau value
 ranktest(mlmmetaresults)
 
 # Egger' Test
 
 # Calculate standard error (SE)
-multilevelmeta$sei_corrected = with(multilevelmeta, sqrt((n_p + n_a) / (n_p * n_a)))
+multilevelmeta$sei_corrected = with(
+       multilevelmeta, 
+       sqrt((n_p + n_a) / (n_p * n_a)))
 lmer(
        # g weighted by SE is predicted by intercept and inverse SE
        # with random intercept by sample
        I(yi / sei_corrected) ~ 1 + I(1 / sei_corrected) + (1 | lab_id),
        data = multilevelmeta
 ) |>
-       # estimate of interest is the intercept
+       # Estimate of interest is the slope
        summary(correlation = FALSE)
 
 ## Test of Moderators --------------
@@ -221,8 +225,8 @@ rma.mv(
 
 ### Forest Plot of Moderators --------------
 
-# pdf function starts the graphics device driver to create PDF files
-# Name the pdf file
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
 # Adjust the width and height of the pdf file
 pdf(file = "mlmforestplotwithmoderators.pdf", width = 15, height = 45) 
 forest(
@@ -240,7 +244,7 @@ forest(
 
        # Add sample size information for presence of smartphone (n_p) and absence of smartphone (n_a) group
        ilab = cbind(n_p, n_a),
-       ilab.xpos = c(x = -4.2, x = -3.6),
+       ilab.xpos = c(-4.2, -3.6),
 
        # Label studies on the forest plot
        slab = paste(author, year_published, sep = ", "),
@@ -263,9 +267,13 @@ forest(
        xlab = "Hedge's g"
 )
 
+# For the following lines of code,
+# Use text function to manually include text within the plot
+
 # Add text labels for moderator (type of publication)
-# Adjust the position of the labels with x (horizontal) and y (vertical) function
+# x values to indicate the horizontal arrangement of the text
 # Labels for different creativity task types (Moderator Analysis)
+# y values indicate the vertical arrangement of the text
 # - "Journal article" at y = 7
 # - "Thesis/Dissertations" at y = 15
 # - "Non-Conference" at y = 21
@@ -279,7 +287,6 @@ text(
 )
 
 # Moderation analysis
-# subset argument ensures only the relevant rows are used
 res.j = rma(
        yi,
        vi,
@@ -304,8 +311,6 @@ res.c = rma(
 )
 
 # Add summary effect sizes for each of the moderators
-# addpoly argument adds a summary effect size (diamond shape) for each moderator
-# row argument places the summary at the corresponding position in the plot
 addpoly(res.c, row = 1) # summary effect for "Conference" group
 addpoly(res.t, row = 6) # summary effect for "Thesis/Dissertation" group
 addpoly(res.j, row = 78) # summary effect for "Journal article" group

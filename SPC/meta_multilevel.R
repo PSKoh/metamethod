@@ -52,7 +52,7 @@ multilevelmeta$publication = factor(
        multilevelmeta$publication,
        levels = c("Journal article", "Thesis/dissertation", "Conference")
 )
-# Order data frame based on publication
+# Order the data frame based on publication
 multilevelmeta = multilevelmeta[order(multilevelmeta$publication), ]
 ### Compute Overall Effect size --------------
 
@@ -99,10 +99,10 @@ forest(
        # Add y-axis limits
        ylim = c(-3, 140),
 
-       # Add sample size information for presence of smartphones (n_p) and absence of smartphones(n_a) group
+       # Add sample size information for presence and absence of smartphones group
        # Values indicate the x-axis position of the sample size columns  
-       # -3 for presence of smartphones
-       # -2.55 for absence of smartphones
+       # -3 for presence of smartphones (n_p)
+       # -2.55 for absence of smartphones (n_a)
        ilab = cbind(n_p, n_a),
        ilab.xpos = c(-3, -2.55),
 
@@ -192,7 +192,9 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Journal Article)
        subset = (publication == "Journal article"),
-       data = multilevelmeta
+       data = multilevelmeta,
+       # To address convergence issues (if it exists)
+       control=list(rel.tol=1e-8) 
 )
 rma.mv(
        yi = yi,
@@ -242,7 +244,10 @@ forest(
        # Add y-axis limits
        ylim = c(-3, 147),
 
-       # Add sample size information for presence of smartphone (n_p) and absence of smartphone (n_a) group
+       # Add sample size information for presence and absence of smartphones group
+       # Values indicate the x-axis position of the sample size columns  
+       # -4.2 for presence of smartphones (n_p)
+       # -3.6 for absence of smartphones (n_a)
        ilab = cbind(n_p, n_a),
        ilab.xpos = c(-4.2, -3.6),
 
@@ -293,7 +298,8 @@ res.j = rma(
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Journal article"),
        data = multilevelmeta,
-       control=list(rel.tol=1e-8) # to address convergence issues (if it exists)
+       # To address convergence issues (if it exists)
+       control=list(rel.tol=1e-8) 
 )
 res.t = rma(
        yi,
@@ -321,7 +327,12 @@ text(x = -6.5, y = 146, "Author(s) Year", font = 2)
 # Add “Sample Size” header
 text(x = -3.9, y = 146.7, "Sample Size", font = 2)
 
-# Add specific sample size column headers, “Presence” (Presence of Smartphones Group) and “Absence” (Absence of Smartphones Group)
+# Add specific sample size column headers, “Presence” and “Absence”
+# x values indicate the horizontal arrangement of the columns
+# x = -4.2 for for presence of smartphones
+# x = -3.6 for absence of smartphones
+# y values indicate the vertical arrangement of the columns
+# y = 146 for both
 text(c(x = -4.2, x = -3.6), y = 146, c("Presence", "Absence"), font = 2)
 
 # Add "g [95% CI]" header

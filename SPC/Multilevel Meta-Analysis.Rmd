@@ -179,7 +179,8 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 ## Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file. 
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
+
 -   The `width` and `height` function adjust the dimensions of the PDF file.
 
 -   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
@@ -236,9 +237,9 @@ forest(
        # Add y-axis limits
        ylim = c(-3, 140),
 
-       # Add sample size information for presence of smartphones (n_p) and absence of smartphones(n_a) group
-       # -3 for presence of smartphones
-       # -2.55 for absence of smartphones
+       # Add sample size information for presence and absence of smartphones group
+       # -3 for presence of smartphones (n_p)
+       # -2.55 for absence of smartphones (n_a)
        ilab = cbind(n_p, n_a),
        ilab.xpos = c(-3, -2.55),
 
@@ -273,7 +274,7 @@ text(x = -4.6, y = 139, "Author(s) Year", font = 2)
 # Add "Sample Size" header
 text(x = -2.8, y = 139.6, "Sample Size", font = 2)
 
-# Add specific sample size column headers for presencen of smartphones and absence of smartphones groups
+# Add specific sample size column headers, “Presence” and “Absence”
 # x = -3 for for presence of smartphones
 # x = -2.55 for absence of smartphones
 # y = 139 for both
@@ -342,7 +343,7 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 
 ### Explanation of the Code
 
--   The `multilevelmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula \(\sqrt{\frac{(n_{[p]} + n_{a})}{(n_{p} \cdot n_{a})}}\).
+-   The `multilevelmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula \(\sqrt{\frac{(n_{p} + n_{a})}{(n_{p} \cdot n_{a})}}\).
     Standard error is corrected in this case because the effect sizes are not normally distributed.
 
 -   The `lmer()` function is used to fit a linear mixed-effects model, where the effect size weighted by the corrected standard error is predicted by the intercept and the inverse of the corrected standard error.
@@ -396,6 +397,7 @@ This section performs moderation analysis to examine the influence of categorica
 
 -   The `summary()` function is used to display the results of the meta-analysis, including the overall effect size estimate and its confidence interval.
 
+Note that if convergence issues arise, the `control` function can be used to adjust the convergence criteria.
 
 ```{r}
 ## Test of Moderators --------------
@@ -407,7 +409,10 @@ rma.mv(
        random = ~ 1 | lab_id / ID,
        # Specify categorical moderator (i.e., Journal Article)
        subset = (publication == "Journal article"),
-       data = multilevelmeta
+       data = multilevelmeta,
+       # To address convergence issues (if it exists)
+       control=list(rel.tol=1e-8) 
+
 )
 rma.mv(
        yi = yi,
@@ -439,7 +444,9 @@ rma.mv(
        summary()
 ```
 # Forest Plot with Moderators
+
 This section generates a forest plot that includes moderators to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis. 
+
 The plot is saved as a PDF file for easy sharing and presentation.
 
 The forest plot includes the following features:
@@ -453,7 +460,9 @@ The forest plot includes the following features:
 -   Custom labels for the studies
 
 -   Summary effect sizes for each moderator
+
 # Explanation of the Code
+
 -   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file. 
 
 -   The `width` and `height` function adjust the dimensions of the PDF file.
@@ -520,7 +529,9 @@ forest(
        # Add y-axis limits
        ylim = c(-3, 147),
 
-       # Add sample size information for presence of smartphone (n_p) and absence of smartphone (n_a) group 
+       # Add sample size information for presence and absence of smartphones group
+       # -4.2 for presence of smartphones (n_p)
+       # -3.6 for absence of smartphones (n_a)
        ilab = cbind(n_p, n_a),
        ilab.xpos = c(-4.2, -3.6),
 
@@ -568,7 +579,8 @@ res.j = rma(
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Journal article"),
        data = multilevelmeta,
-       control=list(rel.tol=1e-8) # to address convergence issues (if it exists)
+       # To address convergence issues (if it exists)
+       control=list(rel.tol=1e-8) 
 )
 res.t = rma(
        yi,
@@ -596,7 +608,13 @@ text(x = -6.5, y = 146, "Author(s) Year", font = 2)
 # Add “Sample Size” header
 text(x = -3.9, y = 146.7, "Sample Size", font = 2)
 
-# Add specific sample size column headers, “Presence” (Presence of Smartphones Group) and “Absence” (Absence of Smartphones Group)
+# Add specific sample size column headers, “Presence” and “Absence”
+# x = -4.2 for for presence of smartphones
+# x = -3.6 for absence of smartphones
+# y = 146 for both
+
+
+
 text(c(x = -4.2, x = -3.6), y = 146, c("Presence", "Absence"), font = 2)
 
 # Add "g [95% CI]" header

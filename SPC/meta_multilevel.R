@@ -218,7 +218,7 @@ rma.mv(
        yi = yi,
        V = vi,
        random = ~ 1 | lab_id / ID,
-       # Specify categorical moderator (i.e., sex)
+       # Specify continuous moderator (i.e., female proportion)
        mods = ~female_proportion,
        method = "REML",
        data = multilevelmeta

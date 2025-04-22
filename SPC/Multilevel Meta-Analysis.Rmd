@@ -1,5 +1,5 @@
 ---
-title: "Multilevel Meta-Analysis Notebook"
+title: "Multilevel Meta-Analysis Tutorial"
 author: Hu, M., Koh, P.S., Soh, X.C., Hartanto, A., Majeed, N.M.
 output: pdf_document
 ---
@@ -8,7 +8,7 @@ output: pdf_document
 
 The following script is designed to perform a traditional meta-analysis using the `metafor` package in R.
 
-The analysis is based on data from Hartanto et al. (2024) and focuses on the relationship between smartphone presence and cognitive functions. The original paper can be found [here](https://doi.org/10.1037/tmb0000123).
+The analysis is based on data from Hartanto et al. (2024) and focuses on the relationship between smartphone presence and cognitive functions. The original paper can be found here: https://doi.org/10.1037/tmb0000123.
 
 The script includes steps for data preparation, effect size calculation, overall effect size computation, forest plot generation, tests for publication bias, and moderation analysis.
 

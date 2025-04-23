@@ -289,8 +289,8 @@ forest(
 # `pos = 4` ensures left alignment of the text
 text(
        x = -7,
-       pos = 4,
        y = c(4, 76, 144),
+       pos = 4,
        c("Conference", "Thesis/dissertation", "Journal article"),
        font = 2
 )

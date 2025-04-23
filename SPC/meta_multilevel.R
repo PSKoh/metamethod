@@ -184,7 +184,7 @@ lmer(
        I(yi / sei_corrected) ~ 1 + I(1 / sei_corrected) + (1 | lab_id),
        data = multilevelmeta
 ) |>
-       # Estimate of interest is the slope
+       # Estimate of interest is the intercept
        summary(correlation = FALSE)
 
 ## Test of Moderators --------------

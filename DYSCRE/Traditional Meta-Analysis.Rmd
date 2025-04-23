@@ -96,7 +96,6 @@ tradmeta = escalc(
   data = tradmeta_raw
 )
 
-
 # Convert Creativity.Measure_type to a factor with specified levels
 tradmeta$Creativity.Measure_type = factor(
   tradmeta$Creativity.Measure_type,

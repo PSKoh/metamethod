@@ -1,476 +1,335 @@
-### START OF CODE ####
+#### START OF CODE #####
 
 ### Set Up --------------
 
 # Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# R version 4.4.3
+# R version 4.5.0
 
 # Install packages (if not already installed)
 install.packages("metafor")
+install.packages("lmerTest")
+install.packages("dplyr")
 
 # Load packages
-library("metafor") # version 4.8-0
-library("lmerTest") # version 3.1-3
+library(metafor)  # version 4.8-0
+library(lmerTest) # version 3.1-3
+library(dplyr)    # version 1.1.4
 
 # Display settings (to disable scientific notation)
 options(scipen = 9999, digits = 4)
 
 # Read in data drawn from Lua et al. (2023)
 # Original paper: https://doi.org/10.1007/s11031-023-10047-w
-
-mlmmeta = read.csv("NFCWB.csv")
+mlmmeta_raw = read.csv("NFCWB.csv")
 
 ### Prepare Data --------------
 
+# Clean data file (reverse correlation for negative well-being)
+mlmmeta_new = mlmmeta_raw %>% 
+  mutate(corr_nfcwb = ifelse(wellbeing_category == "Negative well-being", -corr_nfcwb, corr_nfcwb)) 
 
-# clean data file (reverse correlation for negative well-being and calculate sei)
-
-d.new = d %>% dplyr::mutate(
-  corr_nfcwb = ifelse(wellbeing_category == "Negative well-being", -corr_nfcwb, corr_nfcwb)) 
-d.new = d.new %>% escalc(
+# Compute effect sizes for each study
+mlmmeta = escalc(
+  # Type of effect size measure
   measure = "ZCOR",
+  
+  # Column for raw correlation coefficients
   ri = corr_nfcwb,
+  
+  # Column for sample sizes
   ni = sample_size,
-  data = .) %>%
-  dplyr::mutate(
-    sei = sqrt(vi) / sqrt(sample_size)
+  
+  # Specify data.frame that the information will be extracted from
+  data = mlmmeta_new
   )
 
-
-########## analysis ##########  
-
-# publication bias -----------
-
-# egger's test for publication bias [ include SE for each effect size as moderator ]
-
-EGGERS = rma.mv( yi = yi, V = vi, mods = sei,
-                 random = ~ 1 | sample_id/meta_id, 
-                 method = "REML",
-                 data = d.new, slab = label) # no evidence for pub bias
-EGGERS %>% summary()
-
-
-# published vs unpublished records
-
-rma.mv(yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(publication_type != "Journal article" & publication_type != "Panel data"), slab = label)
-psych::fisherz2r(c(0.2180,0.1605,0.2754))
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(publication_type == "Journal article" | publication_type == "Panel data"), slab = label)
-psych::fisherz2r(c(0.1886,0.1361,0.2411))
-
-
-# year of publication as moderator
-
-rma.mv( yi = yi, V = vi, mods = as.numeric(substr(d.new$year, 1,4)),
-        random = ~ 1 | sample_id/meta_id,
-        method = "REML",
-        data = d.new, slab = label) # no evidence for pub bias
-
-
-# mod = nfc scale used
-
-rma.mv( yi = yi, V = vi,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(nfc_measure == "NCS-34"), slab = label)
-psych::fisherz2r(c(0.2083,0.1167,0.2998))
-
-rma.mv( yi = yi, V = vi,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(nfc_measure == "NCS-18"), slab = label)
-psych::fisherz2r(c(0.1997,0.1489,0.2505))
-
-rma.mv( yi = yi, V = vi,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(nfc_measure == "NCS-6"), slab = label)
-psych::fisherz2r(c(0.2767,0.1868,0.3665))
-
-rma.mv( yi = yi, V = vi,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(nfc_measure == "Other"), slab = label)
-psych::fisherz2r(c(0.1704,0.0966,0.2442))
-
-
-# calculate overall meta analytic effect size ---------------
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new, slab = label)
-psych::fisherz2r(c(0.1977,0.1585,0.2369))
-
-
-# calculate overall meta analytic effect size for subsets of well-being categories ---------------
-
-# Life satisfaction
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Life satisfaction"), slab = label)
-psych::fisherz2r(c(0.1434,0.0798,0.2069))
-table(d.new %>% filter(wellbeing_indicator == "Life satisfaction") %>% select(wellbeing_measure))
-
-
-# Positive affect
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Positive affect"), slab = label)
-psych::fisherz2r(c(0.3619,0.2999,0.4238))
-table(d.new %>% filter(wellbeing_indicator == "Positive affect") %>% select(wellbeing_measure))
-
-
-# Negative affect
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Negative affect"), slab = label)
-psych::fisherz2r(c(0.0894,0.0274,0.1513))
-table(d.new %>% filter(wellbeing_indicator == "Negative affect") %>% select(wellbeing_measure))
-
-
-# Purpose in life
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Purpose in life"), slab = label)
-psych::fisherz2r(c(0.2628,0.1561,0.3694))
-table(d.new %>% filter(wellbeing_indicator == "Purpose in life") %>% select(wellbeing_measure))
-
-
-# Self-acceptance
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Self-acceptance"), slab = label)
-psych::fisherz2r(c(0.2003,0.1632,0.2373))
-table(d.new %>% filter(wellbeing_indicator == "Self-acceptance") %>% select(wellbeing_measure))
-
-
-# Personal growth
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Personal growth"), slab = label)
-psych::fisherz2r(c(0.4902,0.4046,0.5757))
-table(d.new %>% filter(wellbeing_indicator == "Personal growth") %>% select(wellbeing_measure))
-
-
-# Environmental mastery
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Environmental mastery"), slab = label)
-psych::fisherz2r(c(0.3462,0.2376,0.4549))
-table(d.new %>% filter(wellbeing_indicator == "Environmental mastery") %>% select(wellbeing_measure))
-
-
-# Positive relations with others
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Positive relations with others"), slab = label)
-psych::fisherz2r(c(0.1611,0.0659,0.2564))
-table(d.new %>% filter(wellbeing_indicator == "Positive relations with others") %>% select(wellbeing_measure))
-
-
-# Autonomy
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Autonomy"), slab = label)
-psych::fisherz2r(c(0.4088,0.2655,0.5522))
-table(d.new %>% filter(wellbeing_indicator == "Autonomy") %>% select(wellbeing_measure))
-
-
-# Depression
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Depression"), slab = label)
-psych::fisherz2r(c(0.1899,0.1256,0.2543))
-table(d.new %>% filter(wellbeing_indicator == "Depression") %>% select(wellbeing_measure))
-
-
-# Anxiety
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Anxiety"), slab = label)
-psych::fisherz2r(c(0.1840,0.1078,0.2603))
-table(d.new %>% filter(wellbeing_indicator == "Anxiety") %>% select(wellbeing_measure))
-
-
-# Stress
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Stress"), slab = label)
-psych::fisherz2r(c(0.0690,0.0024,0.1355))
-table(d.new %>% filter(wellbeing_indicator == "Stress") %>% select(wellbeing_measure))
-
-
-
-# test for moderators: well-being valence ---------------
-
-rma.mv( yi = yi, V = vi,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(wellbeing_category == "Positive well-being"), slab = label)
-psych::fisherz2r(c(0.2218,0.1737,0.2698))
-
-rma.mv( yi = yi, V = vi,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(wellbeing_category == "Negative well-being"), slab = label)
-psych::fisherz2r(c(0.1348,0.0941,0.1755))
-
-
-# test for moderators: student sample ---------------
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(sample_student == "Yes (Children)" | sample_student == "Yes (Undergrads/ Graduates)"), slab = label)
-psych::fisherz2r(c(0.2340,0.1841,0.2840))
-
-rma.mv( yi = yi, V = vi,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(sample_student == "No"), slab = label)
-psych::fisherz2r(c(0.1319,0.0700,0.1938))
-
-
-
-# test for moderators: student sample [subgroup analyses] --------------
-
-# Life satisfaction
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(sample_student == "Yes (Children)" | sample_student == "Yes (Undergrads/ Graduates)") %>% filter(wellbeing_indicator == "Life satisfaction"), slab = label)
-psych::fisherz2r(c(0.1648,0.0612,0.2684))  
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(sample_student == "No") %>% filter(wellbeing_indicator == "Life satisfaction"), slab = label)
-psych::fisherz2r(c(0.1039,0.0428,0.1649))
-
-
-# Anxiety
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(sample_student == "Yes (Children)" | sample_student == "Yes (Undergrads/ Graduates)") %>% filter(wellbeing_indicator == "Anxiety"), slab = label)
-psych::fisherz2r(c(0.2279,0.1643,0.2916))
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(sample_student == "No") %>% filter(wellbeing_indicator == "Anxiety"), slab = label)
-psych::fisherz2r(c(0.0450,-0.1439,0.2339))
-
-
-# Purpose in life
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(sample_student == "Yes (Children)" | sample_student == "Yes (Undergrads/ Graduates)") %>% filter(wellbeing_indicator == "Purpose in life"), slab = label)
-psych::fisherz2r(c(0.3600,0.2349,0.4851))
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% dplyr::filter(sample_student == "No") %>% filter(wellbeing_indicator == "Purpose in life"), slab = label)
-psych::fisherz2r(c(0.1292,-0.0087,0.2670))
-
-# test for moderators: age ---------------
-
-rma.mv( yi = yi, V = vi, mods = age_m,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new, slab = label)
-
-table(psych::describe(d.new$age_m))
-
-rma.mv( yi = yi, V = vi, mods = (age_m-28.7899602150538)/13.220699917234,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new, slab = label)
-
-# test for moderators: age [subgroup analyses] ---------------  
-
-# Life satisfaction
-rma.mv( yi = yi, V = vi, mods = age_m,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Life satisfaction"), slab = label)
-
-# Anxiety
-rma.mv( yi = yi, V = vi, mods = age_m,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Anxiety"), slab = label)
-
-# Purpose in life
-rma.mv( yi = yi, V = vi, mods = age_m,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Purpose in life"), slab = label)
-
-# test for moderators: gender ---------------    
-
-rma.mv( yi = yi, V = vi, mods = female_proportion,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new, slab = label)
-
-# test for moderators: gender [subgroup analyses] ---------------  
-
-# Life satisfaction
-rma.mv( yi = yi, V = vi, mods = female_proportion,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Life satisfaction"), slab = label)
-
-# Anxiety
-rma.mv( yi = yi, V = vi, mods = female_proportion,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Anxiety"), slab = label)
-
-# Purpose in life
-rma.mv( yi = yi, V = vi, mods = female_proportion,
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.new %>% filter(wellbeing_indicator == "Purpose in life"), slab = label)
-
-########## sensitivity analyses ##########
-
-d.psq = d.new %>% dplyr::filter(
-  inclusion.in.the.sample != "No" & inclusion.in.the.sample != "Unclear",
-  study.subjects.and.the.setting != "No" & study.subjects.and.the.setting != "Unclear",
-  need.for.cognition.measure != "No" & need.for.cognition.measure != "Unclear",
-  outcomes.measure != "No" & outcomes.measure != "Unclear" )
-
-# overall meta-analytic effect size ---------
-
-rma.mv( yi = yi, V = vi, 
-        random = ~ 1 | sample_id/meta_id, 
-        method = "REML",
-        data = d.psq, slab = label)
-psych::fisherz2r(c(0.1952,0.1425,0.2479))
-
-########## generate figures ##########  
-
-# eggers' test funnel plot ---------------
-
-EGGERS %>% funnel(xlab = "Need for Cognition - Well-Being Effect Size")
-
-# sub-group forest plot for NFC scale as moderator funnel plot ---------------
-
-extract_subgroup_info = function(lapply_output, rlabs) {
-  est = sapply(lapply_output, coef); names(est) = NULL
-  se  = sapply(lapply_output, function(x){x$se})
-  nk  = sapply(lapply_output, function(x){x$s.nlevels})
-  r   = psych::fisherz2r(est) %>% round(2) %>% format(nsmall = 2)
-  return(data.frame(rowlabel = rlabs, ri = r, esti = est, sei = se, ni = nk[1,], ki = nk[2,]))
-}
-
-sg1 = c("NCS-34", "NCS-18", "NCS-6","Other"); sg1.res = lapply(
-  sg1,
-  function(x){
-    rma.mv(
-      yi, vi,
-      random = ~ 1 | sample_id/meta_id,
-      method = "REML",
-      data = d.new, subset = nfc_measure == x)
-  }
-) %>% extract_subgroup_info(sg1); rm(sg1)
-
-ilab.xpos =  c(-2.5, -2.0, -1.5)
-
-try(dev.off()); pdf(file="NFCWB_nfcsubgroups_forest_210923.pdf", width=7.5, height=4)
-leftmost = -5.5
-forest(
-  x = sg1.res$esti,
-  sei = sg1.res$sei,
-  slab = sg1.res$rowlabel,
-  top = 2, ylim = c(0, 7), rows = c(5:2),
-  alim = c(-0.5, 0.5), steps = 3, xlim = c(-5.4, 2.25),
-  xlab = "Need for Cognition - Well-Being Effect Size",
-  cex = 0.8,
-  header = FALSE,
-  ilab = sg1.res %>% dplyr::select(ni, ki, ri),
-  ilab.xpos =  ilab.xpos,
+# Convert Publication to a factor with specified levels
+mlmmeta$publication_type = factor(
+  mlmmeta$publication_type,
+  levels = c("Journal article", "Conference", "Panel data", "Thesis/dissertation", "Unpublished data")
 )
-text("Need for Cognition Measure", y = 7, x = leftmost, pos = 4, font = 2)
-abline(h = 1)
-headertext = c("m", "k", "r"); for(i in 1:length(ilab.xpos)){
-  text(ilab.xpos[i], 7, headertext[i], adj = c(0.5, 0.5), font = 2, cex = 0.8)
-}; rm(headertext); rm(i)
-dev.off(); rm(leftmost)
 
-
-# sub-group forest plot for wellbeing subcategories funnel plot ---------------
-
-sg0 = c("Life satisfaction", "Positive affect", "Negative affect","Purpose in life", "Self-acceptance", "Personal growth", "Environmental mastery", "Positive relations with others", "Autonomy", "Depression", "Anxiety", "Stress"); sg0.res = lapply(
-  sg0,
-  function(x){
-    rma.mv(
-      yi, vi,
-      random = ~ 1 | sample_id/meta_id,
-      method = "REML",
-      data = d.new, subset = wellbeing_indicator == x)
-  }
-) %>% extract_subgroup_info(sg0); rm(sg0)
-
-ilab.xpos =  c(-2.5, -2.0, -1.5)
-
-try(dev.off()); pdf(file="NFCWB_wbsubgroups_forest_210923.pdf", width=7.5, height=6)
-leftmost = -5.4
-forest(
-  x = sg0.res$esti,
-  sei = sg0.res$sei,
-  slab = sg0.res$rowlabel,
-  top = 2, ylim = c(2, 16), rows = c(14:3),
-  alim = c(-0.75, 0.75), steps = 3, xlim = c(-5.4, 2.25),
-  xlab = "Need for Cognition - Well-Being Effect Size",
-  cex = 0.8,
-  header = FALSE,
-  ilab = sg0.res %>% dplyr::select(ni, ki, ri),
-  ilab.xpos =  ilab.xpos,
+### Compute Overall Effect Size -------------------  
+# Effect size estimates
+mlmmetaresults = rma.mv(
+  # Effect size estimates
+  yi = yi,
+  # Sampling variances
+  V = vi,
+  # Include random effects for grouping variable (i.e., sample)
+  random = ~ 1 | sample_id/meta_id,
+  # Specify where to get the data from
+  data = mlmmeta
 )
-text("Well-Being Type", y = 16, x = leftmost, pos = 4, font = 2)
-abline(h = 2)
-headertext = c("m", "k", "r"); for(i in 1:length(ilab.xpos)){
-  text(ilab.xpos[i], 16, headertext[i], adj = c(0.5, 0.5), font = 2, cex = 0.8)
-}; rm(headertext); rm(i)
-dev.off(); rm(leftmost)
 
-########## end of script ########## 
+# summary function used to provide detailed results of the meta-analysis
+summary(mlmmetaresults)
+
+### Forest Plot --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+pdf(file = "NFCWBforestplot.pdf", width = 15, height = 40)
+
+# Start creating the forest plot itself
+# Specify dataset
+forest(
+  mlmmetaresults, 
+  
+  # Arrangement of studies
+  order = "obs",
+  
+  # Add y-axis limits
+  ylim = c(-3, 111),
+  
+  # Add sample size information for presence and absence of smartphones group
+  # Values indicate the x-axis position of the sample size columns  
+  ilab = sample_size,
+  ilab.xpos = -3,
+  
+  # Label studies on the forest plot
+  slab = paste(author, year, sep = ", "),
+  
+  # Add x-axis limits
+  xlim = c(-5, 3),
+  
+  # Add confidence interval limits
+  # Adjust intervals based on the number of steps
+  alim = c(-2, 2),
+  steps = 9,
+  
+  # Change size of effect size polygons
+  efac = 0.3,
+  
+  # Show (TRUE) or hide (FALSE) default headers
+  # Hide when we want to manually specify our own headers
+  header = FALSE,
+  
+  # Add label for confidence interval, in this case, "Pearson's corr"
+  xlab = "Pearson's corr"
+)
+
+# For the following lines of code,
+# Use text function to manually include text within the plot
+
+# Add "Author(s) Year" header
+text(x = -4.6, y = 110, "Author(s) Year", font = 2)
+
+# Add "Sample Size" header
+text(x = -3, y = 110, "Sample Size", font = 2)
+
+# Add "r [95% CI]" header
+text(x = 2.7, y = 110, "r [95% CI]", font = 2) 
+
+# Close the forest plot and finalise it as a saved file
+dev.off()
+
+### Tests for Publication Bias --------------------
+
+# Funnel Plot
+
+# Save the funnel plot as a PDF file
+# Name the pdf file of the funnel plot
+# Adjust the width and height of the pdf file
+pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
+# funnel function to create the funnel plot, specify the data to create the plot
+funnel(mlmmetaresults, legend = TRUE, xlab = "Pearson's corr")
+# Close the funnel plot and finalise it as a saved file
+dev.off()
+
+# Rank Correlation Test
+
+ranktest(mlmmetaresults)
+
+
+# Eggers' Test
+
+# Calculate standard error (SE)
+mlmmeta$sei = with(
+  mlmmeta, 
+  (sqrt(vi) / sqrt(sample_size)))
+lmer(
+  # g weighted by SE is predicted by intercept and inverse SE
+  # with random intercept by sample
+  I(yi / sei) ~ 1 + I(1 / sei) + (1 | sample_id),
+  data = mlmmeta
+) |>
+  # Estimate of interest is the slope
+  summary(correlation = FALSE)
+
+## Test of Moderators --------------
+# Panel data was not included as there was only one study 
+
+# Categorical Variable (i.e., publication type)
+rma.mv(
+  yi = yi,
+  V = vi,
+  random = ~ 1 | sample_id/meta_id,
+  # Specify categorical moderator (i.e., Journal Article)
+  subset = (publication_type == "Journal article"),
+  data = mlmmeta,
+  # To address convergence issues (if it exists)
+  control=list(rel.tol=1e-8) 
+)
+
+rma.mv(
+  yi = yi,
+  V = vi,
+  random = ~ 1 | sample_id/meta_id,
+  # Specify categorical moderator (i.e., Conference)
+  subset = (publication_type == "Conference"),
+  data = mlmmeta,
+  # To address convergence issues (if it exists)
+  control=list(rel.tol=1e-8) 
+)
+
+rma.mv(
+  yi = yi,
+  V = vi,
+  random = ~ 1 | sample_id/meta_id,
+  # Specify categorical moderator (i.e., Thesis/dissertation)
+  subset = (publication_type == "Thesis/dissertation"),
+  data = mlmmeta,
+  # To address convergence issues (if it exists)
+  control=list(rel.tol=1e-8) 
+)
+
+rma.mv(
+  yi = yi,
+  V = vi,
+  random = ~ 1 | sample_id/meta_id,
+  # Specify categorical moderator (i.e., Unpublished data)
+  subset = (publication_type == "Unpublished data"),
+  data = mlmmeta,
+  # To address convergence issues (if it exists)
+  control=list(rel.tol=1e-8) 
+)
+
+# Continuous variable (i.e., female proportion)
+rma.mv(
+  yi = yi,
+  V = vi,
+  random = ~ 1 | sample_id/meta_id,
+  # Specify continuous moderator (i.e., female proportion)
+  mods = ~female_proportion,
+  method = "REML",
+  data = mlmmeta
+) |>
+  summary()
+
+### Forest Plot of Moderators --------------
+
+# Save the forest plot as a PDF file
+
+### Forest Plot of Moderators --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+# Adjust the width and height of the pdf file
+pdf(file = "NFCWBforestplotwithmod.pdf", width = 15, height = 45) 
+forest(
+  mlmmetaresults,
+  
+  # Manually arrange effect sizes by creativity measure type
+  # - Journal article: Rows 108 to 51
+  # - Conference: Rows 50 to 48
+  # - Panel data: Rows 47
+  # - Thesis/dissertations: Rows 46 to 25
+  # - Unpublished data: Rows 25 to 2
+  # The arrangement must consider spacing and must end at row 2
+  rows = c(108:51, 50:48,, 47, 46:25, 25:2),
+  
+  # Add y-axis limits
+  ylim = c(-3, 147),
+  
+  # Add sample size information for presence and absence of smartphones group
+  # Values indicate the x-axis position of the sample size columns  
+  ilab = sample_size,
+  ilab.xpos = -4.2, 
+  
+  # Label studies on the forest plot
+  slab = paste(author, year, sep = ", "),
+  
+  # Add x-axis limits
+  xlim = c(-7, 4),
+  
+  # Add confidence interval limits
+  # Adjust intervals based on the number of steps
+  alim = c(-1.5, 1.5),
+  steps = 11,
+  
+  # Change size of effect size polygons
+  efac = 0.3,
+  
+  # Remove headers (if any), for manual input
+  header = FALSE,
+  
+  # Add label for confidence interval, in this case, "Pearson's corr"
+  xlab = "Pearson's corr"
+)
+
+# For the following lines of code,
+# Use text function to manually include text within the plot
+
+# Add text labels for moderator (type of publication)
+# x values to indicate the horizontal arrangement of the text
+# Labels for different creativity task types (Moderator Analysis)
+# y values indicate the vertical arrangement of the text
+# - "Journal article" at y = 7
+# - "Thesis/Dissertations" at y = 15
+# - "Non-Conference" at y = 21
+# `pos = 4` ensures left alignment of the text
+text(
+  x = -7,
+  pos = 4,
+  y = c(4, 76, 144),
+  c("Conference", "Thesis/dissertation", "Journal article"),
+  font = 2
+)
+
+# Moderation analysis
+res.j = rma(
+  yi,
+  vi,
+  random = ~ 1 | sample_id/meta_id,
+  subset = (publication_type == "Journal article"),
+  data = mlmmeta,
+  # To address convergence issues (if it exists)
+  control=list(rel.tol=1e-8) 
+)
+res.t = rma(
+  yi,
+  vi,
+  random = ~ 1 | sample_id/meta_id,
+  subset = (publication_type == "Thesis/dissertation"),
+  data = mlmmeta
+)
+res.c = rma(
+  yi, 
+  vi, 
+  random = ~ 1 | sample_id/meta_id,
+  subset = (publication_type == "Conference"), 
+  data = mlmmeta
+)
+
+# Add summary effect sizes for each of the moderators
+addpoly(res.c, row = 1) # summary effect for "Conference" group
+addpoly(res.t, row = 6) # summary effect for "Thesis/Dissertation" group
+addpoly(res.j, row = 78) # summary effect for "Journal article" group
+
+# Add"Author(s) Year" header
+text(x = -6.5, y = 146, "Author(s) Year", font = 2) 
+
+# Add “Sample Size” header
+text(x = -3.9, y = 146, "Sample Size", font = 2)
+
+
+# Add "g [95% CI]" header
+text(x = 3.6, y = 146, "g [95% CI]", font = 2) 
+
+# Close the forest plot and finalise it as a saved file
+dev.off()
+
+#### END OF CODE ####

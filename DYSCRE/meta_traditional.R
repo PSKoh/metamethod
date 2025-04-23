@@ -208,7 +208,7 @@ rma(
   data = tradmeta
 )
 
-### Forest Plot with Moderators --------------
+### Forest Plot of Moderators --------------
 
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot

@@ -347,6 +347,8 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
     Standard error is corrected in this case because the effect sizes are not normally distributed.
 
 -   The `lmer()` function is used to fit a linear mixed-effects model, where the effect size weighted by the corrected standard error is predicted by the intercept and the inverse of the corrected standard error.
+    metafor::rma.mv does not have a weights argument, and metafor::regtest does not support rma.mv objects.
+    For three (or more) level meta-analysis, use `lmerTest::lmer` instead.
 
 -   The `I(yi / sei_corrected)` expression indicates that the effect size (yi) is divided by the corrected standard error (sei_corrected), which is used to weight the effect sizes in the model.
 
@@ -436,7 +438,7 @@ rma.mv(
        yi = yi,
        V = vi,
        random = ~ 1 | lab_id / ID,
-       # Specify categorical moderator (i.e., sex)
+       # Specify continuous moderator (i.e., female proportion)
        mods = ~female_proportion,
        method = "REML",
        data = multilevelmeta
@@ -510,7 +512,7 @@ The forest plot includes the following features:
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r}
-### Forest Plot with Moderators --------------
+### Forest Plot of Moderators --------------
 
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot

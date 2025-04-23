@@ -490,7 +490,7 @@ The forest plot includes the following features:
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r}
-### Forest Plot with Moderators --------------
+### Forest Plot of Moderators --------------
 
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot

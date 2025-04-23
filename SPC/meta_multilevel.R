@@ -174,6 +174,10 @@ ranktest(mlmmetaresults)
 multilevelmeta$sei_corrected = with(
        multilevelmeta, 
        sqrt((n_p + n_a) / (n_p * n_a)))
+
+# metafor::rma.mv does not have a weights argument
+# metafor::regtest does not support rma.mv objects
+# For three (or more) level meta-analysis, use lmerTest::lmer instead
 lmer(
        # g weighted by SE is predicted by intercept and inverse SE
        # with random intercept by sample

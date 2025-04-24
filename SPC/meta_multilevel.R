@@ -54,6 +54,7 @@ multilevelmeta$publication = factor(
 )
 # Order the data frame based on publication
 multilevelmeta = multilevelmeta[order(multilevelmeta$publication), ]
+
 ### Compute Overall Effect size --------------
 
 # Using traditional meta code (refer to meta_traditional.R)

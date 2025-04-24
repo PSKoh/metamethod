@@ -11,11 +11,13 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 install.packages("metafor")
 install.packages("lmerTest")
 install.packages("dplyr")
+install.packages("psych")
 
 # Load packages
 library(metafor)  # version 4.8-0
 library(lmerTest) # version 3.1-3
 library(dplyr)    # version 1.1.4
+library(psych)    # version 2.5.3
 
 # Display settings (to disable scientific notation)
 options(scipen = 9999, digits = 4)
@@ -27,7 +29,7 @@ mlmmeta_raw = read.csv("NFCWB.csv")
 ### Prepare Data --------------
 
 # Clean data file (reverse correlation for negative well-being)
-mlmmeta_new = mlmmeta_raw %>% 
+mlmmeta_new = mlmmeta_raw %>%
   mutate(corr_nfcwb = ifelse(wellbeing_category == "Negative well-being", -corr_nfcwb, corr_nfcwb)) 
 
 # Compute effect sizes for each study
@@ -51,6 +53,9 @@ mlmmeta$publication_type = factor(
   levels = c("Journal article", "Conference", "Panel data", "Thesis/dissertation", "Unpublished data")
 )
 
+# Order the data frame based on publication
+mlmmeta = mlmmeta[order(mlmmeta$publication_type), ]
+
 ### Compute Overall Effect Size -------------------  
 # Effect size estimates
 mlmmetaresults = rma.mv(
@@ -67,11 +72,16 @@ mlmmetaresults = rma.mv(
 # summary function used to provide detailed results of the meta-analysis
 summary(mlmmetaresults)
 
+# Convert from Fisher's Z to Pearson's r
+mlmmetaresults$b %>% psych::fisherz2r() 
+
 ### Forest Plot --------------
 
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot
-pdf(file = "NFCWBforestplot.pdf", width = 15, height = 40)
+# cairo_pdf function used for font compatibility
+# Adjust the width and height of the pdf file
+cairo_pdf(file = "NFCWBforestplot.pdf", width = 15, height = 40)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -97,7 +107,7 @@ forest(
   
   # Add confidence interval limits
   # Adjust intervals based on the number of steps
-  alim = c(-2, 2),
+  alim = c(-1.5, 1.5),
   steps = 9,
   
   # Change size of effect size polygons
@@ -107,8 +117,8 @@ forest(
   # Hide when we want to manually specify our own headers
   header = FALSE,
   
-  # Add label for confidence interval, in this case, "Pearson's corr"
-  xlab = "Pearson's corr"
+  # Add label for confidence interval, in this case, "Fisher's Z"
+  xlab = "Fisher's Z"
 )
 
 # For the following lines of code,
@@ -121,7 +131,7 @@ text(x = -4.6, y = 110, "Author(s) Year", font = 2)
 text(x = -3, y = 110, "Sample Size", font = 2)
 
 # Add "r [95% CI]" header
-text(x = 2.7, y = 110, "r [95% CI]", font = 2) 
+text(x = 2.7, y = 110, "Z [95% CI]", font = 2) 
 
 # Close the forest plot and finalise it as a saved file
 dev.off()
@@ -135,7 +145,7 @@ dev.off()
 # Adjust the width and height of the pdf file
 pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
 # funnel function to create the funnel plot, specify the data to create the plot
-funnel(mlmmetaresults, legend = TRUE, xlab = "Pearson's corr")
+funnel(mlmmetaresults, legend = TRUE, xlab = "Fisher's Z")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 
@@ -143,23 +153,19 @@ dev.off()
 
 ranktest(mlmmetaresults)
 
-
 # Eggers' Test
 
-# Calculate standard error (SE)
-mlmmeta$sei = with(
-  mlmmeta, 
-  (sqrt(vi) / sqrt(sample_size)))
 lmer(
   # g weighted by SE is predicted by intercept and inverse SE
   # with random intercept by sample
-  I(yi / sei) ~ 1 + I(1 / sei) + (1 | sample_id),
+  I(yi / vi) ~ 1 + I(1 / vi) + (1 | sample_id),
   data = mlmmeta
 ) |>
-  # Estimate of interest is the slope
-  summary(correlation = FALSE)
+  # Estimate of interest is the intercept
+  summary(correlation = TRUE)
 
 ## Test of Moderators --------------
+
 # Panel data was not included as there was only one study 
 
 # Categorical Variable (i.e., publication type)
@@ -227,22 +233,19 @@ rma.mv(
 
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot
+# cairo_pdf function used for font compatibility
 # Adjust the width and height of the pdf file
-pdf(file = "NFCWBforestplotwithmod.pdf", width = 15, height = 45) 
+cairo_pdf(file = "NFCWBforestplotwithmod.pdf", width = 15, height = 35) 
 forest(
   mlmmetaresults,
-  
-  # Manually arrange effect sizes by creativity measure type
-  # - Journal article: Rows 108 to 51
-  # - Conference: Rows 50 to 48
-  # - Panel data: Rows 47
-  # - Thesis/dissertations: Rows 46 to 25
-  # - Unpublished data: Rows 25 to 2
+  # Manually arrange effect sizes by publication type
+  # - Unpublished: Rows 108 to 51
+  # - Published: Rows 50 to 48
   # The arrangement must consider spacing and must end at row 2
-  rows = c(108:51, 50:48,, 47, 46:25, 25:2),
+  rows = c(112:40, 36:2),
   
   # Add y-axis limits
-  ylim = c(-3, 147),
+  ylim = c(-3, 116),
   
   # Add sample size information for presence and absence of smartphones group
   # Values indicate the x-axis position of the sample size columns  
@@ -258,7 +261,7 @@ forest(
   # Add confidence interval limits
   # Adjust intervals based on the number of steps
   alim = c(-1.5, 1.5),
-  steps = 11,
+  steps = 7,
   
   # Change size of effect size polygons
   efac = 0.3,
@@ -266,8 +269,8 @@ forest(
   # Remove headers (if any), for manual input
   header = FALSE,
   
-  # Add label for confidence interval, in this case, "Pearson's corr"
-  xlab = "Pearson's corr"
+  # Add label for confidence interval, in this case, "Fisher's Z"
+  xlab = "Fisher's Z"
 )
 
 # For the following lines of code,
@@ -275,59 +278,52 @@ forest(
 
 # Add text labels for moderator (type of publication)
 # x values to indicate the horizontal arrangement of the text
-# Labels for different creativity task types (Moderator Analysis)
+# Labels for different publication types (Moderator Analysis)
 # y values indicate the vertical arrangement of the text
-# - "Journal article" at y = 7
-# - "Thesis/Dissertations" at y = 15
-# - "Non-Conference" at y = 21
+
+# - "Unpublished" (Unpublished data, Panel Data, Thesis/Dissertations) at
+# - "Published" (Journal Articles, Conference) at 
 # `pos = 4` ensures left alignment of the text
 text(
   x = -7,
+  y = c(37, 113),
   pos = 4,
-  y = c(4, 76, 144),
-  c("Conference", "Thesis/dissertation", "Journal article"),
+  c("Unpublished", "Published"),
   font = 2
 )
 
 # Moderation analysis
-res.j = rma(
+res.p = rma(
   yi,
   vi,
   random = ~ 1 | sample_id/meta_id,
-  subset = (publication_type == "Journal article"),
+  subset = publication_type %in% c("Journal article", "Conference"),
   data = mlmmeta,
   # To address convergence issues (if it exists)
   control=list(rel.tol=1e-8) 
 )
-res.t = rma(
+res.u = rma(
   yi,
   vi,
   random = ~ 1 | sample_id/meta_id,
-  subset = (publication_type == "Thesis/dissertation"),
-  data = mlmmeta
-)
-res.c = rma(
-  yi, 
-  vi, 
-  random = ~ 1 | sample_id/meta_id,
-  subset = (publication_type == "Conference"), 
-  data = mlmmeta
+  subset = publication_type %in% c("Thesis/dissertation","Panel Data","Unpublished data"),
+  data = mlmmeta,
+  # To address convergence issues (if it exists)
+  control=list(rel.tol=1e-8) 
 )
 
 # Add summary effect sizes for each of the moderators
-addpoly(res.c, row = 1) # summary effect for "Conference" group
-addpoly(res.t, row = 6) # summary effect for "Thesis/Dissertation" group
-addpoly(res.j, row = 78) # summary effect for "Journal article" group
+addpoly(res.u, row = 1) # summary effect for "Unpublished" group
+addpoly(res.p, row = 39) # summary effect for "Published" group
 
 # Add"Author(s) Year" header
-text(x = -6.5, y = 146, "Author(s) Year", font = 2) 
+text(x = -6.5, y = 115,"Author(s) Year", font = 2) 
 
 # Add “Sample Size” header
-text(x = -3.9, y = 146, "Sample Size", font = 2)
+text(x = -3.9, y = 115,"Sample Size", font = 2)
 
-
-# Add "g [95% CI]" header
-text(x = 3.6, y = 146, "g [95% CI]", font = 2) 
+# Add "r [95% CI]" header
+text(x = 3.6, y = 115, "Z [95% CI]", font = 2) 
 
 # Close the forest plot and finalise it as a saved file
 dev.off()

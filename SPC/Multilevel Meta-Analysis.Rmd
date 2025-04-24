@@ -344,7 +344,7 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 ### Explanation of the Code
 
 -   The `multilevelmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula \(\sqrt{\frac{(n_{p} + n_{a})}{(n_{p} \cdot n_{a})}}\).
-    Standard error is corrected in this case because the effect sizes are not normally distributed.
+    Using Egger' test (unadjusted) on SMDs results in inflated type 1 error as SMD and SE are not independent. Hence, use corrected formula for SE.
 
 -   The `lmer()` function is used to fit a linear mixed-effects model, where the effect size weighted by the corrected standard error is predicted by the intercept and the inverse of the corrected standard error.
     metafor::rma.mv does not have a weights argument, and metafor::regtest does not support rma.mv objects.

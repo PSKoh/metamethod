@@ -8,7 +8,7 @@ output: pdf_document
 
 The following script is designed to perform a traditional meta-analysis using the `metafor` package in R.
 
-The analysis is based on data from Majeed et al. (2021) and focuses on the relationship between dyslexia and creativity. The original paper can be found here: https://doi.org/10.1002/dys.1677.
+The analysis is based on data from Majeed et al. (2021) and focuses on the relationship between dyslexia and creativity. The original paper can be found here: <https://doi.org/10.1002/dys.1677>.
 
 The script includes steps for data preparation, effect size calculation, overall effect size computation, forest plot generation, tests for publication bias, and moderation analysis.
 
@@ -164,7 +164,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 ## Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file. 
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
 
 -   The `width` and `height` function adjust the dimensions of the PDF file.
 
@@ -327,8 +327,7 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 
 ### Explanation of the Code
 
--   The `tradmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula \(\sqrt{\frac{(n_{dys} + n_{control})}{(n_{dys} \cdot n_{control})}}\).
-    Standard error is corrected in this case to account for unequal sample sizes
+-   The `tradmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula $\sqrt{\frac{(n_{dys} + n_{control})}{(n_{dys} \cdot n_{control})}}$. Standard error is corrected in this case to account for unequal sample sizes
 
 -   The `rma()` function is used to perform Egger's test, with the `yi` and `vi` functions specifying the effect size estimates and their corresponding sampling variances.
 

@@ -81,7 +81,7 @@ mlmmetaresults$b %>% psych::fisherz2r()
 # Name the pdf file of the forest plot
 # cairo_pdf function used for font compatibility
 # Adjust the width and height of the pdf file
-cairo_pdf(file = "NFCWBforestplot.pdf", width = 15, height = 40)
+cairo_pdf(file = "NFCWBforestplot.pdf", width = 14, height = 35)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -108,7 +108,7 @@ forest(
   # Add confidence interval limits
   # Adjust intervals based on the number of steps
   alim = c(-1.5, 1.5),
-  steps = 9,
+  steps = 7,
   
   # Change size of effect size polygons
   efac = 0.3,
@@ -235,7 +235,10 @@ rma.mv(
 # Name the pdf file of the forest plot
 # cairo_pdf function used for font compatibility
 # Adjust the width and height of the pdf file
-cairo_pdf(file = "NFCWBforestplotwithmod.pdf", width = 15, height = 35) 
+cairo_pdf(file = "NFCWBforestplotwithmod.pdf", width = 13, height = 35) 
+
+# Start creating the forest plot itself
+# Specify dataset
 forest(
   mlmmetaresults,
   # Manually arrange effect sizes by publication type
@@ -293,7 +296,7 @@ text(
 )
 
 # Moderation analysis
-res.p = rma(
+res.p = rma.mv(
   yi,
   vi,
   random = ~ 1 | sample_id/meta_id,
@@ -302,7 +305,7 @@ res.p = rma(
   # To address convergence issues (if it exists)
   control=list(rel.tol=1e-8) 
 )
-res.u = rma(
+res.u = rma.mv(
   yi,
   vi,
   random = ~ 1 | sample_id/meta_id,
@@ -317,10 +320,10 @@ addpoly(res.u, row = 1) # summary effect for "Unpublished" group
 addpoly(res.p, row = 39) # summary effect for "Published" group
 
 # Add"Author(s) Year" header
-text(x = -6.5, y = 115,"Author(s) Year", font = 2) 
+text(x = -6.4, y = 115,"Author(s) Year", font = 2) 
 
 # Add “Sample Size” header
-text(x = -3.9, y = 115,"Sample Size", font = 2)
+text(x = -4.0, y = 115,"Sample Size", font = 2)
 
 # Add "r [95% CI]" header
 text(x = 3.6, y = 115, "Z [95% CI]", font = 2) 

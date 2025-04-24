@@ -574,7 +574,7 @@ text(
 )
 
 # Moderation analysis
-res.j = rma(
+res.j = rma.mv(
        yi,
        vi,
        random = ~ 1 | lab_id / ID,
@@ -583,14 +583,14 @@ res.j = rma(
        # To address convergence issues (if it exists)
        control=list(rel.tol=1e-8) 
 )
-res.t = rma(
+res.t = rma.mv(
        yi,
        vi,
        random = ~ 1 | lab_id / ID,
        subset = (publication == "Thesis/dissertation"),
        data = multilevelmeta
 )
-res.c = rma(
+res.c = rma.mv(
        yi, 
        vi, 
        random = ~ 1 | lab_id / ID,

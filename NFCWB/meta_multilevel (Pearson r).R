@@ -10,13 +10,11 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # Install packages (if not already installed)
 install.packages("metafor")
 install.packages("lmerTest")
-install.packages("dplyr")
 install.packages("psych")
 
 # Load packages
 library(metafor)  # version 4.8-0
 library(lmerTest) # version 3.1-3
-library(dplyr)    # version 1.1.4
 library(psych)    # version 2.5.3
 
 # Display settings (to disable scientific notation)
@@ -29,8 +27,7 @@ mlmmeta_raw = read.csv("NFCWB.csv")
 ### Prepare Data --------------
 
 # Clean data file (reverse correlation for negative well-being)
-mlmmeta_new = mlmmeta_raw %>%
-  mutate(corr_nfcwb = ifelse(wellbeing_category == "Negative well-being", -corr_nfcwb, corr_nfcwb)) 
+mlmmeta_new$corr_nfcwb = with(mlmmeta_raw, ifelse(wellbeing_category == "Negative well-being", -corr_nfcwb, corr_nfcwb))
 
 # Compute effect sizes for each study
 mlmmeta = escalc(
@@ -48,10 +45,10 @@ mlmmeta = escalc(
   )
 
 # Convert Publication to a factor with specified levels
-mlmmeta$publication_type = factor(
-  mlmmeta$publication_type,
-  levels = c("Journal article", "Conference", "Panel data", "Thesis/dissertation", "Unpublished data")
-)
+mlmmeta$publication_type = ifelse(
+  mlmmeta$publication_type == "Journal article",
+  "Published",
+  "Unpublished")
 
 # Order the data frame based on publication
 mlmmeta = mlmmeta[order(mlmmeta$publication_type), ]

@@ -50,6 +50,7 @@ tradmeta$Creativity.Measure_type = factor(
 )
 # Order the data frame by Creativity.Measure_type and effect sizes (yi)
 tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type,tradmeta$yi), ]
+
 ### Compute overall effect size --------------
 
 # Estimate the overall effect size using the rma() function
@@ -132,9 +133,10 @@ text(x = 3.5, y = 14.5, "g [95% CI]", font = 2)
 
 # Close the forest plot and finalise it as a saved file
 dev.off()
+
 ### Tests for Publication Bias --------------
 
-# Funnel Plot
+# Funnel Plot # 
 
 # Save the funnel plot as a PDF file
 # Name the pdf file of the funnel plot
@@ -145,11 +147,11 @@ funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 
-# Rank Correlation Test
+# Rank Correlation Test #
 
 ranktest(tradmetaresults)
 
-# Egger's Test
+# Egger's Test #
 
 # Calculate standard error (SE)
 tradmeta$sei_corrected = with(
@@ -170,6 +172,7 @@ rma(
 ) |>
   # Estimate of interest is the slope
   summary()
+
 ### Moderation Analysis --------------
 
 # Continuous variable (i.e., female proportion)
@@ -298,7 +301,7 @@ addpoly(res.n, row = 1) # summary effect for "non-verbal" group
 addpoly(res.m, row = 9) # summary effect for "mixed" group
 addpoly(res.v, row = 17) # summary effect for "verbal" group
 
-# Add"Author(s) Year" header
+# Add "Author(s) Year" header
 text(x = -6.3, y = 23, "Author(s) Year", font = 2) 
 # Add “Sample Size” header
 text(x = -3.6, y = 23.7, "Sample Size", font = 2)

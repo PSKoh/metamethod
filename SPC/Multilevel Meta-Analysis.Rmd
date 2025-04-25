@@ -399,7 +399,7 @@ This section performs moderation analysis to examine the influence of categorica
 
 -   The `summary()` function is used to display the results of the meta-analysis, including the overall effect size estimate and its confidence interval.
 
-Note that if convergence issues arise, the `control` function can be used to adjust the convergence criteria.
+Note that if convergence issues arise, the `control` function can be used to address it. Researchers may also refer more to the `metafor` package documentation for more information on how to address convergence issues.
 
 ```{r}
 ## Test of Moderators --------------
@@ -414,7 +414,6 @@ rma.mv(
        data = multilevelmeta,
        # To address convergence issues (if it exists)
        control=list(rel.tol=1e-8) 
-
 )
 rma.mv(
        yi = yi,

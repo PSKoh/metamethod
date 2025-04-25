@@ -57,18 +57,6 @@ multilevelmeta = multilevelmeta[order(multilevelmeta$publication), ]
 
 ### Compute Overall Effect size --------------
 
-# Using traditional meta code (refer to meta_traditional.R)
-# The code below is for demonstration purposes only
-# The code below is not recommended for multilevel meta-analysis
-usingsimplemetacode = rma(
-       yi = yi,
-       vi = vi,
-       data = multilevelmeta
-)
-summary(usingsimplemetacode)
-
-# Using multilevel code
-# The code below is the recommended approach for multilevel meta-analysis
 mlmmetaresults = rma.mv(
        # Effect size estimates
        yi = yi,

@@ -292,7 +292,7 @@ The funnel plot visually represents the distribution of effect sizes and their s
 ```{r}
 ### Tests for Publication Bias --------------
 
-# Funnel Plot
+# Funnel Plot #
 
 # Save the funnel plot as a PDF file
 # Name the pdf file of the funnel plot
@@ -317,7 +317,7 @@ The rank correlation test serves as a complementary method to the funnel plot in
 ```{r}
 ### Tests for Publication Bias --------------
 
-# Rank Correlation Test
+# Rank Correlation Test #
 ranktest(tradmetaresults)
 ```
 
@@ -327,7 +327,7 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 
 ### Explanation of the Code
 
--   The `tradmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula $\sqrt{\frac{(n_{dys} + n_{control})}{(n_{dys} \cdot n_{control})}}$. Standard error is corrected in this case to account for unequal sample sizes
+-   The `tradmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula $\sqrt{\frac{(n_{dys} + n_{control})}{(n_{dys} \cdot n_{control})}}$. Using Egger' test (unadjusted) on SMDs results in inflated type 1 error as SMD and SE are not independent. Hence, use corrected formula for SE.
 
 -   The `rma()` function is used to perform Egger's test, with the `yi` and `vi` functions specifying the effect size estimates and their corresponding sampling variances.
 
@@ -342,7 +342,7 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 ```{r}
 ### Tests for Publication Bias --------------
 
-# Egger's Test
+# Egger's Test #
 
 # Calculate standard error (SE)
 tradmeta$sei_corrected = with(
@@ -575,7 +575,7 @@ addpoly(res.n, row = 1) # summary effect for "non-verbal" group
 addpoly(res.m, row = 9) # summary effect for "mixed" group
 addpoly(res.v, row = 17) # summary effect for "verbal" group
 
-# Add"Author(s) Year" header
+# Add "Author(s) Year" header
 text(x = -6.3, y = 23, "Author(s) Year", font = 2) 
 
 # Add “Sample Size” header

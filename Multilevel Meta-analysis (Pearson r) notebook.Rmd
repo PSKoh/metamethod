@@ -1,0 +1,233 @@
+---
+title: "Multilevel Meta-Analysis (Pearson R) Tutorial"
+author: Hu, M., Koh, P.S., Soh, X.C., Hartanto, A., Majeed, N.M.
+output: pdf_document
+---
+
+# Introduction
+
+The following script is designed to perform a multilevel meta-analysis using the `metafor` and `lmerTest` package in R.
+
+The analysis is based on data from Lua et al. (2024) and focuses on the relationship between overall relationship between the need for cognition and well-being. The original paper can be found here: https://doi.org/10.1007/s11031-023-10047-w.
+
+The script includes steps for data preparation, effect size calculation, overall effect size computation, forest plot generation, tests for publication bias, and moderation analysis.
+
+The script is structured to be run in RStudio, and it includes comments to guide users through each step of the process.
+
+# Setting Up
+
+This section sets up the working environment, installs necessary packages, loads the required libraries, and reads in the data.
+
+If the `metafor` and `lmerTest` package is not already installed, use the `install.packages()` function to install it.
+
+## Explanation of the Code
+
+-   The `setwd()` function sets the working directory to the location of the script, ensuring that all file paths are relative to the script's location.
+
+-   The `library()` function loads the `metafor` package.
+
+-   The `options()` function is used to adjust the display settings, specifically to disable scientific notation and set the number of digits displayed.
+
+-   The `read.csv()` function reads in the data from a CSV file named "NFCWB.csv", which contains the data drawn from Lua et al.(2024).
+
+```{r}
+### Set Up --------------
+
+# Set working directory to that of script's current location
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
+# R version 4.5.0
+
+# Load packages
+library(metafor)  # version 4.8-0
+library(lmerTest) # version 3.1-3
+
+# Display settings (to disable scientific notation)
+options(scipen = 9999, digits = 4)
+
+# Read in data drawn from Lua et al. (2023)
+# Original paper: https://doi.org/10.1007/s11031-023-10047-w
+mlmmeta_raw = read.csv("NFCWB.csv")
+```
+
+```{r}
+### Prepare Data --------------
+
+# Clean data file (reverse correlation for negative well-being)
+mlmmeta_raw$corr_nfcwb = with(mlmmeta_raw, ifelse(wellbeing_category == "Negative well-being", -corr_nfcwb, corr_nfcwb))
+
+# Compute effect sizes for each study
+mlmmeta = escalc(
+  # Type of effect size measure
+  measure = "ZCOR",
+  
+  # Column for raw correlation coefficients
+  ri = corr_nfcwb,
+  
+  # Column for sample sizes
+  ni = sample_size,
+  
+  # Specify data.frame that the information will be extracted from
+  data = mlmmeta_raw
+  )
+
+# Categorise publication type into "published" and "unpublished"
+# Published: Journal articles
+# Unpublished: Conference, Panel Data, Thesis/dissertation, Unpublished data
+mlmmeta$publication_type = ifelse(
+  mlmmeta$publication_type == "Journal article",
+  "Published",
+  "Unpublished")
+
+# Order the data frame based on publication
+mlmmeta = mlmmeta[order(mlmmeta$publication_type), ]
+```
+
+```{r}
+### Compute Overall Effect Size ------------------- 
+
+# Effect size estimates
+mlmmetaresults = rma.mv(
+  # Effect size estimates
+  yi = yi,
+  # Sampling variances
+  V = vi,
+  # Include random effects for grouping variable (i.e., sample)
+  random = ~ 1 | sample_id/meta_id,
+  # Specify where to get the data from
+  data = mlmmeta
+)
+
+# summary function used to provide detailed results of the meta-analysis
+summary(mlmmetaresults)
+
+# Convert from Fisher's Z to Pearson's r
+mlmmetaresults$b |> psych::fisherz2r() 
+```
+
+```{r}
+### Forest Plot --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+# cairo_pdf function used for font compatibility
+# Adjust the width and height of the pdf file
+cairo_pdf(file = "NFCWBforestplot.pdf", width = 14, height = 35)
+
+# Start creating the forest plot itself
+# Specify dataset
+forest(
+  mlmmetaresults, 
+  
+  # Arrangement of studies
+  order = "obs",
+  
+  # Add y-axis limits
+  ylim = c(-3, 111),
+  
+  # Add sample size information for presence and absence of smartphones group
+  # Values indicate the x-axis position of the sample size columns  
+  ilab = sample_size,
+  ilab.xpos = -3,
+  
+  # Label studies on the forest plot
+  slab = paste(author, year, sep = ", "),
+  
+  # Add x-axis limits
+  xlim = c(-5, 3),
+  
+  # Add confidence interval limits
+  # Adjust intervals based on the number of steps
+  alim = c(-1.5, 1.5),
+  steps = 7,
+  
+  # Change size of effect size polygons
+  efac = 0.3,
+  
+  # Show (TRUE) or hide (FALSE) default headers
+  # Hide when we want to manually specify our own headers
+  header = FALSE,
+  
+  # Add label for confidence interval, in this case, "Fisher's Z"
+  xlab = "Fisher's Z"
+)
+
+# For the following lines of code,
+# Use text function to manually include text within the plot
+
+# Add "Author(s) Year" header
+text(x = -4.6, y = 110, "Author(s) Year", font = 2)
+
+# Add "Sample Size" header
+text(x = -3, y = 110, "Sample Size", font = 2)
+
+# Add "r [95% CI]" header
+text(x = 2.7, y = 110, "Z [95% CI]", font = 2) 
+
+# Close the forest plot and finalise it as a saved file
+dev.off()
+```
+
+```{r}
+### Tests for Publication Bias --------------------
+
+# Funnel Plot #
+
+# Save the funnel plot as a PDF file
+# Name the pdf file of the funnel plot
+# Adjust the width and height of the pdf file
+pdf(file = "NFCWBfunnelplot.pdf", width = 8, height = 5)
+# funnel function to create the funnel plot, specify the data to create the plot
+funnel(mlmmetaresults, legend = TRUE, xlab = "Fisher's Z")
+# Close the funnel plot and finalise it as a saved file
+dev.off()
+```
+
+```{r}
+### Tests for Publication Bias --------------------
+
+# Rank Correlation Test #
+ranktest(mlmmetaresults)
+```
+
+```{r}
+### Tests for Publication Bias --------------------
+
+# Eggers' Test # 
+lmer(
+  # g weighted by SE is predicted by intercept and inverse SE
+  # with random intercept by sample
+  I(yi / vi) ~ 1 + I(1 / vi) + (1 | sample_id),
+  data = mlmmeta
+) |>
+  # Estimate of interest is the intercept
+  summary(correlation = TRUE)
+```
+
+```{r}
+### Moderation Analysis --------------
+
+# Categorical Variable (i.e., publication type)
+rma.mv(
+  yi = yi,
+  V = vi,
+  random = ~ 1 | sample_id/meta_id,
+  # Specify categorical moderator (i.e., Published articles)
+  subset = (publication_type == "Published"),
+  data = mlmmeta,
+  # To address convergence issues (if it exists)
+  control=list(rel.tol=1e-8) 
+)
+
+rma.mv(
+  yi = yi,
+  V = vi,
+  random = ~ 1 | sample_id/meta_id,
+  # Specify categorical moderator (i.e., Unpublished articles)
+  subset = (publication_type == "Unpublished"),
+  data = mlmmeta,
+  # To address convergence issues (if it exists)
+  control=list(rel.tol=1e-8) 
+)
+```
+

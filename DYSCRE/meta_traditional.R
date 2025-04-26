@@ -148,7 +148,6 @@ funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
 dev.off()
 
 # Rank Correlation Test #
-
 ranktest(tradmetaresults)
 
 # Egger's Test #

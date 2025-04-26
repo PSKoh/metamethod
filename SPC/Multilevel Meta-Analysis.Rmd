@@ -6,7 +6,7 @@ output: pdf_document
 
 # Introduction
 
-The following script is designed to perform a traditional meta-analysis using the `metafor` package in R.
+The following script is designed to perform a multilevel meta-analysis using the `metafor` and `lmerTest` package in R.
 
 The analysis is based on data from Hartanto et al. (2024) and focuses on the relationship between smartphone presence and cognitive functions. The original paper can be found here: https://doi.org/10.1037/tmb0000123.
 
@@ -333,9 +333,9 @@ The rank correlation test serves as a complementary method to the funnel plot in
 -   The `mlmmetaresults` object contains the results of the meta-analysis, and the `ranktest()` function uses this object to perform the rank correlation test.
 
 ```{r}
-### Checking for Publication Bias --------------
+### Tests for Publication Bias --------------
 
-## Rank Correlation Test
+# Rank Correlation Test #
 ranktest(mlmmetaresults)
 ```
 ## Egger's Test
@@ -360,9 +360,9 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 
 -   The `summary()` function provides the results of the Egger's test, including the slope estimate and its significance.
 ```{r}
-### Checking for Publication Bias --------------
+### Tests for Publication Bias --------------
 
-## Egger' Test
+# Egger' Test #
 
 # Calculate standard error (SE)
 multilevelmeta$sei_corrected = with(

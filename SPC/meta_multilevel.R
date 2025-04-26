@@ -142,7 +142,7 @@ dev.off()
 
 ### Tests for Publication Bias --------------
 
-# Funnel Plot
+# Funnel Plot #
 
 # Save the funnel plot as a PDF file
 # Name the pdf file of the funnel plot
@@ -153,11 +153,10 @@ funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 
-# Rank Correlation Test
-
+# Rank Correlation Test #
 ranktest(mlmmetaresults)
 
-# Egger' Test
+# Egger' Test #
 
 # Calculate standard error (SE)
 multilevelmeta$sei_corrected = with(

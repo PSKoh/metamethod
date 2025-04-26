@@ -175,7 +175,7 @@ lmer(
        # Estimate of interest is the intercept
        summary(correlation = FALSE)
 
-## Test of Moderators --------------
+### Moderation Analysis --------------
 
 # Categorical variable (i.e., publication)
 rma.mv(

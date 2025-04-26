@@ -311,7 +311,7 @@ The funnel plot visually represents the distribution of effect sizes and their s
 ```{r}
 ### Tests for Publication Bias --------------
 
-## Funnel Plot
+# Funnel Plot #
 
 # Save the funnel plot as a PDF file
 # Name the pdf file of the funnel plot
@@ -402,7 +402,7 @@ This section performs moderation analysis to examine the influence of categorica
 Note that if convergence issues arise, the `control` function can be used to address it. Researchers may also refer more to the `metafor` package documentation for more information on how to address convergence issues.
 
 ```{r}
-## Test of Moderators --------------
+### Moderation Analysis --------------
 
 # Categorical variable (i.e., publication)
 rma.mv(

@@ -6,9 +6,9 @@ output: pdf_document
 
 # Introduction
 
-The following script is designed to perform a multilevel meta-analysis using the `metafor` and `lmerTest` package in R.
+The following script is designed to perform a multilevel meta-analysis using the `metafor` and `lmerTest` package in R. Specifically, this tutorial utilises Pearson's r and Fisher's Z as the effect size measure, to demonstrate how to convert between the two measures.
 
-The analysis is based on data from Lua et al. (2023) and focuses on the relationship between overall relationship between the need for cognition and well-being. The original paper can be found here: https://doi.org/10.1007/s11031-023-10047-w.
+The analysis is based on data from Lua et al. (2023) and focuses on the relationship between overall relationship between the need for cognition and well-being. The original paper can be found here: <https://doi.org/10.1007/s11031-023-10047-w>.
 
 The script includes steps for data preparation, effect size calculation, overall effect size computation, forest plot generation, tests for publication bias, and moderation analysis.
 
@@ -49,6 +49,7 @@ options(scipen = 9999, digits = 4)
 # Original paper: https://doi.org/10.1007/s11031-023-10047-w
 mlmmeta_raw = read.csv("NFCWB.csv")
 ```
+
 # Prepare Data
 
 This section prepares the data for analysis by computing effect sizes for each study and organizing the data frame.
@@ -57,7 +58,9 @@ For more information on the `escalc()` function, refer to ?escalc in R.
 
 ## Explanation of the Code
 
--   The `measure` function specifies the type of effect size to be calculated, in this case, "ZCOR" (Fisher's Z). ZCOR is used to calculate the effect size from the raw correlation coefficients instead of Pearson's r because XXX
+-   The `corr_nfcwb` variable has to be reversed for studies with negative well-being, ensuring that the correlation reflects that the lower the correlation, the lower the well-being. The `ifelse()` function is used to reverse the correlation for studies with negative well-being.
+
+-   The `measure` function specifies the type of effect size to be calculated, in this case, "ZCOR" (Fisher's Z). ZCOR is used to calculate the effect size from the raw correlation coefficients instead of Pearson's r as Fisher's Z normalises the distribution of the effect sizes. Thus, Fisher's Z would be less affected by the sampling distribution skew.
 
 -   The ri variable `corr_nfcwb` is the column containing the raw correlation coefficients.
 
@@ -101,6 +104,7 @@ mlmmeta$publication_type = ifelse(
 # Order the data frame based on publication type and effect sizes (yi)
 mlmmeta = mlmmeta[order(mlmmeta$publication_type, mlmmeta$yi), ]
 ```
+
 # Computing the Overall Effect Size
 
 This section estimates the overall effect size using the `rma.mv()` function from the `metafor` package.
@@ -118,6 +122,7 @@ This section estimates the overall effect size using the `rma.mv()` function fro
 -   The `summary()` function is used to display the results of the meta-analysis, including the overall effect size estimate and its confidence interval.
 
 -   The `psych::fisherz2r()` function is used to convert the effect size estimates from Fisher's Z to Pearson's r.
+
 ```{r}
 ### Compute Overall Effect Size ------------------- 
 
@@ -139,6 +144,7 @@ summary(mlmmetaresults)
 # Convert from Fisher's Z to Pearson's r
 mlmmetaresults$b |> psych::fisherz2r() 
 ```
+
 # Forest Plot
 
 This section generates a forest plot to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
@@ -149,7 +155,7 @@ The plot includes the following features:
 
 -   Arrangement of studies by effect sizes
 
--   Sample size information for both dyslexia and control groups
+-   Sample size information for need for cognition and well-being group
 
 -   Custom headers for the plot
 
@@ -159,7 +165,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 ## Explanation of the Code
 
--   The `cairo_pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file. Specifically, the `cairo_pdf` function is used for font compatibility.
+-   The `cairo_pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file. Specifically, the `cairo_pdf` function is used for font compatibility and in this case, it is for the author's names.
 
 -   The `width` and `height` function adjust the dimensions of the PDF file.
 
@@ -169,7 +175,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `ylim` function sets the y-axis limits for the plot.
 
--   The `ilab` function is used to add sample size information for both dyslexia and control groups into the forest plot.
+-   The `ilab` function is used to add sample size information for need for cognition and well-being group into the forest plot.
 
 -   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
 
@@ -200,6 +206,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 -   The `font` function adjusts the font size.
 
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
+
 ```{r}
 ### Forest Plot --------------
 
@@ -263,6 +270,28 @@ text(x = 2.7, y = 110, "Z [95% CI]", font = 2)
 dev.off()
 ```
 
+# Tests for Publication Bias
+
+This section performs tests for publication bias, including a funnel plot, rank correlation test and Egger's test.
+
+## Funnel Plot
+
+The funnel plot visually represents the distribution of effect sizes and their standard errors, allowing for the identification of potential publication bias. Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+
+### Explanation of the Code
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
+
+-   The `width` and `height` function adjust the dimensions of the PDF file.
+
+-   The `funnel()` function is used to create the funnel plot, and the `tradmetaresults` object contains the results of the meta-analysis.
+
+-   The `legend` function specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
+
+-   The `xlab` function specifies the confidence interval label for the funnel plot, in this case, "Hedge's g"
+
+-   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
+
 ```{r}
 ### Tests for Publication Bias --------------------
 
@@ -278,12 +307,40 @@ funnel(mlmmetaresults, legend = TRUE, xlab = "Fisher's Z")
 dev.off()
 ```
 
+## Rank Correlation Test
+
+The rank correlation test serves as a complementary method to the funnel plot in assessing publication bias by examining the correlation between effect sizes and their standard errors.
+
+### Explanation of the Code
+
+-   The `ranktest()` function computes the Kendall tau value, which indicates the strength and direction of the association between the ranks of effect sizes and their standard errors.
+
+-   The `mlmmetaresults` object contains the results of the meta-analysis, and the `ranktest()` function returns the Kendall tau value and its significance level.
+
 ```{r}
 ### Tests for Publication Bias --------------------
 
 # Rank Correlation Test #
 ranktest(mlmmetaresults)
 ```
+
+## Egger's Test
+
+The Egger's test is a statistical test that quantifies the degree of asymmetry in the funnel plot, providing a more formal assessment of publication bias.
+
+### Explanation of the Code
+
+-   The `lmer()` function is used to fit a linear mixed-effects model, where the effect size weighted by the standard error is predicted by the intercept and the inverse of the corrected standard error. metafor::rma.mv does not have a weights argument, and metafor::regtest does not support rma.mv objects. For three (or more) level meta-analysis, use `lmerTest::lmer` instead.
+
+-   The `I(yi / vi)` expression indicates that the effect size (yi) is divided by the standard error (vi), which is used to weight the effect sizes in the model.
+
+-   The `I(1 / vi)` expression indicates that the inverse of the standard error is included in the model as a predictor.
+
+-   The `1 | sample_id` expression indicates that random intercepts are included for each lab, accounting for the nested structure of the data.
+
+-   The `data` function specifies the dataset to be used for the analysis.
+
+-   The `summary()` function provides the results of the Egger's test, including the slope estimate and its significance.
 
 ```{r}
 ### Tests for Publication Bias --------------------
@@ -298,6 +355,28 @@ lmer(
   # Estimate of interest is the intercept
   summary(correlation = TRUE)
 ```
+
+# Moderation Analysis
+
+This section performs moderation analysis to explore the influence of categorical moderators on the effect sizes.
+
+# Explanation of the Code
+
+-   The `rma.mv()` function is used to compute the multilevel meta-analysis with moderators.
+
+-   The `yi` and `vi` functions specify the effect size estimates and their corresponding sampling variances, respectively.
+
+-   The `random` function specifies the random effects structure, where `~ 1 | sample_id/meta_id` indicates that random intercepts are included for both the lab and individual studies, accounting for the nested structure of the data.
+
+-   The `mods` function specifies the moderator variable, which can be either continuous or categorical.
+
+-   The `subset` function is used to specify the subset of data for each moderator analysis.
+
+-   The `data` function specifies the data frame containing the effect size estimates and variances.
+
+-   The `summary()` function is used to display the results of the meta-analysis, including the overall effect size estimate and its confidence interval.
+
+Note that if convergence issues arise, the `control` function can be used to address it. Researchers may also refer more to the `metafor` package documentation for more information on how to address convergence issues.
 
 ```{r}
 ### Moderation Analysis --------------
@@ -325,4 +404,173 @@ rma.mv(
   control=list(rel.tol=1e-8) 
 )
 ```
+# Forest Plot of Moderators
 
+This section generates a forest plot that includes moderators to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
+
+The plot is saved as a PDF file for easy sharing and presentation.
+
+The forest plot includes the following features:
+
+-   Arrangement of studies by effect sizes and types of moderators
+
+-   Sample size information for need for cognition and well-being group
+
+-   Custom headers for the plot
+
+-   Custom labels for the studies
+
+-   Summary effect sizes for each moderator
+
+# Explanation of the Code
+
+-   The `cairo_pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file. Specifically, the `cairo_pdf` function is used for font compatibility and in this case, it is for the author's names.
+
+-   The `width` and `height` function adjust the dimensions of the PDF file.
+
+-   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
+
+-   The `rows` function specifies the arrangement of studies by publication type, and in ascending order of effect sizes per publication type.
+
+-   The `ylim` function sets the y-axis limits for the plot.
+
+-   The `ilab` function is used to add sample size information for both presence of smartphones and absence of smartphones groups into the forest plot.
+
+-   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
+
+-   The `ilab.xpos` function specifies the horizontal arrangement of the columns, while the `xlim` function sets the x-axis limits for the plot.
+
+-   The `slab` function is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns.
+
+-   The `paste()` function creates the label, and the `sep` function specifies the separator between the columns.
+
+-   The `alim` function sets the confidence interval limits, and the `steps` function determines the number of intervals in the x-axis.
+
+-   The `header` function is set to FALSE to allow for manual specification of headers.
+
+-   The `xlab` function specifies the label for the confidence interval, in this case, "Hedge's g".
+
+-   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
+
+-   The `x` and `y` functions in the `text()` function adjust the position of the headers.
+
+-   The `x` function specifies the horizontal arrangement of the columns and the `y` function specifies the vertical arrangement of the columns.
+
+-   The `font` function adjusts the font size.
+
+-   The `pos` function specifies the position of the text relative to the specified coordinates
+
+-   The `rma.mv()` function is used to perform moderation analysis for each publication type, with the `subset` function specifying the subset of data for each category.
+
+-   The `rest.j`, `res.t`, and `res.c` variables store the results of the moderation analysis for journal articles, thesis/dissertations, and conference papers, respectively.
+
+-   The `subset` function is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
+
+-   The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` function specifying the position of the summary in the plot.
+
+-   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
+```{r}
+### Forest Plot of Moderators --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+# cairo_pdf function used for font compatibility
+# Adjust the width and height of the pdf file
+cairo_pdf(file = "NFCWBforestplotwithmod.pdf", width = 13, height = 35) 
+
+# Start creating the forest plot itself
+# Specify dataset
+forest(
+  mlmmetaresults,
+  # Manually arrange effect sizes by publication type
+  # - Unpublished: Rows 108 to 51
+  # - Published: Rows 50 to 48
+  # The arrangement must consider spacing and must end at row 2
+  rows = c(112:40, 36:2),
+  
+  # Add y-axis limits
+  ylim = c(-3, 116),
+  
+  # Add sample size information for presence and absence of smartphones group
+  # Values indicate the x-axis position of the sample size columns  
+  ilab = sample_size,
+  ilab.xpos = -4.2, 
+  
+  # Label studies on the forest plot
+  slab = paste(author, year, sep = ", "),
+  
+  # Add x-axis limits
+  xlim = c(-7, 4),
+  
+  # Add confidence interval limits
+  # Adjust intervals based on the number of steps
+  alim = c(-1.5, 1.5),
+  steps = 7,
+  
+  # Change size of effect size polygons
+  efac = 0.3,
+  
+  # Remove headers (if any), for manual input
+  header = FALSE,
+  
+  # Add label for confidence interval, in this case, "Fisher's Z"
+  xlab = "Fisher's Z"
+)
+
+# For the following lines of code,
+# Use text function to manually include text within the plot
+
+# Add text labels for moderator (type of publication)
+# x values to indicate the horizontal arrangement of the text
+# Labels for different publication types (Moderator Analysis)
+# y values indicate the vertical arrangement of the text
+
+# - "Unpublished" (Unpublished data, Panel Data, Thesis/Dissertations) at
+# - "Published" (Journal Articles, Conference) at 
+# `pos = 4` ensures left alignment of the text
+text(
+  x = -7,
+  y = c(37, 113),
+  pos = 4,
+  c("Unpublished", "Published"),
+  font = 2
+)
+
+# Moderation analysis
+res.p = rma.mv(
+  yi,
+  vi,
+  random = ~ 1 | sample_id/meta_id,
+  subset = (publication_type == "Published"),
+  data = mlmmeta,
+  # To address convergence issues (if it exists)
+  control=list(rel.tol=1e-8) 
+)
+res.u = rma.mv(
+  yi,
+  vi,
+  random = ~ 1 | sample_id/meta_id,
+  subset = (publication_type == "Unpublished"),
+  data = mlmmeta,
+  # To address convergence issues (if it exists)
+  control=list(rel.tol=1e-8) 
+)
+
+# Add summary effect sizes for each of the moderators
+addpoly(res.u, row = 1) # summary effect for "Unpublished" group
+addpoly(res.p, row = 39) # summary effect for "Published" group
+
+# Add"Author(s) Year" header
+text(x = -6.4, y = 115,"Author(s) Year", font = 2) 
+
+# Add “Sample Size” header
+text(x = -4.0, y = 115,"Sample Size", font = 2)
+
+# Add "r [95% CI]" header
+text(x = 3.6, y = 115, "Z [95% CI]", font = 2) 
+
+# Close the forest plot and finalise it as a saved file
+dev.off()
+```
+
+# END OF CODE

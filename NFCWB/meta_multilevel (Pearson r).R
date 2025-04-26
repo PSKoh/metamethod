@@ -10,12 +10,10 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # Install packages (if not already installed)
 install.packages("metafor")
 install.packages("lmerTest")
-install.packages("psych")
 
 # Load packages
 library(metafor)  # version 4.8-0
 library(lmerTest) # version 3.1-3
-library(psych)    # version 2.5.3
 
 # Display settings (to disable scientific notation)
 options(scipen = 9999, digits = 4)
@@ -73,7 +71,7 @@ mlmmetaresults = rma.mv(
 summary(mlmmetaresults)
 
 # Convert from Fisher's Z to Pearson's r
-mlmmetaresults$b %>% psych::fisherz2r() 
+mlmmetaresults$b |> psych::fisherz2r() 
 
 ### Forest Plot --------------
 
@@ -143,7 +141,7 @@ dev.off()
 # Save the funnel plot as a PDF file
 # Name the pdf file of the funnel plot
 # Adjust the width and height of the pdf file
-pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
+pdf(file = "NFCWBfunnelplot.pdf", width = 8, height = 5)
 # funnel function to create the funnel plot, specify the data to create the plot
 funnel(mlmmetaresults, legend = TRUE, xlab = "Fisher's Z")
 # Close the funnel plot and finalise it as a saved file

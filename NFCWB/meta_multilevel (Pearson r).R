@@ -27,7 +27,7 @@ mlmmeta_raw = read.csv("NFCWB.csv")
 ### Prepare Data --------------
 
 # Clean data file (reverse correlation for negative well-being)
-mlmmeta_new$corr_nfcwb = with(mlmmeta_raw, ifelse(wellbeing_category == "Negative well-being", -corr_nfcwb, corr_nfcwb))
+mlmmeta_raw$corr_nfcwb = with(mlmmeta_raw, ifelse(wellbeing_category == "Negative well-being", -corr_nfcwb, corr_nfcwb))
 
 # Compute effect sizes for each study
 mlmmeta = escalc(
@@ -41,10 +41,12 @@ mlmmeta = escalc(
   ni = sample_size,
   
   # Specify data.frame that the information will be extracted from
-  data = mlmmeta_new
+  data = mlmmeta_raw
   )
 
-# Convert Publication to a factor with specified levels
+# Categorise publication type into "published" and "unpublished"
+# Published: Journal articles
+# Unpublished: Conference, Panel Data, Thesis/dissertation, Unpublished data
 mlmmeta$publication_type = ifelse(
   mlmmeta$publication_type == "Journal article",
   "Published",
@@ -53,7 +55,8 @@ mlmmeta$publication_type = ifelse(
 # Order the data frame based on publication
 mlmmeta = mlmmeta[order(mlmmeta$publication_type), ]
 
-### Compute Overall Effect Size -------------------  
+### Compute Overall Effect Size ------------------- 
+
 # Effect size estimates
 mlmmetaresults = rma.mv(
   # Effect size estimates
@@ -135,7 +138,7 @@ dev.off()
 
 ### Tests for Publication Bias --------------------
 
-# Funnel Plot
+# Funnel Plot #
 
 # Save the funnel plot as a PDF file
 # Name the pdf file of the funnel plot
@@ -146,12 +149,10 @@ funnel(mlmmetaresults, legend = TRUE, xlab = "Fisher's Z")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 
-# Rank Correlation Test
-
+# Rank Correlation Test #
 ranktest(mlmmetaresults)
 
-# Eggers' Test
-
+# Eggers' Test # 
 lmer(
   # g weighted by SE is predicted by intercept and inverse SE
   # with random intercept by sample
@@ -163,15 +164,13 @@ lmer(
 
 ## Test of Moderators --------------
 
-# Panel data was not included as there was only one study 
-
 # Categorical Variable (i.e., publication type)
 rma.mv(
   yi = yi,
   V = vi,
   random = ~ 1 | sample_id/meta_id,
-  # Specify categorical moderator (i.e., Journal Article)
-  subset = (publication_type == "Journal article"),
+  # Specify categorical moderator (i.e., Published articles)
+  subset = (publication_type == "Published"),
   data = mlmmeta,
   # To address convergence issues (if it exists)
   control=list(rel.tol=1e-8) 
@@ -181,50 +180,12 @@ rma.mv(
   yi = yi,
   V = vi,
   random = ~ 1 | sample_id/meta_id,
-  # Specify categorical moderator (i.e., Conference)
-  subset = (publication_type == "Conference"),
+  # Specify categorical moderator (i.e., Unpublished articles)
+  subset = (publication_type == "Unpublished"),
   data = mlmmeta,
   # To address convergence issues (if it exists)
   control=list(rel.tol=1e-8) 
 )
-
-rma.mv(
-  yi = yi,
-  V = vi,
-  random = ~ 1 | sample_id/meta_id,
-  # Specify categorical moderator (i.e., Thesis/dissertation)
-  subset = (publication_type == "Thesis/dissertation"),
-  data = mlmmeta,
-  # To address convergence issues (if it exists)
-  control=list(rel.tol=1e-8) 
-)
-
-rma.mv(
-  yi = yi,
-  V = vi,
-  random = ~ 1 | sample_id/meta_id,
-  # Specify categorical moderator (i.e., Unpublished data)
-  subset = (publication_type == "Unpublished data"),
-  data = mlmmeta,
-  # To address convergence issues (if it exists)
-  control=list(rel.tol=1e-8) 
-)
-
-# Continuous variable (i.e., female proportion)
-rma.mv(
-  yi = yi,
-  V = vi,
-  random = ~ 1 | sample_id/meta_id,
-  # Specify continuous moderator (i.e., female proportion)
-  mods = ~female_proportion,
-  method = "REML",
-  data = mlmmeta
-) |>
-  summary()
-
-### Forest Plot of Moderators --------------
-
-# Save the forest plot as a PDF file
 
 ### Forest Plot of Moderators --------------
 
@@ -297,7 +258,7 @@ res.p = rma.mv(
   yi,
   vi,
   random = ~ 1 | sample_id/meta_id,
-  subset = publication_type %in% c("Journal article", "Conference"),
+  subset = (publication_type == "Published"),
   data = mlmmeta,
   # To address convergence issues (if it exists)
   control=list(rel.tol=1e-8) 
@@ -306,7 +267,7 @@ res.u = rma.mv(
   yi,
   vi,
   random = ~ 1 | sample_id/meta_id,
-  subset = publication_type %in% c("Thesis/dissertation","Panel Data","Unpublished data"),
+  subset = (publication_type == "Unpublished"),
   data = mlmmeta,
   # To address convergence issues (if it exists)
   control=list(rel.tol=1e-8) 

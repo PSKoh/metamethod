@@ -172,7 +172,7 @@ The plot includes the following features:
 
 -   Arrangement of studies by effect sizes
 
--   Sample size information for both dyslexia and control groups
+-   Sample size information for both presence of smartphones and absence of smartphones groups
 
 -   Custom headers for the plot
 
@@ -192,7 +192,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `ylim` function sets the y-axis limits for the plot.
 
--   The `ilab` function is used to add sample size information for both dyslexia and control groups into the forest plot.
+-   The `ilab` function is used to add sample size information for presence of smartphones and absence of smartphones groups into the forest plot.
 
 -   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
 
@@ -207,6 +207,8 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 -   The `efac` function changes the size of effect size polygons.
 
 -   The `header` function is set to FALSE to allow for manual specification of headers.
+
+-   The `xlab` function specifies the confidence interval label for the funnel plot, in this case, "Hedge's g"
 
 -   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
 
@@ -240,7 +242,7 @@ forest(
        # Add y-axis limits
        ylim = c(-3, 140),
 
-       # Add sample size information for presence and absence of smartphones group
+       # Add sample size information for presence of smartphones and absence of smartphones groups
        # -3 for presence of smartphones (n_p)
        # -2.55 for absence of smartphones (n_a)
        ilab = cbind(n_p, n_a),
@@ -451,7 +453,7 @@ rma.mv(
        summary()
 ```
 
-# Forest Plot with Moderators
+# Forest Plot of Moderators
 
 This section generates a forest plot that includes moderators to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
 
@@ -461,7 +463,7 @@ The forest plot includes the following features:
 
 -   Arrangement of studies by effect sizes and types of moderators
 
--   Sample size information for both dyslexia and control groups
+-   Sample size information for both presence of smartphones and absence of smartphones groups
 
 -   Custom headers for the plot
 
@@ -481,7 +483,7 @@ The forest plot includes the following features:
 
 -   The `ylim` function sets the y-axis limits for the plot.
 
--   The `ilab` function is used to add sample size information for both dyslexia and control groups into the forest plot.
+-   The `ilab` function is used to add sample size information for both presence of smartphones and absence of smartphones groups into the forest plot.
 
 -   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
 
@@ -536,7 +538,7 @@ forest(
        # Add y-axis limits
        ylim = c(-3, 147),
 
-       # Add sample size information for presence and absence of smartphones group
+       # Add sample size information for presence of smartphones and absence of smartphones groups
        # -4.2 for presence of smartphones (n_p)
        # -3.6 for absence of smartphones (n_a)
        ilab = cbind(n_p, n_a),

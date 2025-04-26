@@ -50,8 +50,8 @@ mlmmeta$publication_type = ifelse(
   "Published",
   "Unpublished")
 
-# Order the data frame based on publication
-mlmmeta = mlmmeta[order(mlmmeta$publication_type), ]
+# Order the data frame based on publication and effect sizes (yi)
+mlmmeta = mlmmeta[order(mlmmeta$publication_type, mlmmeta$yi), ]
 
 ### Compute Overall Effect Size ------------------- 
 

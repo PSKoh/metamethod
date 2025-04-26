@@ -421,7 +421,7 @@ rma(
 )
 ```
 
-# Forest Plot with Moderators
+# Forest Plot of Moderators
 
 This section generates a forest plot that includes moderators to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
 

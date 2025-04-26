@@ -8,7 +8,7 @@ output: pdf_document
 
 The following script is designed to perform a multilevel meta-analysis using the `metafor` and `lmerTest` package in R.
 
-The analysis is based on data from Hartanto et al. (2024) and focuses on the relationship between smartphone presence and cognitive functions. The original paper can be found here: https://doi.org/10.1037/tmb0000123.
+The analysis is based on data from Hartanto et al. (2024) and focuses on the relationship between smartphone presence and cognitive functions. The original paper can be found here: <https://doi.org/10.1037/tmb0000123>.
 
 The script includes steps for data preparation, effect size calculation, overall effect size computation, forest plot generation, tests for publication bias, and moderation analysis.
 
@@ -35,13 +35,13 @@ If the `metafor` and `lmerTest` package is not already installed, use the `insta
 ```{r}
 ### Set Up --------------
 
+# R version 4.5.0
+
 # Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# R version 4.5.0
-
 # Load packages
-library(metafor) # version 4.8-0
+library(metafor)  # version 4.8-0
 library(lmerTest) # version 3.1-3
 
 # Display settings (to disable scientific notation)
@@ -66,11 +66,11 @@ For more information on the `escalc()` function, refer to ?escalc in R.
 
 -   The `measure` function specifies the type of effect size to be calculated, in this case, "SMD" (Standardized Mean Difference).
 
--   The `n1i` and `n2i` functions specify the columns for the sample sizes of each group
+-   The `n1i` and `n2i` function specify the columns for the sample sizes of each group
 
--   The `m1i` and `m2i` functions specify the columns for the means of each group.
+-   The `m1i` and `m2i` function specify the columns for the means of each group.
 
--   The `sd1i` and `sd2i` functions specify the columns for the standard deviations of each group.
+-   The `sd1i` and `sd2i` function specify the columns for the standard deviations of each group.
 
 -   Afterwards, the `escalc()` function computes the effect sizes (yi) and their corresponding sampling variances (vi) for each study.
 
@@ -80,7 +80,7 @@ For more information on the `escalc()` function, refer to ?escalc in R.
 
 ```{r}
 ### Prepare Data --------------
-
+# Compute effect sizes for each study
 multilevelmeta = escalc(
        # Type of effect size measure
        measure = "SMD",
@@ -106,9 +106,10 @@ multilevelmeta$publication = factor(
        multilevelmeta$publication,
        levels = c("Journal article", "Thesis/dissertation", "Conference")
 )
-# Order the data frame based on publication
-multilevelmeta = multilevelmeta[order(multilevelmeta$publication), ]
+# Order the data frame based on publication and effect sizes (yi)
+multilevelmeta = multilevelmeta[order(multilevelmeta$publication, multilevelmeta$yi), ]
 ```
+
 # Computing the Overall Effect Size
 
 This section estimates the overall effect size using the `rma.mv()` function from the `metafor` package.
@@ -130,6 +131,7 @@ The multilevel meta-analysis approach is more appropriate for this type of data,
 -   The `data` function specifies the data frame containing the effect size estimates and variances.
 
 -   The `summary()` function is used to display the results of the meta-analysis, including the overall effect size estimate and its confidence interval.
+
 ```{r}
 ### Compute Overall Effect size --------------
 
@@ -159,6 +161,7 @@ mlmmetaresults = rma.mv(
 # summary function used to provide detailed results of the meta-analysis
 summary(mlmmetaresults)
 ```
+
 # Forest Plot
 
 This section generates a forest plot to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
@@ -286,11 +289,12 @@ text(x = 2.7, y = 139, "g [95% CI]", font = 2)
 # Close the forest plot and finalise it as a saved file
 dev.off()
 ```
+
 # Tests for Publication Bias
 
 This section performs tests for publication bias, including a funnel plot, rank correlation test and Egger's test.
 
-## Funnel Plot 
+## Funnel Plot
 
 The funnel plot visually represents the distribution of effect sizes and their standard errors, allowing for the identification of potential publication bias. Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
 
@@ -322,6 +326,7 @@ funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 ```
+
 ## Rank Correlation Test
 
 The rank correlation test serves as a complementary method to the funnel plot in assessing publication bias by examining the correlation between effect sizes and their standard errors.
@@ -330,7 +335,7 @@ The rank correlation test serves as a complementary method to the funnel plot in
 
 -   The `ranktest()` function computes the Kendall tau value, which indicates the strength and direction of the association between the ranks of effect sizes and their standard errors.
 
--   The `mlmmetaresults` object contains the results of the meta-analysis, and the `ranktest()` function uses this object to perform the rank correlation test.
+-   The `mlmmetaresults` object contains the results of the meta-analysis, and the `ranktest()` function returns the Kendall tau value and its significance level.
 
 ```{r}
 ### Tests for Publication Bias --------------
@@ -338,17 +343,16 @@ The rank correlation test serves as a complementary method to the funnel plot in
 # Rank Correlation Test #
 ranktest(mlmmetaresults)
 ```
+
 ## Egger's Test
+
 The Egger's test is a statistical test that quantifies the degree of asymmetry in the funnel plot, providing a more formal assessment of publication bias.
 
 ### Explanation of the Code
 
--   The `multilevelmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula \(\sqrt{\frac{(n_{p} + n_{a})}{(n_{p} \cdot n_{a})}}\).
-    Using Egger' test (unadjusted) on SMDs results in inflated type 1 error as SMD and SE are not independent. Hence, use corrected formula for SE.
+-   The `multilevelmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula $\sqrt{\frac{(n_{p} + n_{a})}{(n_{p} \cdot n_{a})}}$. Using Egger' test (unadjusted) on SMDs results in inflated type 1 error as SMD and SE are not independent. Hence, use corrected formula for SE.
 
--   The `lmer()` function is used to fit a linear mixed-effects model, where the effect size weighted by the corrected standard error is predicted by the intercept and the inverse of the corrected standard error.
-    metafor::rma.mv does not have a weights argument, and metafor::regtest does not support rma.mv objects.
-    For three (or more) level meta-analysis, use `lmerTest::lmer` instead.
+-   The `lmer()` function is used to fit a linear mixed-effects model, where the effect size weighted by the corrected standard error is predicted by the intercept and the inverse of the corrected standard error. metafor::rma.mv does not have a weights argument, and metafor::regtest does not support rma.mv objects. For three (or more) level meta-analysis, use `lmerTest::lmer` instead.
 
 -   The `I(yi / sei_corrected)` expression indicates that the effect size (yi) is divided by the corrected standard error (sei_corrected), which is used to weight the effect sizes in the model.
 
@@ -359,6 +363,7 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 -   The `data` function specifies the dataset to be used for the analysis.
 
 -   The `summary()` function provides the results of the Egger's test, including the slope estimate and its significance.
+
 ```{r}
 ### Tests for Publication Bias --------------
 
@@ -377,9 +382,10 @@ lmer(
        # Estimate of interest is the intercept
        summary(correlation = FALSE)
 ```
+
 # Moderation Analysis
 
-This section performs moderation analysis to examine the influence of categorical and continuous moderators on the effect sizes.
+This section performs moderation analysis to explore the influence of categorical and continuous moderators on the effect sizes.
 
 # Explanation of the Code
 
@@ -444,9 +450,10 @@ rma.mv(
 ) |>
        summary()
 ```
+
 # Forest Plot with Moderators
 
-This section generates a forest plot that includes moderators to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis. 
+This section generates a forest plot that includes moderators to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
 
 The plot is saved as a PDF file for easy sharing and presentation.
 
@@ -464,13 +471,13 @@ The forest plot includes the following features:
 
 # Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file. 
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
 
 -   The `width` and `height` function adjust the dimensions of the PDF file.
 
 -   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
--   The `rows` function specifies the arrangement of studies, with the order of rows adjusted to group studies by publication type.
+-   The `rows` function specifies the arrangement of studies by publication type, and in ascending order of effect sizes per publication type.
 
 -   The `ylim` function sets the y-axis limits for the plot.
 
@@ -500,7 +507,7 @@ The forest plot includes the following features:
 
 -   The `pos` function specifies the position of the text relative to the specified coordinates
 
--   The `rma.mv()` function is used to compute the multilevel meta-analysis with moderators.
+-   The `rma.mv()` function is used to perform moderation analysis for each publication type, with the `subset` function specifying the subset of data for each category.
 
 -   The `rest.j`, `res.t`, and `res.c` variables store the results of the moderation analysis for journal articles, thesis/dissertations, and conference papers, respectively.
 

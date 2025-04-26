@@ -251,7 +251,7 @@ forest(
 # Add "Author(s) Year" header
 text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
 
-# Add “Sample Size” header
+# Add "Sample Size" header
 text(x = -4.0, y = 15, "Sample Size", font = 2) 
 
 # Add specific sample size column headers for dyslexia and control groups
@@ -312,7 +312,7 @@ The rank correlation test serves as a complementary method to the funnel plot in
 
 -   The `ranktest()` function computes the Kendall tau value, which indicates the strength and direction of the association between the ranks of effect sizes and their standard errors.
 
--   The `tradmetaresults` object contains the results of the meta-analysis, and the function returns the Kendall tau value and its significance level.
+-   The `tradmetaresults` object contains the results of the meta-analysis, and the `ranktest()` function returns the Kendall tau value and its significance level.
 
 ```{r}
 ### Tests for Publication Bias --------------
@@ -361,7 +361,7 @@ rma(
   # Specify dataset
   data = tradmeta
 ) |>
-  # Estimate of interest is the slope
+  # Estimate of interest is the intercept
   summary()
 ```
 
@@ -447,7 +447,7 @@ The forest plot includes the following features:
 
 -   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
--   The `rows` function specifies the arrangement of studies by creativity measure type, with the rows arranged in a specific order.
+-   The `rows` function specifies the arrangement of studies by creativity measure type, and in ascending order of effect sizes per creativity measure type.
 
 -   The `ylim` function sets the y-axis limits for the plot.
 
@@ -477,7 +477,7 @@ The forest plot includes the following features:
 
 -   The `pos` function specifies the position of the text relative to the specified coordinates.
 
--   The rma() function is used to perform moderation analysis for each type of creativity measure, with the `subset` function specifying the subset of data for each category.
+-   The `rma()` function is used to perform moderation analysis for each type of creativity measure, with the `subset` function specifying the subset of data for each category.
 
 -   The `res.v`, `res.n`, and `res.m` variables store the results of the moderation analysis for verbal, non-verbal, and mixed creativity measures, respectively.
 

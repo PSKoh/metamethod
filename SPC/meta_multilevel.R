@@ -52,8 +52,8 @@ multilevelmeta$publication = factor(
        multilevelmeta$publication,
        levels = c("Journal article", "Thesis/dissertation", "Conference")
 )
-# Order the data frame based on publication
-multilevelmeta = multilevelmeta[order(multilevelmeta$publication), ]
+# Order the data frame based on publication and effect sizes (yi)
+multilevelmeta = multilevelmeta[order(multilevelmeta$publication, multilevelmeta$yi), ]
 
 ### Compute Overall Effect size --------------
 

@@ -169,7 +169,7 @@ rma(
   # Specify dataset
   data = tradmeta
 ) |>
-  # Estimate of interest is the slope
+  # Estimate of interest is the intercept
   summary()
 
 ### Moderation Analysis --------------

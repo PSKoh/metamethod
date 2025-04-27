@@ -244,7 +244,7 @@ forest(
        # Add y-axis limits
        ylim = c(-3, 140),
 
-       # Add sample size information for presence of smartphones and absence of smartphones groups
+       # Add sample size information for presence and absence of smartphones groups
        # -3 for presence of smartphones (n_p)
        # -2.55 for absence of smartphones (n_a)
        ilab = cbind(n_p, n_a),
@@ -532,7 +532,7 @@ forest(
        # Add y-axis limits
        ylim = c(-3, 147),
 
-       # Add sample size information for presence of smartphones and absence of smartphones groups
+       # Add sample size information for presence and absence of smartphones groups
        # -4.2 for presence of smartphones (n_p)
        # -3.6 for absence of smartphones (n_a)
        ilab = cbind(n_p, n_a),

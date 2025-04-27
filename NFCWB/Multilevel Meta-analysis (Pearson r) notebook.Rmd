@@ -28,7 +28,7 @@ If the `metafor` and `lmerTest` package is not already installed, use the `insta
 
 -   The `options()` function is used to adjust the display settings, specifically to disable scientific notation and set the number of digits displayed.
 
--   The `read.csv()` function reads in the data from a CSV file named "NFCWB.csv", which contains the data drawn from Lua et al.(2024).
+-   The `read.csv()` function reads in the data from a CSV file named "NFCWB.csv", which contains the data drawn from Lua et al.(2023).
 
 ```{r}
 ### Set Up --------------

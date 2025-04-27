@@ -153,9 +153,6 @@ funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 
-# Rank Correlation Test #
-ranktest(mlmmetaresults)
-
 # Egger' Test #
 
 # Calculate standard error (SE)

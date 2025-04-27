@@ -274,6 +274,10 @@ dev.off()
 
 This section performs tests for publication bias, including a funnel plot, rank correlation test and Egger's test.
 
+For multilevel meta-analysis, we do not recommend conducting a rank correlation test as it is prone to Type 1 error. 
+
+Researchers may refer to this article by Fernández-Castilla et al. (2019) on a detailed discussion of the limitations of rank correlation tests in multilevel meta-analysis, as well as an overview on other publication bias tests: https://doi.org/10.1080/00220973.2019.1582470: 
+
 ## Funnel Plot
 
 The funnel plot visually represents the distribution of effect sizes and their standard errors, allowing for the identification of potential publication bias. Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
@@ -305,23 +309,6 @@ pdf(file = "NFCWBfunnelplot.pdf", width = 8, height = 5)
 funnel(mlmmetaresults, legend = TRUE, xlab = "Fisher's Z")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
-```
-
-## Rank Correlation Test
-
-The rank correlation test serves as a complementary method to the funnel plot in assessing publication bias by examining the correlation between effect sizes and their standard errors.
-
-### Explanation of the Code
-
--   The `ranktest()` function computes the Kendall tau value, which indicates the strength and direction of the association between the ranks of effect sizes and their standard errors.
-
--   The `mlmmetaresults` object contains the results of the meta-analysis, and the `ranktest()` function returns the Kendall tau value and its significance level.
-
-```{r}
-### Tests for Publication Bias --------------------
-
-# Rank Correlation Test #
-ranktest(mlmmetaresults)
 ```
 
 ## Egger's Test
@@ -360,7 +347,7 @@ lmer(
 
 This section performs moderation analysis to explore the influence of categorical moderators on the effect sizes.
 
-# Explanation of the Code
+## Explanation of the Code
 
 -   The `rma.mv()` function is used to compute the multilevel meta-analysis with moderators.
 
@@ -422,7 +409,7 @@ The forest plot includes the following features:
 
 -   Summary effect sizes for each moderator
 
-# Explanation of the Code
+## Explanation of the Code
 
 -   The `cairo_pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file. Specifically, the `cairo_pdf` function is used for font compatibility and in this case, it is for the author's names.
 

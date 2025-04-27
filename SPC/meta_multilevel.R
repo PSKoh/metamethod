@@ -153,7 +153,7 @@ funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 
-# Egger' Test #
+# Egger's Test #
 
 # Calculate standard error (SE)
 multilevelmeta$sei_corrected = with(

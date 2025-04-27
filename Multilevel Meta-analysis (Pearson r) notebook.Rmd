@@ -274,9 +274,9 @@ dev.off()
 
 This section performs tests for publication bias, including a funnel plot, rank correlation test and Egger's test.
 
-For multilevel meta-analysis, we do not recommend conducting a rank correlation test as it is prone to Type 1 error. 
+For multilevel meta-analysis, we do not recommend conducting a rank correlation test as it is prone to Type 1 error.
 
-Researchers may refer to this article by Fernández-Castilla et al. (2019) on a detailed discussion of the limitations of rank correlation tests in multilevel meta-analysis, as well as an overview on other publication bias tests: https://doi.org/10.1080/00220973.2019.1582470: 
+Researchers may refer to this article by Fernández-Castilla et al. (2019) on a detailed discussion of the limitations of rank correlation tests in multilevel meta-analysis, as well as an overview on other publication bias tests: <https://doi.org/10.1080/00220973.2019.1582470>:
 
 ## Funnel Plot
 
@@ -355,8 +355,6 @@ This section performs moderation analysis to explore the influence of categorica
 
 -   The `random` function specifies the random effects structure, where `~ 1 | sample_id/meta_id` indicates that random intercepts are included for both the lab and individual studies, accounting for the nested structure of the data.
 
--   The `mods` function specifies the moderator variable, which can be either continuous or categorical.
-
 -   The `subset` function is used to specify the subset of data for each moderator analysis.
 
 -   The `data` function specifies the data frame containing the effect size estimates and variances.
@@ -391,6 +389,7 @@ rma.mv(
   control=list(rel.tol=1e-8) 
 )
 ```
+
 # Forest Plot of Moderators
 
 This section generates a forest plot that includes moderators to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
@@ -456,6 +455,7 @@ The forest plot includes the following features:
 -   The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` function specifying the position of the summary in the plot.
 
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
+
 ```{r}
 ### Forest Plot of Moderators --------------
 

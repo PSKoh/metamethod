@@ -70,7 +70,7 @@ mlmmetaresults = rma.mv(
 # summary function used to provide detailed results of the meta-analysis
 summary(mlmmetaresults)
 
-# Convert from Fisher's Z to Pearson's r
+# Convert from Fisher's Z to Pearson r
 mlmmetaresults$b |> psych::fisherz2r() 
 
 ### Forest Plot --------------
@@ -92,7 +92,7 @@ forest(
   # Add y-axis limits
   ylim = c(-3, 111),
   
-  # Add sample size information for presence and absence of smartphones group
+  # Add sample size information for need for cognition and well-being group
   # Values indicate the x-axis position of the sample size columns  
   ilab = sample_size,
   ilab.xpos = -3,
@@ -206,7 +206,7 @@ forest(
   # Add y-axis limits
   ylim = c(-3, 116),
   
-  # Add sample size information for presence and absence of smartphones group
+  # Add sample size information for need for cognition and well-being group
   # Values indicate the x-axis position of the sample size columns  
   ilab = sample_size,
   ilab.xpos = -4.2, 
@@ -237,11 +237,10 @@ forest(
 
 # Add text labels for moderator (type of publication)
 # x values to indicate the horizontal arrangement of the text
-# Labels for different publication types (Moderator Analysis)
+# Labels for different creativity task types (Moderator Analysis)
 # y values indicate the vertical arrangement of the text
-
-# - "Unpublished" (Unpublished data, Panel Data, Thesis/Dissertations) at
-# - "Published" (Journal Articles, Conference) at 
+# - "Unpublished" (Unpublished data, Panel Data, Thesis/Dissertations) at y = 37
+# - "Published" (Journal Articles, Conference) at y = 113
 # `pos = 4` ensures left alignment of the text
 text(
   x = -7,

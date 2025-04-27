@@ -186,7 +186,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `width` and `height` function adjust the dimensions of the PDF file.
 
--   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
+-   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
 -   The `order` function specifies the arrangement of studies, with "obs" indicating that the studies should be arranged by effect sizes. To organise by column, replace "obs" with the specific column in the data frame.
 
@@ -194,11 +194,13 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `ilab` function is used to add sample size information for presence of smartphones and absence of smartphones groups into the forest plot.
 
--   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
+-   The `cbind()` function combines the columns indicating the sample size of the groups (n_p and n_a).
 
 -   The `ilab.xpos` function specifies the horizontal arrangement of the columns.
 
--   The `slab` function is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns. The `paste()` function creates the label, and the `sep` function specifies the separator between the columns.
+-   The `slab` function is used to label each effect size with its respective study.
+
+-   The `paste()` function creates the label by combining the "author" and "year_published" columns, and the `sep` function specifies the separator between the columns.
 
 -   The `xlim` function sets the x-axis limits for the plot.
 
@@ -310,7 +312,7 @@ The funnel plot visually represents the distribution of effect sizes and their s
 
 -   The `width` and `height` function adjust the dimensions of the PDF file.
 
--   The `funnel()` function is used to create the funnel plot, and the `tradmetaresults` object contains the results of the meta-analysis.
+-   The `funnel()` function is used to create the funnel plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
 -   The `legend` function specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
 
@@ -325,7 +327,6 @@ The funnel plot visually represents the distribution of effect sizes and their s
 
 # Save the funnel plot as a PDF file
 # Name the pdf file of the funnel plot
-# Adjust the width and height of the pdf file
 pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
 # funnel function to create the funnel plot, specify the data to create the plot
 funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
@@ -356,7 +357,7 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 ```{r}
 ### Tests for Publication Bias --------------
 
-# Egger' Test #
+# Egger's Test #
 
 # Calculate standard error (SE)
 multilevelmeta$sei_corrected = with(
@@ -376,21 +377,25 @@ lmer(
 
 This section performs moderation analysis to explore the influence of categorical and continuous moderators on the effect sizes.
 
+For continuous moderators, use meta-regression. Specficially, the `mods`function specifies the moderator variable (for continuous moderators).
+
+For categorical moderators, use subgroup analysis. Specifically, the `subset` function is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
+
 ## Explanation of the Code
 
--   The `rma.mv()` function is used to compute the multilevel meta-analysis with moderators.
+-   The `rma.mv()` function is used to perform the moderation analysis,
 
 -   The `yi` and `vi` functions specify the effect size estimates and their corresponding sampling variances, respectively.
 
 -   The `random` function specifies the random effects structure, where `~ 1 | lab_id / ID` indicates that random intercepts are included for both the lab and individual studies, accounting for the nested structure of the data.
 
--   The `mods` function specifies the moderator variable, which can be either continuous or categorical.
+-   The `mods` function specifies the moderator variable (for continuous moderators)
+
+-   The `subset` function is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
 -   The `method` function specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
 
--   The `subset` function is used to specify the subset of data for each moderator analysis.
-
--   The `data` function specifies the data frame containing the effect size estimates and variances.
+-   The `data` function specifies the dataset to be used for the analysis.
 
 -   The `summary()` function is used to display the results of the meta-analysis, including the overall effect size estimate and its confidence interval.
 
@@ -433,7 +438,7 @@ rma.mv(
        V = vi,
        random = ~ 1 | lab_id / ID,
        # Specify continuous moderator (i.e., female proportion)
-       mods = ~female_proportion,
+       mods = ~ female_proportion,
        method = "REML",
        data = multilevelmeta
 ) |>
@@ -472,13 +477,15 @@ The forest plot includes the following features:
 
 -   The `ilab` function is used to add sample size information for both presence of smartphones and absence of smartphones groups into the forest plot.
 
--   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
+-   The `cbind()` function combines the columns indicating the sample size of the groups (n_p and n_a).
 
 -   The `ilab.xpos` function specifies the horizontal arrangement of the columns, while the `xlim` function sets the x-axis limits for the plot.
 
--   The `slab` function is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns.
+-   The `slab` function is used to label each effect size with its respective study.
 
--   The `paste()` function creates the label, and the `sep` function specifies the separator between the columns.
+-   The `paste()` function creates the label by combining the "author" and "year_published" columns, and the `sep` function specifies the separator between the columns.
+
+-   The `xlim` function sets the x-axis limits for the plot.
 
 -   The `alim` function sets the confidence interval limits, and the `steps` function determines the number of intervals in the x-axis.
 

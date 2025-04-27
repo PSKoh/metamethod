@@ -180,7 +180,9 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `ilab.xpos` function specifies the horizontal arrangement of the columns.
 
--   The `slab` function is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns. The `paste()` function creates the label, and the `sep` function specifies the separator between the columns.
+-   The `slab` function is used to label each effect size with its respective study.
+
+-   The `paste()` function creates the label by combining the "Paper" and "Study" columns, and the `sep` function specifies the separator between the columns.
 
 -   The `xlim` function sets the x-axis limits for the plot.
 
@@ -367,19 +369,25 @@ rma(
 
 # Moderation Analysis
 
-This section performs moderation analysis to explore the influence of different moderators on the effect sizes. It includes both continuous and categorical moderators.
+This section performs moderation analysis to explore the influence of categorical and continuous moderators on the effect sizes.
+
+For continuous moderators, use meta-regression. Specficially, the `mods`function specifies the moderator variable (for continuous moderators).
+
+For categorical moderators, use subgroup analysis. Specifically, the `subset` function is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
 ## Explanation of the Code
 
--   The `rma()` function is used to perform the moderation analysis, and the `yi` and `vi` functions specify the effect size estimates and their corresponding sampling variances.
+-   The `rma()` function is used to perform the moderation analysis.
 
--   The `mods` function specifies the moderator variable, which can be either continuous or categorical.
+-   The `yi` and `vi` functions specify the effect size estimates and their corresponding sampling variances, respectively.
+
+-   The `mods` function specifies the moderator variable (for continuous moderators)
+
+-   The `subset` function is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
 -   The `method` function specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
 
 -   The `data` function specifies the dataset to be used for the analysis.
-
--   The `subset` function is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
 ```{r}
 ### Moderation Analysis --------------
@@ -457,9 +465,11 @@ The forest plot includes the following features:
 
 -   The `ilab.xpos` function specifies the horizontal arrangement of the columns, while the `xlim` function sets the x-axis limits for the plot.
 
--   The `slab` function is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns.
+-   The `slab` function is used to label each effect size with its respective study.
 
--   The `paste()` function creates the label, and the `sep` function specifies the separator between the columns.
+-   The `paste()` function creates the label by combining the "Paper" and "Study" columns, and the `sep` function specifies the separator between the columns.
+
+-   The `xlim` function sets the x-axis limits for the plot.
 
 -   The `alim` function sets the confidence interval limits, and the `steps` function determines the number of intervals in the x-axis.
 

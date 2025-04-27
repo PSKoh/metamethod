@@ -1,5 +1,5 @@
 ---
-title: "Multilevel Meta-Analysis (Pearson R) Tutorial"
+title: "Multilevel Meta-Analysis (Pearson r) Tutorial"
 author: Hu, M., Koh, P.S., Soh, X.C., Hartanto, A., Majeed, N.M.
 output: pdf_document
 ---

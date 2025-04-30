@@ -88,9 +88,9 @@ forest(
   # Add sample size information for dyslexia (n_dys) and control (n_control) group
   # Values indicate the x-axis position of the sample size columns  
   # -4.2 for Dslx (dyslexia Group)
-  # -3.7 for Ctrl (control Group)
+  # -3.5 for Ctrl (control Group)
   ilab = cbind(n_dys, n_control),
-  ilab.xpos = c(-4.2, -3.7),
+  ilab.xpos = c(-4.2, -3.5),
 
   # Label studies on the forest plot
   slab = paste(Paper, paste("Study", Study), sep = ", "),
@@ -118,15 +118,15 @@ forest(
 text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
 
 # Add “Sample Size” header
-text(x = -4.0, y = 15, "Sample Size", font = 2)
+text(x = -3.85, y = 15, "Sample Size", font = 2)
 
 # Add specific sample size column headers for dyslexia and control groups
 # x values indicate the horizontal arrangement of the columns
 # x = -4.2 for Dslx (dyslexia Group)
-# x = -3.8 for Ctrl (control Group)
+# x = -3.5 for Ctrl (control Group)
 # y values indicate the vertical arrangement of the columns
 # y = 14.5 for both
-text(c(x = -4.2, x = -3.7), y = 14.5, c("Dslx", "Ctrl"), font = 2)
+text(c(x = -4.2, x = -3.5), y = 14.5, c("Dslx", "Ctrl"), font = 2)
 
 # Add "g [95% CI]" header
 text(x = 3.5, y = 14.5, "g [95% CI]", font = 2)
@@ -248,7 +248,7 @@ forest(
   # Add confidence interval limits
   # Adjust intervals based on the number of steps
   alim = c(-1.5, 1.5),
-  steps = 11,
+  steps = 7,
 
   # Remove headers (if any), for manual input
   header = FALSE,

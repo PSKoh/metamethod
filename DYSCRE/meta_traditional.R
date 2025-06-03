@@ -2,10 +2,10 @@
 
 ### Set Up --------------
 
+# R version 4.5.0
+
 # Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-# R version 4.5.0
 
 # Install packages (if not already installed)
 install.packages("metafor")
@@ -48,6 +48,7 @@ tradmeta$Creativity.Measure_type = factor(
   tradmeta$Creativity.Measure_type,
   levels = c("Verbal", "Mixed", "Non-verbal")
 )
+
 # Order the data frame by Creativity.Measure_type and effect sizes (yi)
 tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type,tradmeta$yi), ]
 
@@ -87,8 +88,8 @@ forest(
 
   # Add sample size information for dyslexia (n_dys) and control (n_control) group
   # Values indicate the x-axis position of the sample size columns  
-  # -4.2 for Dslx (dyslexia Group)
-  # -3.5 for Ctrl (control Group)
+  # -4.2 for Dslx (Dyslexia Group)
+  # -3.5 for Ctrl (Control Group)
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-4.2, -3.5),
 
@@ -122,8 +123,8 @@ text(x = -3.85, y = 15, "Sample Size", font = 2)
 
 # Add specific sample size column headers for dyslexia and control groups
 # x values indicate the horizontal arrangement of the columns
-# x = -4.2 for Dslx (dyslexia Group)
-# x = -3.5 for Ctrl (control Group)
+# x = -4.2 for Dslx (Dyslexia Group)
+# x = -3.5 for Ctrl (Control Group)
 # y values indicate the vertical arrangement of the columns
 # y = 14.5 for both
 text(c(x = -4.2, x = -3.5), y = 14.5, c("Dslx", "Ctrl"), font = 2)

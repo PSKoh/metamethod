@@ -36,9 +36,6 @@ If the `metafor` package is not already installed, use the `install.packages()` 
 # Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# Install packages (if not already installed)
-install.packages("metafor")
-
 # Load packages
 library(metafor) # version 4.8-0
 

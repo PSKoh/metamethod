@@ -26,6 +26,7 @@ multilevelmeta_raw = read.csv("SPC.csv")
 multilevelmeta_raw$ID = 1:nrow(multilevelmeta_raw)
 
 ### Prepare Data --------------
+# Compute effect sizes for each study
 
 multilevelmeta = escalc(
        # Type of effect size measure
@@ -88,7 +89,7 @@ forest(
        # Add y-axis limits
        ylim = c(-3, 140),
 
-       # Add sample size information for presence and absence of smartphones group
+       # Add sample size information for presence and absence of smartphones groups
        # Values indicate the x-axis position of the sample size columns  
        # -3 for presence of smartphones (n_p)
        # -2.55 for absence of smartphones (n_a)
@@ -208,7 +209,7 @@ rma.mv(
        V = vi,
        random = ~ 1 | lab_id / ID,
        # Specify continuous moderator (i.e., female proportion)
-       mods = ~female_proportion,
+       mods = ~ female_proportion,
        method = "REML",
        data = multilevelmeta
 ) |>
@@ -223,7 +224,7 @@ pdf(file = "mlmforestplotwithmoderators.pdf", width = 15, height = 45)
 forest(
        mlmmetaresults,
 
-       # Manually arrange effect sizes by creativity measure type
+       # Manually arrange effect sizes by publication type
        # - Journal article: Rows 143 to 79
        # - Thesis/Dissertations: Rows 75 to 7
        # - Conference: Rows 3 to 2
@@ -233,7 +234,7 @@ forest(
        # Add y-axis limits
        ylim = c(-3, 147),
 
-       # Add sample size information for presence and absence of smartphones group
+       # Add sample size information for presence and absence of smartphones groups
        # Values indicate the x-axis position of the sample size columns  
        # -4.2 for presence of smartphones (n_p)
        # -3.6 for absence of smartphones (n_a)
@@ -266,7 +267,7 @@ forest(
 
 # Add text labels for moderator (type of publication)
 # x values to indicate the horizontal arrangement of the text
-# Labels for different creativity task types (Moderator Analysis)
+# Labels for different publication type (Moderator Analysis)
 # y values indicate the vertical arrangement of the text
 # - "Journal article" at y = 7
 # - "Thesis/Dissertations" at y = 15

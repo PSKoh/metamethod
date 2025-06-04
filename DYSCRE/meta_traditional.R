@@ -50,7 +50,7 @@ tradmeta$Creativity.Measure_type = factor(
 )
 
 # Order the data frame by Creativity.Measure_type and effect sizes (yi)
-tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type,tradmeta$yi), ]
+tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type, tradmeta$yi), ]
 
 ### Compute overall effect size --------------
 
@@ -118,7 +118,7 @@ forest(
 # Add "Author(s) Year" header
 text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
 
-# Add “Sample Size” header
+# Add "Sample Size" header
 text(x = -3.85, y = 15, "Sample Size", font = 2)
 
 # Add specific sample size column headers for dyslexia and control groups
@@ -235,8 +235,8 @@ forest(
 
   # Add sample size information for dyslexia (n_dys) and control (n_control) group
   # Values indicate the x-axis position of the sample size columns
-  # -3.8 for Dslx (dyslexia Group)
-  # -3.3 for Ctrl (control Group)
+  # -3.8 for Dslx (Dyslexia Group)
+  # -3.3 for Ctrl (Control Group)
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-3.8, -3.3),
 

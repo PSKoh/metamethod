@@ -50,19 +50,18 @@ tradmeta_raw = read.csv("DYSCRE.csv")
 
 This section prepares the data for analysis by computing effect sizes for each study and organizing the data frame.
 
-The `tradmeta_raw` data frame does not include pre-computed effect sizes for each study. Therefore, the `escalc()` function from `metafor` package is used to calculate them.
-
+The `tradmeta_raw` data frame does not include pre-computed effect sizes for each study. Therefore, the `escalc()` function from `metafor` package is used to calculate them. 
 For more information on the `escalc()` function, refer to ?metafor::escalc in R.
 
 ## Explanation of the Code
 
--   The `measure` function specifies the type of effect size to be calculated, in this case, "SMD" (Standardized Mean Difference).
+-   The `measure` argument specifies the type of effect size to be calculated, which in this case is "SMD" (Standardized Mean Difference). In the `metafor` package, specifying "SMD" computes Hedges' g by default.
 
--   The `n1i` and `n2i` function specify the columns for the sample sizes of each group
+-   The `n1i` and `n2i` argument specify the columns for the sample sizes of each group
 
--   The `m1i` and `m2i` function specify the columns for the means of each group.
+-   The `m1i` and `m2i` argument specify the columns for the means of each group.
 
--   The `sd1i` and `sd2i` function specify the columns for the standard deviations of each group.
+-   The `sd1i` and `sd2i` argument specify the columns for the standard deviations of each group.
 
 -   Afterwards, the `escalc()` function computes the effect sizes (yi) and their corresponding sampling variances (vi) for each study.
 
@@ -122,7 +121,7 @@ The results are summarized to provide detailed information about the meta-analys
 
 -   The `rma()` function is used to perform a random-effects meta-analysis, which accounts for the variability between studies.
 
--   The `method` function specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
+-   The `method` argument specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
 
 -   The `summary()` function is used to provide detailed results of the meta-analysis, including the overall effect size estimate, confidence intervals, and heterogeneity statistics.
 
@@ -170,39 +169,39 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
--   The `order` function specifies the arrangement of studies, with "obs" indicating that the studies should be arranged by effect sizes. To organise by column, replace "obs" with the specific column in the data frame.
+-   The `order` argument specifies the arrangement of studies, with "obs" indicating that the studies should be arranged by effect sizes. To organise by column, replace "obs" with the specific column in the data frame.
 
--   The `ylim` function sets the y-axis limits for the plot.
+-   The `ylim` argument sets the y-axis limits for the plot.
 
--   The `ilab` function is used to add sample size information for both dyslexia and control groups into the forest plot.
+-   The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
 
 -   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
 
 -   The `c()` function combines the values into a numeric vector.
 
--   The `ilab.xpos` function specifies the horizontal arrangement of the columns.
+-   The `ilab.xpos` argument specifies the horizontal arrangement of the columns.
 
--   The `slab` function is used to label each effect size with its respective study.
+-   The `slab` argument is used to label each effect size with its respective study.
 
--   The `paste()` function creates the label by combining the "Paper" and "Study" columns, and the `sep` function specifies the separator between the columns.
+-   The `paste()` function creates the label by combining the "Paper" and "Study" columns, and the `sep` argument specifies the separator between the columns.
 
--   The `xlim` function sets the x-axis limits for the plot.
+-   The `xlim` argument sets the x-axis limits for the plot.
 
--   The `alim` function sets the confidence interval limits, and the `steps` function determines the number of intervals in the x-axis.
+-   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
 
--   The `header` function is set to FALSE to allow for manual specification of headers.
+-   The `header` argument is set to FALSE to allow for manual specification of headers.
+
+-   The `xlab` argument specifies the confidence interval label for the forest plot, in this case, "Hedge's g".
 
 -   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
 
--   The `x` and `y` function in the `text()` function adjust the position of the headers, with the `x` function specifying the horizontal arrangement of the columns and the `y` function specifying the vertical arrangement of the columns.
+-   The `x` and `y` arguments in the `text()` function adjust the position of the headers, with the `x` argument specifying the horizontal arrangement of the columns and the `y` argument specifying the vertical arrangement of the columns.
 
--   The `x` function specifies the horizontal arrangement of the columns and the `y` function specifies the vertical arrangement of the columns.
+-   The `x` argument specifies the horizontal arrangement of the columns and the `y` argument specifies the vertical arrangement of the columns.
 
--   The `font` function adjusts the font size.
+-   The `font` argument adjusts the font size.
 
--   The `pos` function in the `text()` function specifies the position of the text relative to the specified coordinates.
-
--   The `font` function adjusts the font size.
+-   The `c()` function inside the `text()` function creates a vector of x-positions, where the labels "Dslx" and "Ctrl" will be placed. The first x-value (-4.2) determines the horizontal position of the "Dslx" label, and the second x-value (-3.5) positions the "Ctrl" label. 
 
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
@@ -284,13 +283,13 @@ The funnel plot visually represents the distribution of effect sizes and their s
 
 -   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
 
--   The `width` and `height` function adjust the dimensions of the PDF file.
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
 -   The `funnel()` function is used to create the funnel plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
--   The `legend` function specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
+-   The `legend` argument specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
 
--   The `xlab` function specifies the confidence interval label for the funnel plot, in this case, "Hedge's g"
+-   The `xlab` argument specifies the confidence interval label for the funnel plot, in this case, "Hedge's g"
 
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
@@ -336,11 +335,11 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 
 -   The `rma()` function is used to perform Egger's test, with the `yi` and `vi` functions specifying the effect size estimates and their corresponding sampling variances.
 
--   The `mods` function specifies the moderator variable, which is the corrected standard error in this case.
+-   The `mods` argument specifies the moderator variable, which is the corrected standard error in this case.
 
--   The `weights` function specifies the weight for each effect size, which is the inverse of the corrected standard error squared.
+-   The `weights` argument specifies the weight for each effect size, which is the inverse of the corrected standard error squared.
 
--   The `data` function specifies the dataset to be used for the analysis.
+-   The `data` argument specifies the dataset to be used for the analysis.
 
 -   The `summary()` function provides the results of the Egger's test, including the slope estimate and its significance.
 
@@ -382,15 +381,15 @@ For categorical moderators, use subgroup analysis. Specifically, the `subset` fu
 
 -   The `rma()` function is used to perform the moderation analysis.
 
--   The `yi` and `vi` functions specify the effect size estimates and their corresponding sampling variances, respectively.
+-   The `yi` and `vi` arguments specify the effect size estimates and their corresponding sampling variances, respectively.
 
--   The `mods` function specifies the moderator variable (for continuous moderators)
+-   The `mods` argument specifies the moderator variable (for continuous moderators)
 
--   The `subset` function is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
+-   The `method` argument specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
 
--   The `method` function specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
+-   The `subset` argument is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
--   The `data` function specifies the dataset to be used for the analysis.
+-   The `data` argument specifies the dataset to be used for the analysis.
 
 ```{r}
 ### Moderation Analysis --------------
@@ -454,49 +453,51 @@ The forest plot includes the following features:
 
 -   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
 
--   The `width` and `height` function adjust the dimensions of the PDF file.
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
 -   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
--   The `rows` function specifies the arrangement of studies by creativity measure type, and in ascending order of effect sizes per creativity measure type.
+-   The `rows` argument specifies the arrangement of studies by creativity measure type, and in ascending order of effect sizes per creativity measure type.
 
--   The `ylim` function sets the y-axis limits for the plot.
+-   The `ylim` argument sets the y-axis limits for the plot.
 
--   The `ilab` function is used to add sample size information for both dyslexia and control groups into the forest plot.
+-   The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
 
 -   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
 
--   The `ilab.xpos` function specifies the horizontal arrangement of the columns, while the `xlim` function sets the x-axis limits for the plot.
+-   The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
 
--   The `slab` function is used to label each effect size with its respective study.
+-   The `slab` argument is used to label each effect size with its respective study.
 
--   The `paste()` function creates the label by combining the "Paper" and "Study" columns, and the `sep` function specifies the separator between the columns.
+-   The `paste()` function creates the label by combining the "Paper" and "Study" columns, and the `sep` argument specifies the separator between the columns.
 
--   The `xlim` function sets the x-axis limits for the plot.
+-   The `xlim` argument sets the x-axis limits for the plot.
 
--   The `alim` function sets the confidence interval limits, and the `steps` function determines the number of intervals in the x-axis.
+-   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
 
--   The `header` function is set to FALSE to allow for manual specification of headers.
+-   The `header` argument is set to FALSE to allow for manual specification of headers.
 
--   The `xlab` function specifies the label for the confidence interval, in this case, "Hedge's g".
+-   The `xlab` argument specifies the label for the confidence interval, in this case, "Hedge's g".
 
 -   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
 
--   The `x` and `y` functions in the `text()` function adjust the position of the headers.
+-   The `x` and `y` arguments in the `text()` function adjust the position of the headers.
 
--   The `x` function specifies the horizontal arrangement of the columns and the `y` function specifies the vertical arrangement of the columns.
+-   The `x` argument specifies the horizontal arrangement of the columns and the `y` argument specifies the vertical arrangement of the columns.
 
--   The `font` function adjusts the font size.
+-   The `font` argument adjusts the font size.
 
--   The `pos` function specifies the position of the text relative to the specified coordinates.
+-   The `pos` argument specifies the position of the text relative to the specified coordinates.
 
 -   The `rma()` function is used to perform moderation analysis for each type of creativity measure, with the `subset` function specifying the subset of data for each category.
 
 -   The `res.v`, `res.n`, and `res.m` variables store the results of the moderation analysis for verbal, non-verbal, and mixed creativity measures, respectively.
 
--   The `subset` function is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
+-   The `subset` argument is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
 -   The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` function specifying the position of the summary in the plot.
+
+-   The `c()` function inside the `text()` function creates a vector of x-positions, where the labels "Dslx" and "Ctrl" will be placed. The first x-value (-3.8) determines the horizontal position of the "Dslx" label, and the second x-value (-3.3) positions the "Ctrl" label. 
 
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
@@ -524,8 +525,8 @@ forest(
   ylim = c(-2, 24),
 
   # Add sample size information for dyslexia (n_dys) and control (n_control) group
-  # -3.8 for Dslx (dyslexia Group)
-  # -3.3 for Ctrl (control Group) 
+  # -3.8 for Dslx (Dyslexia Group)
+  # -3.3 for Ctrl (Control Group) 
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-3.8, -3.3),
 

@@ -142,11 +142,13 @@ dev.off()
 # Save the funnel plot as a PDF file
 # Name the pdf file of the funnel plot
 # Adjust the width and height of the pdf file
-pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
+pdf(file = "tradfunnelplot.pdf", width = 7, height = 4)
+par(mar = c(4, 4, 0.3, 1))
 # funnel function to create the funnel plot, specify the data to create the plot
 funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
+
 
 # Rank Correlation Test #
 ranktest(tradmetaresults)

@@ -149,6 +149,9 @@ dev.off()
 # Name the pdf file of the funnel plot
 # Adjust the width and height of the pdf file
 pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
+# par function to adjust margins of the funnel plot
+# mar = c(bottom, left, top, right)
+par(mar = c(4, 4, 0.3, 1))
 # funnel function to create the funnel plot, specify the data to create the plot
 funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file

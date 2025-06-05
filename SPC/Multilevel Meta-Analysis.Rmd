@@ -66,11 +66,11 @@ For more information on the `escalc()` function, refer to ?escalc in R.
 
 -   The `measure` argument specifies the type of effect size to be calculated, which in this case is "SMD" (Standardized Mean Difference). In the `metafor` package, specifying "SMD" computes Hedge's g by default.
 
--   The `n1i` and `n2i` argument specify the columns for the sample sizes of each group.
+-   The `n1i` and `n2i` arguments specify the columns for the sample sizes of each group.
 
--   The `m1i` and `m2i` argument specify the columns for the means of each group.
+-   The `m1i` and `m2i` arguments specify the columns for the means of each group.
 
--   The `sd1i` and `sd2i` argument specify the columns for the standard deviations of each group.
+-   The `sd1i` and `sd2i` arguments specify the columns for the standard deviations of each group.
 
 -   Afterwards, the `escalc()` function computes the effect sizes (yi) and their corresponding sampling variances (vi) for each study.
 
@@ -126,7 +126,7 @@ The multilevel meta-analysis approach is more appropriate for this type of data,
 
 -   The `rma.mv()` function is used to compute the overall effect size, accounting for the nested structure of the data.
 
--   The `random` argument specifies the random effects structure, where `~ 1 | lab_id / ID` indicates that random intercepts are included for both the lab and individual studies.
+-   The `random` argument specifies the random effects structure, where `~ 1 | lab_id / ID` indicates that random intercepts are included for both the lab and individual studies, accounting for the nested structure of the data.
 
 -   The `yi` and `vi` arguments specify the effect size estimates and their corresponding sampling variances, respectively.
 
@@ -184,7 +184,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 ## Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
 
 -   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
@@ -375,7 +375,7 @@ This section performs moderation analysis to explore the influence of categorica
 
 For continuous moderators, use meta-regression. Specficially, the `mods`function specifies the moderator variable (for continuous moderators).
 
-For categorical moderators, use subgroup analysis. Specifically, the `subset` function is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
+For categorical moderators, use subgroup analysis. Specifically, the `subset` argument is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
 ## Explanation of the Code
 
@@ -409,7 +409,7 @@ rma.mv(
        subset = (publication == "Journal article"),
        data = multilevelmeta,
        # To address convergence issues (if it exists)
-       control = list(rel.tol=1e-8) 
+       control = list(rel.tol=1e-8)
 )
 rma.mv(
        yi = yi,
@@ -491,9 +491,7 @@ The forest plot includes the following features:
 
 -   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
 
--   The `x` and `y` arguments in the `text()` function adjust the position of the headers.
-
--   The `x` argument specifies the horizontal arrangement of the columns and the `y` argument specifies the vertical arrangement of the columns.
+-   The `x` and `y` arguments in the `text()` function adjust the position of the headers, with `x` argument specifying the horizontal arrangement of the columns and the `y` specifying the vertical arrangement of the columns.
 
 -   The `pos` argument specifies the position of the text relative to the specified coordinates
 
@@ -502,6 +500,8 @@ The forest plot includes the following features:
 -   The `rma.mv()` function is used to perform moderation analysis for each publication type, with the `subset` argument specifying the subset of data for each category.
 
 -   The `rest.j`, `res.t`, and `res.c` variables store the results of the moderation analysis for journal articles, thesis/dissertations, and conference papers, respectively.
+
+-   The `random` argument specifies the random effects structure, where `~ 1 | lab_id / ID` indicates that random intercepts are included for both the lab and individual studies, accounting for the nested structure of the data.
 
 -   The `subset` argument is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
@@ -579,7 +579,7 @@ res.j = rma.mv(
        subset = (publication == "Journal article"),
        data = multilevelmeta,
        # To address convergence issues (if it exists)
-       control=list(rel.tol=1e-8) 
+       control = list(rel.tol=1e-8) 
 )
 res.t = rma.mv(
        yi,

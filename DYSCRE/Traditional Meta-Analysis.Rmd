@@ -33,6 +33,8 @@ If the `metafor` package is not already installed, use the `install.packages()` 
 ```{r}
 ### Set Up --------------
 
+# R version 4.5.0
+
 # Set working directory to that of script's current location
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
@@ -50,18 +52,17 @@ tradmeta_raw = read.csv("DYSCRE.csv")
 
 This section prepares the data for analysis by computing effect sizes for each study and organizing the data frame.
 
-The `tradmeta_raw` data frame does not include pre-computed effect sizes for each study. Therefore, the `escalc()` function from `metafor` package is used to calculate them. 
-For more information on the `escalc()` function, refer to ?metafor::escalc in R.
+The `tradmeta_raw` data frame does not include pre-computed effect sizes for each study. Therefore, the `escalc()` function from `metafor` package is used to calculate them. For more information on the `escalc()` function, refer to ?metafor::escalc in R.
 
 ## Explanation of the Code
 
 -   The `measure` argument specifies the type of effect size to be calculated, which in this case is "SMD" (Standardized Mean Difference). In the `metafor` package, specifying "SMD" computes Hedges' g by default.
 
--   The `n1i` and `n2i` argument specify the columns for the sample sizes of each group
+-   The `n1i` and `n2i` arguments specify the columns for the sample sizes of each group
 
--   The `m1i` and `m2i` argument specify the columns for the means of each group.
+-   The `m1i` and `m2i` arguments specify the columns for the means of each group.
 
--   The `sd1i` and `sd2i` argument specify the columns for the standard deviations of each group.
+-   The `sd1i` and `sd2i` arguments specify the columns for the standard deviations of each group.
 
 -   Afterwards, the `escalc()` function computes the effect sizes (yi) and their corresponding sampling variances (vi) for each study.
 
@@ -163,9 +164,9 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 ## Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
 
--   The `width` and `height` function adjust the dimensions of the PDF file.
+-   The `width` and `height` functions adjust the dimensions of the PDF file.
 
 -   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
@@ -197,11 +198,9 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `x` and `y` arguments in the `text()` function adjust the position of the headers, with the `x` argument specifying the horizontal arrangement of the columns and the `y` argument specifying the vertical arrangement of the columns.
 
--   The `x` argument specifies the horizontal arrangement of the columns and the `y` argument specifies the vertical arrangement of the columns.
-
 -   The `font` argument adjusts the font size.
 
--   The `c()` function inside the `text()` function creates a vector of x-positions, where the labels "Dslx" and "Ctrl" will be placed. The first x-value (-4.2) determines the horizontal position of the "Dslx" label, and the second x-value (-3.5) positions the "Ctrl" label. 
+-   The `c()` function inside the `text()` function creates a vector of x-positions, where the labels "Dslx" and "Ctrl" will be placed. The first x-value (-4.2) determines the horizontal position of the "Dslx" label, and the second x-value (-3.5) positions the "Ctrl" label.
 
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
@@ -225,7 +224,7 @@ forest(
 
   # Add sample size information for dyslexia (n_dys) and control (n_control) group
   # -4.2 for Dslx (Dyslexia Group)
-  # -3.5 for Ctrl (Control Group) 
+  # -3.5 for Ctrl (Control Group)
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-4.2, -3.5),
 
@@ -255,7 +254,7 @@ forest(
 text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
 
 # Add "Sample Size" header
-text(x = -3.85, y = 15, "Sample Size", font = 2) 
+text(x = -3.85, y = 15, "Sample Size", font = 2)
 
 # Add specific sample size column headers for dyslexia and control groups
 # x = -4.2 for Dslx (Dyslexia Group)
@@ -331,9 +330,9 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 
 ### Explanation of the Code
 
--   The `tradmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula $\sqrt{\frac{(n_{dys} + n_{control})}{(n_{dys} \cdot n_{control})}}$. Using Egger' test (unadjusted) on SMDs results in inflated type 1 error as SMD and SE are not independent. Hence, use corrected formula for SE.
+-   The `tradmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula $\sqrt{\frac{(n_{dys} + n_{control})}{(n_{dys} \cdot n_{control})}}$. Using Egger' test (unadjusted) on SMDs results in inflated type 1 error as SMD and SE are not independent. Hence, use the corrected formula for SE.
 
--   The `rma()` function is used to perform Egger's test, with the `yi` and `vi` functions specifying the effect size estimates and their corresponding sampling variances.
+-   The `rma()` function is used to perform Egger's test, with the `yi` and `vi` arguments specifying the effect size estimates and their corresponding sampling variances.
 
 -   The `mods` argument specifies the moderator variable, which is the corrected standard error in this case.
 
@@ -373,9 +372,9 @@ rma(
 
 This section performs moderation analysis to explore the influence of categorical and continuous moderators on the effect sizes.
 
-For continuous moderators, use meta-regression. Specficially, the `mods`function specifies the moderator variable (for continuous moderators).
+For continuous moderators, use meta-regression. Specficially, the `mods` argument specifies the moderator variable (for continuous moderators).
 
-For categorical moderators, use subgroup analysis. Specifically, the `subset` function is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
+For categorical moderators, use subgroup analysis. Specifically, the `subset` argument is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
 ## Explanation of the Code
 
@@ -451,7 +450,7 @@ The forest plot includes the following features:
 
 ## Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
 
 -   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
@@ -481,23 +480,21 @@ The forest plot includes the following features:
 
 -   The `text()` function is used to manually include text within the plot, such as the "Author(s) Year" header and specific sample size column headers.
 
--   The `x` and `y` arguments in the `text()` function adjust the position of the headers.
-
--   The `x` argument specifies the horizontal arrangement of the columns and the `y` argument specifies the vertical arrangement of the columns.
+-   The `x` and `y` arguments in the `text()` function adjust the position of the headers, with the `x` argument specifying the horizontal arrangement of the columns and the `y` argument specifying the vertical arrangement of the columns.
 
 -   The `font` argument adjusts the font size.
 
 -   The `pos` argument specifies the position of the text relative to the specified coordinates.
 
--   The `rma()` function is used to perform moderation analysis for each type of creativity measure, with the `subset` function specifying the subset of data for each category.
+-   The `rma()` function is used to perform moderation analysis for each type of creativity measure.
 
 -   The `res.v`, `res.n`, and `res.m` variables store the results of the moderation analysis for verbal, non-verbal, and mixed creativity measures, respectively.
 
 -   The `subset` argument is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
--   The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` function specifying the position of the summary in the plot.
+-   The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` argument specifying the position of the summary in the plot.
 
--   The `c()` function inside the `text()` function creates a vector of x-positions, where the labels "Dslx" and "Ctrl" will be placed. The first x-value (-3.8) determines the horizontal position of the "Dslx" label, and the second x-value (-3.3) positions the "Ctrl" label. 
+-   The `c()` function within the `text()` function creates a vector of x-positions, where the labels "Dslx" and "Ctrl" will be placed. The first x-value (-3.8) determines the horizontal position of the "Dslx" label, and the second x-value (-3.3) positions the "Ctrl" label.
 
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
@@ -507,7 +504,7 @@ The forest plot includes the following features:
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot
 # Adjust the width and height of the pdf file
-pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 9) 
+pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 9)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -526,7 +523,7 @@ forest(
 
   # Add sample size information for dyslexia (n_dys) and control (n_control) group
   # -3.8 for Dslx (Dyslexia Group)
-  # -3.3 for Ctrl (Control Group) 
+  # -3.3 for Ctrl (Control Group)
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-3.8, -3.3),
 
@@ -544,7 +541,7 @@ forest(
   # Remove headers (if any), for manual input
   header = FALSE,
 
-  # Add label for confidence interval, in this case, "Hedge's g" 
+  # Add label for confidence interval, in this case, "Hedge's g"
   xlab = "Hedge's g"
 )
 
@@ -590,7 +587,7 @@ addpoly(res.m, row = 9) # summary effect for "mixed" group
 addpoly(res.v, row = 17) # summary effect for "verbal" group
 
 # Add "Author(s) Year" header
-text(x = -6.3, y = 23, "Author(s) Year", font = 2) 
+text(x = -6.3, y = 23, "Author(s) Year", font = 2)
 
 # Add “Sample Size” header
 text(x = -3.6, y = 23.7, "Sample Size", font = 2)
@@ -602,7 +599,7 @@ text(x = -3.6, y = 23.7, "Sample Size", font = 2)
 text(c(x = -3.8, x = -3.3), y = 23, c("Dslx", "Ctrl"), font = 2)
 
 # Add "g [95% CI]" header
-text(x = 3.5, y = 23, "g [95% CI]", font = 2) 
+text(x = 3.5, y = 23, "g [95% CI]", font = 2)
 
 # Close the forest plot and finalise it as a saved file
 dev.off()

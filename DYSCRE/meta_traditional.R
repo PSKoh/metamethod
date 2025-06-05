@@ -143,6 +143,8 @@ dev.off()
 # Name the pdf file of the funnel plot
 # Adjust the width and height of the pdf file
 pdf(file = "tradfunnelplot.pdf", width = 7, height = 4)
+# par function to adjust margins of the funnel plot
+# mar = c(bottom, left, top, right)
 par(mar = c(4, 4, 0.3, 1))
 # funnel function to create the funnel plot, specify the data to create the plot
 funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")

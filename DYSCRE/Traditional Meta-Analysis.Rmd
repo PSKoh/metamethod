@@ -284,6 +284,8 @@ The funnel plot visually represents the distribution of effect sizes and their s
 
 -   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
+-   The `par()` function is used to adjust the margins of the funnel plot, with the `mar` argument specifying the bottom, left, top, and right margins.
+
 -   The `funnel()` function is used to create the funnel plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
 -   The `legend` argument specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
@@ -300,8 +302,11 @@ The funnel plot visually represents the distribution of effect sizes and their s
 # Save the funnel plot as a PDF file
 # Name the pdf file of the funnel plot
 # Adjust the width and height of the pdf file
-pdf(file = "tradfunnelplot.pdf", width = 8, height = 5)
-# funnel function to create the funnel plot, specify the data to create the plot
+pdf(file = "tradfunnelplot.pdf", width = 7, height = 4)
+# Adjust margins of the funnel plot
+# Set the bottom, left, top, and right margins
+par(mar = c(4, 4, 0.3, 1))
+# Create the funnel plot
 funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
 # Close the funnel plot and finalise it as a saved file
 dev.off()

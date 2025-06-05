@@ -92,7 +92,7 @@ tradmeta = escalc(
   sd1i = SD_CRE_dys,
   sd2i = SD_CRE_control,
 
-  # Specify data.frame that the information will be extracted from
+  # Specify data frame that the information will be extracted from
   data = tradmeta_raw
 )
 
@@ -118,7 +118,7 @@ The results are summarized to provide detailed information about the meta-analys
 
 -   The `tradmeta` data frame contains the computed effect sizes (yi) and their corresponding sampling variances (vi).
 
--   The `yi` column represents the effect size estimates, while the `vi` column represents the sampling variance for each effect size.
+-   The `yi` and `vi` arguments specify the effect size estimates and their corresponding sampling variances, respectively.
 
 -   The `rma()` function is used to perform a random-effects meta-analysis, which accounts for the variability between studies.
 
@@ -166,7 +166,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
 
--   The `width` and `height` functions adjust the dimensions of the PDF file.
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
 -   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
@@ -176,9 +176,9 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
 
--   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
-
 -   The `c()` function combines the values into a numeric vector.
+
+-   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
 
 -   The `ilab.xpos` argument specifies the horizontal arrangement of the columns.
 
@@ -190,7 +190,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
 
--   The `header` argument is set to FALSE to allow for manual specification of headers.
+-   The `header` argument is set to FALSE to allow for manual specification of headers. Otherwise, the default headers will be used if the `header` argument is set to TRUE.
 
 -   The `xlab` argument specifies the confidence interval label for the forest plot, in this case, "Hedge's g".
 
@@ -382,7 +382,7 @@ For categorical moderators, use subgroup analysis. Specifically, the `subset` ar
 
 -   The `yi` and `vi` arguments specify the effect size estimates and their corresponding sampling variances, respectively.
 
--   The `mods` argument specifies the moderator variable (for continuous moderators)
+-   The `mods` argument specifies the moderator variable (for continuous moderators).
 
 -   The `method` argument specifies the method used to estimate heterogeneity, in this case, "REML" (Restricted Maximum Likelihood).
 

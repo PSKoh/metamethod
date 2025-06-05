@@ -336,7 +336,7 @@ The Egger's test is a statistical test that quantifies the degree of asymmetry i
 
 ### Explanation of the Code
 
--   The `multilevelmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula $\sqrt{\frac{(n_{p} + n_{a})}{(n_{p} \cdot n_{a})}}$. Using Egger' test (unadjusted) on SMDs results in inflated type 1 error as SMD and SE are not independent. Hence, use corrected formula for SE.
+-   The `multilevelmeta$sei_corrected` variable is created to store the corrected standard error for each effect size, calculated using the formula $\sqrt{\frac{(n_{p} + n_{a})}{(n_{p} \cdot n_{a})}}$. Using Egger' test (unadjusted) on SMDs results in inflated Type 1 error as SMD and SE are not independent. Hence, use corrected formula for SE.
 
 -   The `lmer()` function is used to fit a linear mixed-effects model, where the effect size weighted by the corrected standard error is predicted by the intercept and the inverse of the corrected standard error. metafor::rma.mv does not have a weights argument, and metafor::regtest does not support rma.mv objects. For three (or more) level meta-analysis, use `lmerTest::lmer` instead.
 
@@ -493,7 +493,7 @@ The forest plot includes the following features:
 
 -   The `x` and `y` arguments in the `text()` function adjust the position of the headers, with `x` argument specifying the horizontal arrangement of the columns and the `y` specifying the vertical arrangement of the columns.
 
--   The `pos` argument specifies the position of the text relative to the specified coordinates
+-   The `pos` argument specifies the position of the text relative to the specified coordinates.
 
 -   The `font` argument adjusts the font size.
 

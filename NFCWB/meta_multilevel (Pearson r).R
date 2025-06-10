@@ -55,7 +55,7 @@ mlmmeta = mlmmeta[order(mlmmeta$publication_type, mlmmeta$yi), ]
 
 ### Compute Overall Effect Size ------------------- 
 
-# Effect size estimates
+# Estimate the overall effect size using the rma.mv() function
 mlmmetaresults = rma.mv(
   # Effect size estimates
   yi = yi,
@@ -142,6 +142,9 @@ dev.off()
 # Name the pdf file of the funnel plot
 # Adjust the width and height of the pdf file
 pdf(file = "NFCWBfunnelplot.pdf", width = 8, height = 5)
+# par function to adjust margins of the funnel plot
+# mar = c(bottom, left, top, right)
+par(mar = c(4, 4, 0.3, 1))
 # funnel function to create the funnel plot, specify the data to create the plot
 funnel(mlmmetaresults, legend = TRUE, xlab = "Fisher's Z")
 # Close the funnel plot and finalise it as a saved file
@@ -160,7 +163,7 @@ lmer(
   # Estimate of interest is the intercept
   summary(correlation = TRUE)
 
-## Test of Moderators --------------
+### Moderation Analysis --------------
 
 # Categorical Variable (i.e., publication type)
 rma.mv(
@@ -184,6 +187,18 @@ rma.mv(
   # To address convergence issues (if it exists)
   control=list(rel.tol=1e-8) 
 )
+
+# Continuous variable (i.e., female proportion)
+rma.mv(
+       yi = yi,
+       V = vi,
+       random = ~ 1 | sample_id/meta_id,
+       # Specify continuous moderator (i.e., female proportion)
+       mods = ~ female_proportion,
+       method = "REML",
+       data = mlmmeta
+) |>
+       summary()
 
 ### Forest Plot of Moderators --------------
 

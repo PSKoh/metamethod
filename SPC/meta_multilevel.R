@@ -26,8 +26,8 @@ multilevelmeta_raw = read.csv("SPC.csv")
 multilevelmeta_raw$ID = 1:nrow(multilevelmeta_raw)
 
 ### Prepare Data --------------
-# Compute effect sizes for each study
 
+# Compute effect sizes for each study
 multilevelmeta = escalc(
        # Type of effect size measure
        measure = "SMD",
@@ -56,8 +56,9 @@ multilevelmeta$publication = factor(
 # Order the data frame based on publication and effect sizes (yi)
 multilevelmeta = multilevelmeta[order(multilevelmeta$publication, multilevelmeta$yi), ]
 
-### Compute Overall Effect size --------------
+### Compute Overall Effect Size --------------
 
+# Estimate the overall effect size using the rma.mv() function
 mlmmetaresults = rma.mv(
        # Effect size estimates
        yi = yi,
@@ -76,6 +77,7 @@ summary(mlmmetaresults)
 
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot
+# Adjust the width and height of the pdf file
 pdf(file = "mlmforestplot.pdf", width = 15, height = 40)
 
 # Start creating the forest plot itself
@@ -224,6 +226,9 @@ rma.mv(
 # Name the pdf file of the forest plot
 # Adjust the width and height of the pdf file
 pdf(file = "mlmforestplotwithmoderators.pdf", width = 15, height = 45) 
+
+# Start creating the forest plot itself
+# Specify dataset
 forest(
        mlmmetaresults,
 

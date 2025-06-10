@@ -52,13 +52,13 @@ tradmeta$Creativity.Measure_type = factor(
 # Order the data frame by Creativity.Measure_type and effect sizes (yi)
 tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type, tradmeta$yi), ]
 
-### Compute overall effect size --------------
+### Compute Overall Effect Size --------------
 
 # Estimate the overall effect size using the rma() function
 tradmetaresults = rma(
   # Effect size estimates
   yi = yi,
-  # Sampling variance
+  # Sampling variances
   vi = vi,
   # Specify method to estimate heterogeneity
   method = "REML",
@@ -73,6 +73,7 @@ summary(tradmetaresults)
 
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot
+# Adjust the width and height of the pdf file
 pdf(file = "tradforestplot.pdf", width = 11, height = 8)
 
 # Start creating the forest plot itself

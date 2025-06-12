@@ -127,12 +127,12 @@ The results are summarized to provide detailed information about the meta-analys
 -   The `summary()` function is used to provide detailed results of the meta-analysis, including the overall effect size estimate, confidence intervals, and heterogeneity statistics.
 
 ```{r}
-### Compute Overall Effect size --------------
+### Compute Overall Effect Size --------------
 
 tradmetaresults = rma(
   # Effect size estimates
   yi = yi,
-  # Sampling variance
+  # Sampling variances
   vi = vi,
   # Specify method to estimate heterogeneity
   method = "REML",

@@ -10,10 +10,12 @@ setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 # Install packages (if not already installed)
 install.packages("metafor")
 install.packages("lmerTest")
+install.packages("psych")
 
 # Load packages
 library(metafor)  # version 4.8-0
 library(lmerTest) # version 3.1-3
+library(psych)    # version 2.5.3
 
 # Display settings (to disable scientific notation)
 options(scipen = 9999, digits = 4)
@@ -50,7 +52,7 @@ mlmmeta$publication_type = ifelse(
   "Published",
   "Unpublished")
 
-# Order the data frame based on publication and effect sizes (yi)
+# Order the data frame based on publication type and effect sizes (yi)
 mlmmeta = mlmmeta[order(mlmmeta$publication_type, mlmmeta$yi), ]
 
 ### Compute Overall Effect Size ------------------- 
@@ -71,7 +73,7 @@ mlmmetaresults = rma.mv(
 summary(mlmmetaresults)
 
 # Convert from Fisher's Z to Pearson r
-mlmmetaresults$b |> psych::fisherz2r() 
+mlmmetaresults$b |> fisherz2r() 
 
 ### Forest Plot --------------
 
@@ -252,7 +254,7 @@ forest(
 
 # Add text labels for moderator (type of publication)
 # x values to indicate the horizontal arrangement of the text
-# Labels for different creativity task types (Moderator Analysis)
+# Labels for different publication types (Moderator Analysis)
 # y values indicate the vertical arrangement of the text
 # - "Unpublished" (Unpublished data, Panel Data, Thesis/Dissertations) at y = 37
 # - "Published" (Journal Articles, Conference) at y = 113
@@ -282,7 +284,7 @@ res.u = rma.mv(
   subset = (publication_type == "Unpublished"),
   data = mlmmeta,
   # To address convergence issues (if it exists)
-  control=list(rel.tol=1e-8) 
+  control = list(rel.tol=1e-8) 
 )
 
 # Add summary effect sizes for each of the moderators

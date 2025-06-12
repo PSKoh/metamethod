@@ -48,12 +48,12 @@ multilevelmeta = escalc(
        data = multilevelmeta_raw
 )
 
-# Convert Publication to a factor with specified levels
+# Convert publication type to a factor with specified levels
 multilevelmeta$publication = factor(
        multilevelmeta$publication,
        levels = c("Journal article", "Thesis/dissertation", "Conference")
 )
-# Order the data frame based on publication and effect sizes (yi)
+# Order the data frame based on publication type and effect sizes (yi)
 multilevelmeta = multilevelmeta[order(multilevelmeta$publication, multilevelmeta$yi), ]
 
 ### Compute Overall Effect Size --------------
@@ -180,7 +180,7 @@ lmer(
 
 ### Moderation Analysis --------------
 
-# Categorical variable (i.e., publication)
+# Categorical variable (i.e., publication type)
 rma.mv(
        yi = yi,
        V = vi,

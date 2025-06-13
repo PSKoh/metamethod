@@ -106,7 +106,7 @@ tradmeta$Creativity.Measure_type = factor(
 tradmeta = tradmeta[order(tradmeta$Creativity.Measure_type, tradmeta$yi), ]
 ```
 
-# Computing the Overall Effect size
+# Computing the Overall Effect Size
 
 This section estimates the overall effect size using the `rma()` function from the `metafor` package, based on the computed effect sizes (yi) and their corresponding sampling variances (vi).
 

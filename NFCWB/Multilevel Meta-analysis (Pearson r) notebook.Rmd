@@ -125,7 +125,7 @@ This section estimates the overall effect size using the `rma.mv()` function fro
 -   The `fisherz2r()` function is used to convert the effect size estimates from Fisher's Z to Pearson's r.
 
 ```{r}
-### Compute Overall Effect Size -------------- 
+### Compute Overall Effect Size --------------
 
 # Effect size estimates
 mlmmetaresults = rma.mv(

@@ -189,7 +189,7 @@ rma.mv(
        subset = (publication == "Journal article"),
        data = multilevelmeta,
        # To address convergence issues (if it exists)
-       control=list(rel.tol=1e-8) 
+       control = list(rel.tol=1e-8) 
 )
 rma.mv(
        yi = yi,

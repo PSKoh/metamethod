@@ -176,7 +176,7 @@ rma.mv(
   subset = (publication_type == "Published"),
   data = mlmmeta,
   # To address convergence issues (if it exists)
-  control=list(rel.tol=1e-8) 
+  control = list(rel.tol=1e-8) 
 )
 
 rma.mv(
@@ -187,7 +187,7 @@ rma.mv(
   subset = (publication_type == "Unpublished"),
   data = mlmmeta,
   # To address convergence issues (if it exists)
-  control=list(rel.tol=1e-8) 
+  control = list(rel.tol=1e-8) 
 )
 
 # Continuous variable (i.e., female proportion)

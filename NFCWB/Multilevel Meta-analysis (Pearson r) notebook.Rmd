@@ -18,7 +18,7 @@ The script is structured to be run in RStudio, and it includes comments to guide
 
 This section sets up the working environment, installs necessary packages, loads the required libraries, and reads in the data.
 
-If the `metafor`, `lmerTest` and `psych`and packages are not already installed, use the `install.packages()` function to install it.
+If the `metafor`, `lmerTest` and `psych` and packages are not already installed, use the `install.packages()` function to install it.
 
 ## Explanation of the Code
 
@@ -77,7 +77,8 @@ For more information on the `escalc()` function, refer to ?escalc in R.
 ### Prepare Data --------------
 
 # Clean data file (reverse correlation for negative well-being)
-mlmmeta_raw$corr_nfcwb = with(mlmmeta_raw, ifelse(wellbeing_category == "Negative well-being", -corr_nfcwb, corr_nfcwb))
+mlmmeta_raw$corr_nfcwb = with(mlmmeta_raw, 
+ifelse(wellbeing_category == "Negative well-being", -corr_nfcwb, corr_nfcwb))
 
 # Compute effect sizes for each study
 mlmmeta = escalc(
@@ -143,7 +144,7 @@ mlmmetaresults = rma.mv(
 summary(mlmmetaresults)
 
 # Convert from Fisher's Z to Pearson's r
-mlmmetaresults$b |> psych::fisherz2r() 
+mlmmetaresults$b |> fisherz2r() 
 ```
 
 # Forest Plot
@@ -180,7 +181,9 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `ilab.xpos` argument specifies the horizontal arrangement of the columns.
 
--   The `slab` argument is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns. The `paste()` function creates the label, and the `sep` function specifies the separator between the columns.
+-   The `slab` argument is used to label each effect size with its respective study.
+
+-   The `paste()` function creates the label by combining the author and year columns.  The  `sep` argument specifies the separator between author and the year label, which is set to ", " in this case. Hence, the label will be in the format "Author(s), Year" (e.g., "Smith et al., Study 1").
 
 -   The `xlim` argument sets the x-axis limits for the plot.
 
@@ -417,9 +420,9 @@ The forest plot includes the following features:
 
 -   The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
 
--   The `slab` argument is used to label each effect size with its respective study, using the `paste()` function to combine the "Paper" and "Study" columns.
+-   The `slab` argument is used to label each effect size with its respective study. 
 
--   The `paste()` function creates the label, and the `sep` argument specifies the separator between the columns.
+-   The `paste()` function creates the label by combining the author and year columns.  The  `sep` argument specifies the separator between author and the year label, which is set to ", " in this case. Hence, the label will be in the format "Author(s), Year" (e.g., "Smith et al., Study 1").
 
 -   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
 
@@ -452,7 +455,7 @@ The forest plot includes the following features:
 # Name the pdf file of the forest plot
 # cairo_pdf function used for font compatibility
 # Adjust the width and height of the pdf file
-cairo_pdf(file = "NFCWBforestplotwithmod.pdf", width = 13, height = 35) 
+cairo_pdf(file = "NFCWBforestplotwithmod.pdf", width = 13, height = 35)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -516,7 +519,7 @@ res.p = rma.mv(
   subset = (publication_type == "Published"),
   data = mlmmeta,
   # To address convergence issues (if it exists)
-  control=list(rel.tol=1e-8) 
+  control = list(rel.tol=1e-8) 
 )
 res.u = rma.mv(
   yi,

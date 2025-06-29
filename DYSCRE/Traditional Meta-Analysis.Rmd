@@ -302,7 +302,7 @@ The funnel plot visually represents the distribution of effect sizes and their s
 # Save the funnel plot as a PDF file
 # Name the pdf file of the funnel plot
 # Adjust the width and height of the pdf file
-pdf(file = "tradfunnelplot.pdf", width = 7, height = 4)
+pdf(file = "tradfunnelplot.pdf", width = 7, height = 3.5)
 # Adjust margins of the funnel plot
 # Set the bottom, left, top, and right margins
 par(mar = c(4, 4, 0.3, 1))

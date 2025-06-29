@@ -184,7 +184,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
--   The `paste()` function creates the label by combining the Paper (i.e., authors of the paper) and Study columns. Since the Study column in the dataset only contains numbers, we added the word "Study" before the number to make it clearer. The  `sep` argument specifies the separator between paper and the study label, which is set to ", " in this case. Hence, the label will be in the format "Paper, Study X" (e.g., "Smith et al., Study 1").
+-   The `paste()` function creates the label by combining the Paper (i.e., authors of the paper) and Study columns. Since the Study column in the dataset only contains numbers, we added the word "Study" before the number to make it clearer. The `sep` argument specifies the separator between paper and the study label, which is set to ", " in this case. Hence, the label will be in the format "Paper, Study X" (e.g., "Smith et al., Study 1").
 
 -   The `xlim` argument sets the x-axis limits for the plot.
 
@@ -363,7 +363,7 @@ rma(
   # Sampling variance
   vi = vi,
   # Indicate moderator which is SE/sei_corrected
-  mods = ~sei_corrected,
+  mods = ~ sei_corrected,
   # Indicate weight which is inverse SE^2
   weights = 1 / sei_corrected^2,
   # Specify dataset
@@ -403,7 +403,7 @@ rma(
   yi = yi,
   vi = vi,
   # Specify continuous moderator (i.e., sex)
-  mods = ~Proportion.of.female,
+  mods = ~ Proportion.of.female,
   method = "REML",
   data = tradmeta
 )
@@ -473,7 +473,7 @@ The forest plot includes the following features:
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
--   The `paste()` function creates the label by combining the Paper (i.e., authors of the paper) and Study columns. Since the Study column in the dataset only contains numbers, we added the word "Study" before the number to make it clearer. The  `sep` argument specifies the separator between paper and the study label, which is set to ", " in this case. Hence, the label will be in the format "Paper, Study X" (e.g., "Smith et al., Study 1").
+-   The `paste()` function creates the label by combining the Paper (i.e., authors of the paper) and Study columns. Since the Study column in the dataset only contains numbers, we added the word "Study" before the number to make it clearer. The `sep` argument specifies the separator between paper and the study label, which is set to ", " in this case. Hence, the label will be in the format "Paper, Study X" (e.g., "Smith et al., Study 1").
 
 -   The `xlim` argument sets the x-axis limits for the plot.
 

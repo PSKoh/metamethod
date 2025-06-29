@@ -169,7 +169,7 @@ rma(
   # Sampling variance
   vi = vi,
   # Indicate moderator which is SE/sei_corrected
-  mods = ~sei_corrected,
+  mods = ~ sei_corrected,
   # Indicate weight which is inverse SE^2
   weights = 1 / sei_corrected^2,
   # Specify dataset
@@ -185,7 +185,7 @@ rma(
   yi = yi,
   vi = vi,
   # Specify continuous moderator (i.e., sex)
-  mods = ~Proportion.of.female,
+  mods = ~ Proportion.of.female,
   method = "REML",
   data = tradmeta
 )

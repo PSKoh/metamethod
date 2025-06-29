@@ -74,7 +74,7 @@ summary(tradmetaresults)
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot
 # Adjust the width and height of the pdf file
-pdf(file = "tradforestplot.pdf", width = 11, height = 8)
+pdf(file = "tradforestplot.pdf", width = 11, height = 6.5)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -120,7 +120,7 @@ forest(
 text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
 
 # Add "Sample Size" header
-text(x = -3.85, y = 15, "Sample Size", font = 2)
+text(x = -3.85, y = 15.3, "Sample Size", font = 2)
 
 # Add specific sample size column headers for dyslexia and control groups
 # x values indicate the horizontal arrangement of the columns
@@ -221,7 +221,7 @@ rma(
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot
 # Adjust the width and height of the pdf file
-pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 9)
+pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 7.8)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -236,7 +236,7 @@ forest(
   rows = c(20:18, 14:10, 6:2),
 
   # Add y-axis limits
-  ylim = c(-2, 24),
+  ylim = c(-2, 24.5),
 
   # Add sample size information for dyslexia (n_dys) and control (n_control) group
   # Values indicate the x-axis position of the sample size columns

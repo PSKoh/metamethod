@@ -202,7 +202,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
--   The `paste()` function creates the label by combining the "author" and "year_published" columns. The `sep` argument specifies the separator between the columns, whcich is set to ", " in this case. Hence, the label will be in the format "Author(s), Year_Published" (e.g., "Smith, 2020").
+-   The `paste()` function creates the label by combining the "author" and "year_published" columns. The `sep` argument specifies the separator between the columns, which is set to ", " in this case. Hence, the label will be in the format "Author(s), Year_Published" (e.g., "Smith, 2020").
 
 -   The `xlim` argument sets the x-axis limits for the plot.
 
@@ -484,7 +484,7 @@ The forest plot includes the following features:
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
--   The `paste()` function creates the label by combining the "author" and "year_published" columns. The `sep` argument specifies the separator between the columns, whcich is set to ", " in this case. Hence, the label will be in the format "Author(s), Year" (e.g., "Smith, 2020").
+-   The `paste()` function creates the label by combining the "author" and "year_published" columns. The `sep` argument specifies the separator between the columns, which is set to ", " in this case. Hence, the label will be in the format "Author(s), Year" (e.g., "Smith, 2020").
 
 -   The `xlim` argument sets the x-axis limits for the plot.
 

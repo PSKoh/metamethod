@@ -183,7 +183,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
--   The `paste()` function creates the label by combining the author and year columns.  The  `sep` argument specifies the separator between author and the year label, which is set to ", " in this case. Hence, the label will be in the format "Author(s), Year" (e.g., "Smith et al., Study 1").
+-   The `paste()` function creates the label by combining the author and year columns. The `sep` argument specifies the separator between author and the year label, which is set to ", " in this case. Hence, the label will be in the format "Author(s), Year" (e.g., "Smith et al., Study 1").
 
 -   The `xlim` argument sets the x-axis limits for the plot.
 
@@ -420,9 +420,9 @@ The forest plot includes the following features:
 
 -   The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
 
--   The `slab` argument is used to label each effect size with its respective study. 
+-   The `slab` argument is used to label each effect size with its respective study.
 
--   The `paste()` function creates the label by combining the author and year columns.  The  `sep` argument specifies the separator between author and the year label, which is set to ", " in this case. Hence, the label will be in the format "Author(s), Year" (e.g., "Smith et al., Study 1").
+-   The `paste()` function creates the label by combining the author and year columns. The `sep` argument specifies the separator between author and the year label, which is set to ", " in this case. Hence, the label will be in the format "Author(s), Year" (e.g., "Smith et al., Study 1").
 
 -   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
 

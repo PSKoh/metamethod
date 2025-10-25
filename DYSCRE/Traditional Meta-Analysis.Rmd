@@ -70,7 +70,7 @@ The `tradmeta_raw` data frame does not include pre-computed effect sizes for eac
 
 -   The `c()` function combines the creativity measure types into a character vector.
 
--   The `tradmeta_raw` data frame is then sorted by the type of creativity measure and corresponding effect sizes to facilitate clearer visualization in the forest plot.
+-   The `tradmeta_raw` data frame is then sorted by the type of creativity measure and corresponding effect sizes to facilitate clearer visualization in the forest plot. Do note that the comma before the closing square bracket is required, as it indicates that we are keeping the columns while reordering the rows.
 
 ```{r}
 ### Prepare Data --------------
@@ -164,23 +164,17 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 ## Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
 -   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
 -   The `order` argument specifies the arrangement of studies, with "obs" indicating that the studies should be arranged by effect sizes. To organise by column, replace "obs" with the specific column in the data frame.
 
 -   The `ylim` argument sets the y-axis limits for the plot.
 
--   The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
+-   The `ilab` argument is used to add extra columns of information to the forest plot beyond just the effect sizes. Here, we are adding sample size data for both the dyslexia and control groups.
 
--   The `c()` function combines the values into a numeric vector.
+-   The `cbind()` function combines multiple columns side-by-side. In this case, the sample sizes of the groups (dys and control) will appear side-by-side in the forest plot.
 
--   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
-
--   The `ilab.xpos` argument specifies the horizontal arrangement of the columns.
+-   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study names.
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
@@ -202,14 +196,8 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `c()` function inside the `text()` function creates a vector of x-positions, where the labels "Dslx" and "Ctrl" will be placed. The first x-value (-4.2) determines the horizontal position of the "Dslx" label, and the second x-value (-3.5) positions the "Ctrl" label.
 
--   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
-
-```{r}
+```{r, fig.width = 11, fig.height = 6.5}
 ### Forest Plot --------------
-
-# Save the forest plot as a PDF file
-# Name the pdf file of the forest plot
-pdf(file = "tradforestplot.pdf", width = 11, height = 6.5)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -266,6 +254,50 @@ text(c(x = -4.2, x = -3.5), y = 14.5, c("Dslx", "Ctrl"), font = 2)
 # Add "g [95% CI]" header
 text(x = 3.5, y = 14.5, "g [95% CI]", font = 2)
 
+```
+
+## Optional: Saving the Forest Plot as a Separate File
+
+### Explanation of the Code
+
+-   To save the forest plot as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   Following the `pdf()` function, the same code used to create the forest plot is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
+
+-   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
+
+```{r}
+
+### Saving the Forest Plot as a Separate File (Optional) --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+pdf(file = "tradforestplot.pdf", width = 11, height = 6.5)
+
+# Same forest plot code as above
+forest(
+  tradmetaresults,
+  order = "obs",
+  ylim = c(-2, 16),
+  ilab = cbind(n_dys, n_control),
+  ilab.xpos = c(-4.2, -3.5),
+  slab = paste(Paper, paste("Study", Study), sep = ", "),
+  xlim = c(-8, 4),
+  alim = c(-2.5, 2.5),
+  steps = 11,
+  header = FALSE,
+  xlab = "Hedge's g"
+)
+
+text(x = -7.2, y = 14.5, "Author(s) Year", font = 2)
+text(x = -3.85, y = 15.3, "Sample Size", font = 2)
+text(c(x = -4.2, x = -3.5), y = 14.5, c("Dslx", "Ctrl"), font = 2)
+text(x = 3.5, y = 14.5, "g [95% CI]", font = 2)
+
 # Close the forest plot and finalise it as a saved file
 dev.off()
 ```
@@ -280,10 +312,6 @@ The funnel plot visually represents the distribution of effect sizes and their s
 
 ### Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
 -   The `par()` function is used to adjust the margins of the funnel plot, with the `mar` argument specifying the bottom, left, top, and right margins.
 
 -   The `funnel()` function is used to create the funnel plot, and the `tradmetaresults` object contains the results of the meta-analysis.
@@ -292,10 +320,35 @@ The funnel plot visually represents the distribution of effect sizes and their s
 
 -   The `xlab` argument specifies the confidence interval label for the funnel plot, in this case, "Hedge's g"
 
+```{r}
+### Tests for Publication Bias --------------
+
+# Funnel Plot #
+
+# Adjust margins of the funnel plot
+# Set the bottom, left, top, and right margins
+par(mar = c(4, 4, 0.3, 1))
+# Create the funnel plot
+funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
+
+```
+
+## Optional: Saving the Funnel Plot as a Separate File
+
+### Explanation of the Code
+
+-   To save the funnel plot as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   Following the `pdf()` function, the same code used to create the funnel plot is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
+
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r}
-### Tests for Publication Bias --------------
+### Saving the Funnel Plot as a Separate File (Optional) --------------
 
 # Funnel Plot #
 
@@ -303,11 +356,11 @@ The funnel plot visually represents the distribution of effect sizes and their s
 # Name the pdf file of the funnel plot
 # Adjust the width and height of the pdf file
 pdf(file = "tradfunnelplot.pdf", width = 7, height = 3.5)
-# Adjust margins of the funnel plot
-# Set the bottom, left, top, and right margins
+
+# Same funnel plot code as above
 par(mar = c(4, 4, 0.3, 1))
-# Create the funnel plot
 funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
+
 # Close the funnel plot and finalise it as a saved file
 dev.off()
 ```
@@ -465,11 +518,11 @@ The forest plot includes the following features:
 
 -   The `ylim` argument sets the y-axis limits for the plot.
 
--   The `ilab` argument is used to add sample size information for both dyslexia and control groups into the forest plot.
+-   The `ilab` argument is used to add extra columns of information to the forest plot beyond just the effect sizes. Here, we are adding sample size data for both the dyslexia and control groups.
 
--   The `cbind()` function combines the columns indicating the sample size of the groups (dys and control).
+-   The `cbind()` function combines multiple columns side-by-side. In this case, the sample sizes of the groups (dys and control) will appear side-by-side in the forest plot.
 
--   The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
+-   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study names.
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
@@ -503,13 +556,8 @@ The forest plot includes the following features:
 
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
-```{r}
+```{r, fig.width = 11, fig.height = 6.5}
 ### Forest Plot of Moderators --------------
-
-# Save the forest plot as a PDF file
-# Name the pdf file of the forest plot
-# Adjust the width and height of the pdf file
-pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 7.8)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -604,6 +652,85 @@ text(x = -3.6, y = 23.7, "Sample Size", font = 2)
 text(c(x = -3.8, x = -3.3), y = 23, c("Dslx", "Ctrl"), font = 2)
 
 # Add "g [95% CI]" header
+text(x = 3.5, y = 23, "g [95% CI]", font = 2)
+
+```
+
+## Optional: Saving the Forest Plot of Moderators as a Separate File
+
+### Explanation of the Code
+
+-   To save the forest plot of moderators as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   Following the `pdf()` function, the same code used to create the forest plot of moderators is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
+
+-   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
+
+```{r}
+
+### Saving the Forest Plot as a Separate File (Optional) --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+pdf(file = "tradforestplot.pdf", width = 11, height = 6.5)
+
+# Same forest plot code as above
+forest(
+  tradmetaresults,
+
+  rows = c(20:18, 14:10, 6:2),
+  ylim = c(-2, 24.5),
+  ilab = cbind(n_dys, n_control),
+  ilab.xpos = c(-3.8, -3.3),
+  slab = paste(Paper, paste("Study", Study), sep = ", "),
+  xlim = c(-7, 4),
+  alim = c(-1.5, 1.5),
+  steps = 7,
+  header = FALSE,
+  xlab = "Hedge's g"
+)
+
+text(
+  x = -7,
+  y = c(7, 15, 21),
+  pos = 4,
+  c("Non-verbal", "Mixed", "Verbal"),
+  font = 2
+)
+
+res.v = rma(
+  yi,
+  vi,
+  subset = (Creativity.Measure_type == "Verbal"),
+  data = tradmeta
+)
+res.n = rma(
+  yi,
+  vi,
+  subset = (Creativity.Measure_type == "Non-verbal"),
+  data = tradmeta
+)
+res.m = rma(
+  yi,
+  vi,
+  subset = (Creativity.Measure_type == "Mixed"),
+  data = tradmeta
+)
+
+addpoly(res.n, row = 1)
+addpoly(res.m, row = 9)
+addpoly(res.v, row = 17) 
+
+text(x = -6.3, y = 23, "Author(s) Year", font = 2)
+
+text(x = -3.6, y = 23.7, "Sample Size", font = 2)
+
+text(c(x = -3.8, x = -3.3), y = 23, c("Dslx", "Ctrl"), font = 2)
+
 text(x = 3.5, y = 23, "g [95% CI]", font = 2)
 
 # Close the forest plot and finalise it as a saved file

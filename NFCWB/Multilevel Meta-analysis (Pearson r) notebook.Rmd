@@ -43,7 +43,6 @@ library(metafor)  # version 4.8-0
 library(lmerTest) # version 3.1-3
 library(psych)    # version 2.5.3
 
-
 # Display settings (to disable scientific notation)
 options(scipen = 9999, digits = 4)
 
@@ -71,7 +70,7 @@ For more information on the `escalc()` function, refer to ?escalc in R.
 
 -   The publication type is categorised into "Published" and "Unpublished" based on the type of publication (e.g., journal article, conference paper, thesis/dissertation).
 
--   The `mlmmeta` data frame is then sorted by the type of publication (published vs unpublished) to facilitate clearer visualization in the forest plot.
+-   The `mlmmeta` data frame is then sorted by the type of publication (published vs unpublished) to facilitate clearer visualization in the forest plot. Do note that the comma before the closing square bracket is required, as it indicates that we are keeping the columns while reordering the rows.
 
 ```{r}
 ### Prepare Data --------------
@@ -177,9 +176,9 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `ylim` argument sets the y-axis limits for the plot.
 
--   The `ilab` argument is used to add sample size information for need for cognition and well-being group into the forest plot.
+-   The `ilab` argument is used to add extra columns of information to the forest plot beyond just the effect sizes. Here, we are adding sample size data for cognition and well-being group into the forest plot.
 
--   The `ilab.xpos` argument specifies the horizontal arrangement of the columns.
+-   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study names.
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
@@ -189,7 +188,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
 
--   The `efac` argument changes the size of effect size polygons.
+-   The `efac` argument controls the size of the diamond shapes that represent the effect sizes in the plot.
 
 -   The `header` argument is set to FALSE to allow for manual specification of headers.
 
@@ -203,12 +202,8 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
-```{r}
+```{r, fig.width = 14, fig.height = 35}
 ### Forest Plot --------------
-
-# Save the forest plot as a PDF file
-# Name the pdf file of the forest plot
-cairo_pdf(file = "NFCWBforestplot.pdf", width = 14, height = 35)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -259,6 +254,51 @@ text(x = -3, y = 110, "Sample Size", font = 2)
 # Add "r [95% CI]" header
 text(x = 2.7, y = 110, "Z [95% CI]", font = 2) 
 
+```
+
+## Optional: Saving the Forest Plot as a Separate File
+
+### Explanation of the Code
+
+-   To save the forest plot as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   Following the `pdf()` function, the same code used to create the forest plot of moderators is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
+
+-   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
+
+```{r}
+### Forest Plot --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+cairo_pdf(file = "NFCWBforestplot.pdf", width = 14, height = 35)
+
+# Same forest plot code as above
+forest(
+  mlmmetaresults, 
+  order = "obs",
+  ylim = c(-3, 111),
+  ilab = sample_size,
+  ilab.xpos = -3,
+  slab = paste(author, year, sep = ", "),
+  xlim = c(-5, 3),
+  alim = c(-1.5, 1.5),
+  steps = 7,
+  efac = 0.3,
+  header = FALSE,
+  xlab = "Fisher's Z"
+)
+
+text(x = -4.6, y = 110, "Author(s) Year", font = 2)
+
+text(x = -3, y = 110, "Sample Size", font = 2)
+
+text(x = 2.7, y = 110, "Z [95% CI]", font = 2)
+
 # Close the forest plot and finalise it as a saved file
 dev.off()
 ```
@@ -296,14 +336,39 @@ The funnel plot visually represents the distribution of effect sizes and their s
 
 # Funnel Plot #
 
-# Save the funnel plot as a PDF file
-# Name the pdf file of the funnel plot
-# Adjust the width and height of the pdf file
-pdf(file = "NFCWBfunnelplot.pdf", width = 8, height = 5)
 # Adjust margins of the funnel plot
 # Set the bottom, left, top, and right margins
 par(mar = c(4, 4, 0.3, 1))
 # Create the funnel plot
+funnel(mlmmetaresults, legend = TRUE, xlab = "Fisher's Z")
+
+```
+
+# Optional: Saving the Funnel Plot as a Separate File
+
+### Explanation of the Code
+
+-   To save the funnel plot as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   Following the `pdf()` function, the same code used to create the funnel plot is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
+
+-   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
+
+```{r}
+### Tests for Publication Bias --------------
+
+# Funnel Plot #
+
+# Save the funnel plot as a PDF file
+# Name the pdf file of the funnel plot
+# Adjust the width and height of the pdf file
+pdf(file = "NFCWBfunnelplot.pdf", width = 8, height = 5)
+# Same funnel plot code as above
+par(mar = c(4, 4, 0.3, 1))
 funnel(mlmmetaresults, legend = TRUE, xlab = "Fisher's Z")
 # Close the funnel plot and finalise it as a saved file
 dev.off()
@@ -416,15 +481,19 @@ The forest plot includes the following features:
 
 -   The `ylim` argument sets the y-axis limits for the plot.
 
--   The `ilab` argument is used to add sample size information for the need for cognition and well-being group into the forest plot.
+-   The `ilab` argument is used to add extra columns of information to the forest plot beyond just the effect sizes. Here, we are adding sample size data for cognition and well-being group into the forest plot.
 
--   The `ilab.xpos` argument specifies the horizontal arrangement of the columns, while the `xlim` argument sets the x-axis limits for the plot.
+-   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study names.
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
 -   The `paste()` function creates the label by combining the author and year columns. The `sep` argument specifies the separator between author and the year label, which is set to ", " in this case. Hence, the label will be in the format "Author(s), Year" (e.g., "Smith et al., Study 1").
 
+-   The `xlim` argument sets the x-axis limits for the plot.
+
 -   The `alim` argument sets the confidence interval limits, and the `steps` argument determines the number of intervals in the x-axis.
+
+-   The `efac` argument controls the size of the diamond shapes that represent the effect sizes in the plot.
 
 -   The `header` argument is set to FALSE to allow for manual specification of headers.
 
@@ -448,14 +517,8 @@ The forest plot includes the following features:
 
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
-```{r}
+```{r, fig.width = 13, fig.height = 35}
 ### Forest Plot of Moderators --------------
-
-# Save the forest plot as a PDF file
-# Name the pdf file of the forest plot
-# cairo_pdf function used for font compatibility
-# Adjust the width and height of the pdf file
-cairo_pdf(file = "NFCWBforestplotwithmod.pdf", width = 13, height = 35)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -542,6 +605,81 @@ text(x = -6.4, y = 115, "Author(s) Year", font = 2)
 text(x = -4.0, y = 115, "Sample Size", font = 2)
 
 # Add "r [95% CI]" header
+text(x = 3.6, y = 115, "Z [95% CI]", font = 2)
+
+```
+
+## Optional: Saving the Forest Plot of Moderators as a Separate File
+
+### Explanation of the Code
+
+-   To save the forest plot of moderators as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
+
+-   Following the `pdf()` function, the same code used to create the forest plot of moderators is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
+
+-   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
+
+```{r}
+### Forest Plot of Moderators --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+# cairo_pdf function used for font compatibility
+# Adjust the width and height of the pdf file
+cairo_pdf(file = "NFCWBforestplotwithmod.pdf", width = 13, height = 35)
+
+# Same forest plot code as above
+forest(
+  mlmmetaresults,
+  rows = c(112:40, 36:2),
+  ylim = c(-3, 116),
+  ilab = sample_size,
+  ilab.xpos = -4.2, 
+  slab = paste(author, year, sep = ", "),
+  xlim = c(-7, 4),
+  alim = c(-1.5, 1.5),
+  steps = 7,
+  efac = 0.3,
+  header = FALSE,
+  xlab = "Fisher's Z"
+)
+
+text(
+  x = -7,
+  y = c(37, 113),
+  pos = 4,
+  c("Unpublished", "Published"),
+  font = 2
+)
+
+res.p = rma.mv(
+  yi,
+  vi,
+  random = ~ 1 | sample_id/meta_id,
+  subset = (publication_type == "Published"),
+  data = mlmmeta,
+  control = list(rel.tol=1e-8) 
+)
+res.u = rma.mv(
+  yi,
+  vi,
+  random = ~ 1 | sample_id/meta_id,
+  subset = (publication_type == "Unpublished"),
+  data = mlmmeta,
+  control = list(rel.tol=1e-8) 
+)
+
+addpoly(res.u, row = 1) 
+addpoly(res.p, row = 39) 
+
+text(x = -6.4, y = 115, "Author(s) Year", font = 2)
+
+text(x = -4.0, y = 115, "Sample Size", font = 2)
+
 text(x = 3.6, y = 115, "Z [95% CI]", font = 2)
 
 # Close the forest plot and finalise it as a saved file

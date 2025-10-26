@@ -174,7 +174,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `cbind()` function combines multiple columns side-by-side. In this case, the sample sizes of the groups (dys and control) will appear side-by-side in the forest plot.
 
--   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study names.
+-   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study labels.
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
@@ -522,7 +522,7 @@ The forest plot includes the following features:
 
 -   The `cbind()` function combines multiple columns side-by-side. In this case, the sample sizes of the groups (dys and control) will appear side-by-side in the forest plot.
 
--   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study names.
+-   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study labels.
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
@@ -676,7 +676,7 @@ text(x = 3.5, y = 23, "g [95% CI]", font = 2)
 
 # Save the forest plot as a PDF file
 # Name the pdf file of the forest plot
-pdf(file = "tradforestplot.pdf", width = 11, height = 6.5)
+pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 6.5)
 
 # Same forest plot code as above
 forest(

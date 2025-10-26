@@ -170,7 +170,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
--   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
+-   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
 -   The `order` argument specifies the arrangement of studies, with "obs" indicating that the studies should be arranged by effect sizes. To organise by column, replace "obs" with the specific column in the data frame.
 
@@ -178,7 +178,7 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 -   The `ilab` argument is used to add extra columns of information to the forest plot beyond just the effect sizes. Here, we are adding sample size data for cognition and well-being group into the forest plot.
 
--   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study names.
+-   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study labels.
 
 -   The `slab` argument is used to label each effect size with its respective study.
 
@@ -323,7 +323,7 @@ The funnel plot visually represents the distribution of effect sizes and their s
 
 -   The `par()` function is used to adjust the margins of the funnel plot, with the `mar` argument specifying the bottom, left, top, and right margins.
 
--   The `funnel()` function is used to create the funnel plot, and the `tradmetaresults` object contains the results of the meta-analysis.
+-   The `funnel()` function is used to create the funnel plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
 -   The `legend` argument specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
 
@@ -483,7 +483,7 @@ The forest plot includes the following features:
 
 -   The `ilab` argument is used to add extra columns of information to the forest plot beyond just the effect sizes. Here, we are adding sample size data for cognition and well-being group into the forest plot.
 
--   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study names.
+-   The `ilab.xpos` argument specifies where the sample size columns appear horizontally on the plot. The negative values position the columns on the left side of the plot, just after the study labels.
 
 -   The `slab` argument is used to label each effect size with its respective study.
 

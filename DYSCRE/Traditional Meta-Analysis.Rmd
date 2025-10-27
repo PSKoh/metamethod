@@ -70,7 +70,7 @@ The `tradmeta_raw` data frame does not include pre-computed effect sizes for eac
 
 -   The `c()` function combines the creativity measure types into a character vector.
 
--   The `tradmeta_raw` data frame is then sorted by the type of creativity measure and corresponding effect sizes to facilitate clearer visualization in the forest plot. Do note that the comma before the closing square bracket is required, as it indicates that we are keeping the columns while reordering the rows.
+-   The `tradmeta` data frame is reordered to prepare it for visualization. The `order()` function sorts the rows first by `Creativity.Measure_type` (grouping same creativity measures together) and then by `yi` (the effect sizes, from smallest to largest within each measure type). Do note that the comma before ']' is required as it tells R to keep all columns while reordering the rows according to the specified order.
 
 ```{r}
 ### Prepare Data --------------
@@ -160,9 +160,15 @@ The plot includes the following features:
 
 -   Custom labels for the studies
 
-After running this code, the forest plot will appear as shown on page 7 of this handbook.
+Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+
+For reference, the forest plot will appear as shown on page 7 of this handbook.
 
 ## Explanation of the Code
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
 -   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
@@ -196,8 +202,15 @@ After running this code, the forest plot will appear as shown on page 7 of this 
 
 -   The `c()` function inside the `text()` function creates a vector of x-positions, where the labels "Dslx" and "Ctrl" will be placed. The first x-value (-4.2) determines the horizontal position of the "Dslx" label, and the second x-value (-3.5) positions the "Ctrl" label.
 
-```{r, fig.width = 11, fig.height = 6.5}
+-   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
+
+```{r}
+
 ### Forest Plot --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+pdf(file = "tradforestplot.pdf", width = 11, height = 6.5)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -254,35 +267,19 @@ text(c(x = -4.2, x = -3.5), y = 14.5, c("Dslx", "Ctrl"), font = 2)
 # Add "g [95% CI]" header
 text(x = 3.5, y = 14.5, "g [95% CI]", font = 2)
 
+# Close the forest plot and finalise it as a saved file
+dev.off()
 ```
 
-## Optional: Saving the Forest Plot as a Separate File
-
-### Explanation of the Code
-
--   To save the forest plot as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
-
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
--   Following the `pdf()` function, the same code used to create the forest plot is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
-
--   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
-
-```{r}
-
-### Saving the Forest Plot as a Separate File (Optional) --------------
-
-# Save the forest plot as a PDF file
-# Name the pdf file of the forest plot
-pdf(file = "tradforestplot.pdf", width = 11, height = 6.5)
+```{r, fig.width = 11, fig.height = 6.5, echo=FALSE}
+# For illustration purposes only
 
 # Same forest plot code as above
+
 forest(
   tradmetaresults,
   order = "obs",
-  ylim = c(-2, 16),
+  ylim = c(-2, 16), 
   ilab = cbind(n_dys, n_control),
   ilab.xpos = c(-4.2, -3.5),
   slab = paste(Paper, paste("Study", Study), sep = ", "),
@@ -298,8 +295,6 @@ text(x = -3.85, y = 15.3, "Sample Size", font = 2)
 text(c(x = -4.2, x = -3.5), y = 14.5, c("Dslx", "Ctrl"), font = 2)
 text(x = 3.5, y = 14.5, "g [95% CI]", font = 2)
 
-# Close the forest plot and finalise it as a saved file
-dev.off()
 ```
 
 # Tests for Publication Bias
@@ -310,9 +305,15 @@ This section performs tests for publication bias, including a funnel plot, rank 
 
 The funnel plot visually represents the distribution of effect sizes and their standard errors, allowing for the identification of potential publication bias.
 
-After running this code, the funnel plot will appear as shown on page 9 of this handbook.
+Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+
+For reference, the funnel plot will appear as shown on page 8 of this handbook.
 
 ### Explanation of the Code
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
 -   The `par()` function is used to adjust the margins of the funnel plot, with the `mar` argument specifying the bottom, left, top, and right margins.
 
@@ -322,37 +323,10 @@ After running this code, the funnel plot will appear as shown on page 9 of this 
 
 -   The `xlab` argument specifies the confidence interval label for the funnel plot, in this case, "Hedge's g"
 
-```{r}
-### Tests for Publication Bias --------------
-
-# Funnel Plot #
-
-# Adjust margins of the funnel plot
-# Set the bottom, left, top, and right margins
-par(mar = c(4, 4, 0.3, 1))
-# Create the funnel plot
-funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
-
-```
-
-## Optional: Saving the Funnel Plot as a Separate File
-
-Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
-
-### Explanation of the Code
-
--   To save the funnel plot as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
-
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
--   Following the `pdf()` function, the same code used to create the funnel plot is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
-
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r}
-### Saving the Funnel Plot as a Separate File (Optional) --------------
+### Tests for Publication Bias --------------
 
 # Funnel Plot #
 
@@ -367,6 +341,16 @@ funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
 
 # Close the funnel plot and finalise it as a saved file
 dev.off()
+```
+
+```{r, echo=FALSE}
+# For illustration purposes only
+
+# Same funnel plot code as above
+
+par(mar = c(4, 4, 0.3, 1))
+funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
+
 ```
 
 ## Rank Correlation Test
@@ -508,9 +492,15 @@ The forest plot includes the following features:
 
 -   Summary effect sizes for each moderator
 
-After running this code, the forest plot of moderators will appear as shown on page 18 of this handbook.
+Saving the forest plot of moderators as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+
+For reference, the forest plot of moderators will appear as shown on page 16 of this handbook.
 
 ## Explanation of the Code
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
 -   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
@@ -554,8 +544,14 @@ After running this code, the forest plot of moderators will appear as shown on p
 
 -   The `c()` function within the `text()` function creates a vector of x-positions, where the labels "Dslx" and "Ctrl" will be placed. The first x-value (-3.8) determines the horizontal position of the "Dslx" label, and the second x-value (-3.3) positions the "Ctrl" label.
 
-```{r, fig.width = 11, fig.height = 6.5}
+-   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
+
+```{r}
 ### Forest Plot of Moderators --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 6.5)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -652,36 +648,17 @@ text(c(x = -3.8, x = -3.3), y = 23, c("Dslx", "Ctrl"), font = 2)
 # Add "g [95% CI]" header
 text(x = 3.5, y = 23, "g [95% CI]", font = 2)
 
+# Close the forest plot and finalise it as a saved file
+dev.off()
 ```
 
-## Optional: Saving the Forest Plot of Moderators as a Separate File
+```{r, fig.width = 11, fig.height = 6, echo=FALSE}
 
-Saving the forest plot of moderators as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
-
-### Explanation of the Code
-
--   To save the forest plot of moderators as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
-
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
--   Following the `pdf()` function, the same code used to create the forest plot of moderators is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
-
--   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
-
-```{r}
-
-### Saving the Forest Plot as a Separate File (Optional) --------------
-
-# Save the forest plot as a PDF file
-# Name the pdf file of the forest plot
-pdf(file = "tradforestplotwithmoderators.pdf", width = 11, height = 6.5)
+# For illustration purposes only
 
 # Same forest plot code as above
 forest(
   tradmetaresults,
-
   rows = c(20:18, 14:10, 6:2),
   ylim = c(-2, 24.5),
   ilab = cbind(n_dys, n_control),
@@ -726,15 +703,10 @@ addpoly(res.m, row = 9)
 addpoly(res.v, row = 17) 
 
 text(x = -6.3, y = 23, "Author(s) Year", font = 2)
-
 text(x = -3.6, y = 23.7, "Sample Size", font = 2)
-
 text(c(x = -3.8, x = -3.3), y = 23, c("Dslx", "Ctrl"), font = 2)
-
 text(x = 3.5, y = 23, "g [95% CI]", font = 2)
 
-# Close the forest plot and finalise it as a saved file
-dev.off()
 ```
 
 # End of Code

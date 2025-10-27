@@ -78,7 +78,7 @@ For more information on the `escalc()` function, refer to ?escalc in R.
 
 -   The `c()` function combines the types of publication into a character vector.
 
--   The `multilevelmeta` data frame is then sorted by the type of publication (e.g., journal articles, thesis/dissertation, conference) and corresponding effect sizes to facilitate clearer visualization in the forest plot. Do note that the comma before the closing square bracket is required, as it indicates that we are keeping the columns while reordering the rows.
+-   The `multilevelmeta` data frame is reordered to prepare it for visualization. The `order()` function sorts the rows first by publication (grouping the same publication types together) and then by `yi` (arranging effect sizes from smallest to largest within each publication type). Do note that the comma before ] is required as it tells R to keep all columns while reordering only the rows according to the specified order.
 
 ```{r}
 ### Prepare Data --------------
@@ -180,9 +180,15 @@ The plot includes the following features:
 
 -   Custom labels for the studies
 
-After running this code, the forest plot will appear as shown on page 8 of this handbook.
+Saving the forest plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+
+For reference, the forest plot will appear as shown on page 8 of this handbook.
 
 ## Explanation of the Code
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
 -   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
@@ -216,8 +222,14 @@ After running this code, the forest plot will appear as shown on page 8 of this 
 
 -   The `font` argument adjusts the font size.
 
-```{r, fig.width = 15, fig.height = 40}
+-   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
+
+```{r}
 ### Forest Plot --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+pdf(file = "mlmforestplot.pdf", width = 15, height = 40)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -278,29 +290,9 @@ text(x = 2.7, y = 139, "g [95% CI]", font = 2)
 
 ```
 
-## Optional: Saving the Forest Plot as a Separate File
+```{r, fig.width = 15, fig.height = 24, echo=FALSE}
 
-Saving the forest plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
-
-### Explanation of the Code
-
--   To save the forest plot as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
-
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
--   Following the `pdf()` function, the same code used to create the forest plot is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
-
--   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
-
-```{r}
-
-### Saving the Forest Plot as a Separate File (Optional) --------------
-
-# Save the forest plot as a PDF file
-# Name the pdf file of the forest plot
-pdf(file = "mlmforestplot.pdf", width = 15, height = 40)
+# For illustration purposes only
 
 # Same forest plot code as above
 forest(
@@ -319,15 +311,10 @@ forest(
 )
 
 text(x = -4.6, y = 139, "Author(s) Year", font = 2)
-
 text(x = -2.8, y = 139.6, "Sample Size", font = 2)
-
 text(c(x = -3, x = -2.55), y = 139, c("Presence", "Absence"), font = 2)
-
 text(x = 2.7, y = 139, "g [95% CI]", font = 2)
 
-# Close the forest plot and finalise it as a saved file
-dev.off()
 ```
 
 # Tests for Publication Bias
@@ -346,6 +333,8 @@ After running this code, the funnel plot will appear as shown on page 11 of this
 
 ### Explanation of the Code
 
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
+
 -   The `par()` function is used to adjust the margins of the funnel plot, with the `mar` argument specifying the bottom, left, top, and right margins.
 
 -   The `funnel()` function is used to create the funnel plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
@@ -354,37 +343,10 @@ After running this code, the funnel plot will appear as shown on page 11 of this
 
 -   The `xlab` argument specifies the confidence interval label for the funnel plot, in this case, "Hedge's g".
 
-```{r}
-### Tests for Publication Bias --------------
-
-# Funnel Plot #
-
-# Adjust margins of the funnel plot
-# Set the bottom, left, top, and right margins
-par(mar = c(4, 4, 0.3, 1))
-# Create the funnel plot
-funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
-
-```
-
-# Optional: Saving the Funnel Plot as a Separate File
-
-Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
-
-### Explanation of the Code
-
--   To save the funnel plot as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
-
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` function specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
--   Following the `pdf()` function, the same code used to create the funnel plot is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
-
 -   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r}
-### Saving the Funnel Plot as a Separate File (Optional) --------------
+### Tests for Publication Bias --------------
 
 # Funnel Plot #
 
@@ -393,12 +355,23 @@ Saving the funnel plot as a PDF file allows for easy sharing and presentation, a
 # Adjust the width and height of the pdf file
 pdf(file = "mlmfunnelplot.pdf", width = 8, height = 5)
 
-# Same funnel plot code as above
+# Adjust margins of the funnel plot
+# Set the bottom, left, top, and right margins
 par(mar = c(4, 4, 0.3, 1))
+# Create the funnel plot
 funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
 
 # Close the funnel plot and finalise it as a saved file
 dev.off()
+```
+
+```{r, echo=FALSE}
+# For illustration purposes only
+
+# Same funnel plot code as above
+par(mar = c(4, 4, 0.3, 1))
+funnel(mlmmetaresults, legend = TRUE, xlab = "Hedge's g")
+
 ```
 
 ## Egger's Test
@@ -528,9 +501,15 @@ The forest plot includes the following features:
 
 -   Summary effect sizes for each moderator
 
+Saving the forest plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+
 After running this code, the forest plot with moderators will appear as shown on page 20 of this handbook.
 
 ## Explanation of the Code
+
+-   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+
+-   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
 -   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
@@ -576,8 +555,15 @@ After running this code, the forest plot with moderators will appear as shown on
 
 -   The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` argument specifying the position of the summary in the plot.
 
-```{r, fig.width = 15, fig.height = 45}
+-   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
+
+```{r}
 ### Forest Plot of Moderators --------------
+
+# Save the forest plot as a PDF file
+# Name the pdf file of the forest plot
+# Adjust the width and height of the pdf file
+pdf(file = "mlmforestplotwithmoderators.pdf", width = 15, height = 45)
 
 # Start creating the forest plot itself
 # Specify dataset
@@ -681,31 +667,12 @@ text(c(x = -4.2, x = -3.6), y = 146, c("Presence", "Absence"), font = 2)
 # Add "g [95% CI]" header
 text(x = 3.6, y = 146, "g [95% CI]", font = 2) 
 
+# Close the forest plot and finalise it as a saved file
+dev.off()
 ```
 
-## Optional: Saving the Forest Plot of Moderators as a Separate File
-
-Saving the forest plot of moderators as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
-
-### Explanation of the Code
-
--   To save the forest plot of moderators as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
-
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
--   Following the `pdf()` function, the same code used to create the forest plot of moderators is repeated to generate the plot within the PDF file. The graphical output will be directed to the specified PDF file instead of the RStudio plotting window.
-
--   The `dev.off()` function is used to close the graphics device and finalise the plot as a saved file.
-
-```{r}
-### Forest Plot of Moderators --------------
-
-# Save the forest plot as a PDF file
-# Name the pdf file of the forest plot
-# Adjust the width and height of the pdf file
-pdf(file = "mlmforestplotwithmoderators.pdf", width = 15, height = 45)
+```{r, fig.width = 15, fig.height = 24, echo=FALSE}
+# For illustration purposes only
 
 # Same forest plot code as above
 forest(
@@ -759,15 +726,10 @@ addpoly(res.t, row = 6)
 addpoly(res.j, row = 78)
 
 text(x = -6.5, y = 146, "Author(s) Year", font = 2) 
-
 text(x = -3.9, y = 146.7, "Sample Size", font = 2)
-
 text(c(x = -4.2, x = -3.6), y = 146, c("Presence", "Absence"), font = 2)
+text(x = 3.6, y = 146, "g [95% CI]", font = 2)
 
-text(x = 3.6, y = 146, "g [95% CI]", font = 2) 
-
-# Close the forest plot and finalise it as a saved file
-dev.off()
 ```
 
 # End of Code

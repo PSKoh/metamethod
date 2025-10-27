@@ -160,7 +160,7 @@ The plot includes the following features:
 
 -   Custom labels for the studies
 
-Saving the forest plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+After running this code, the forest plot will appear as shown on page 7 of this handbook.
 
 ## Explanation of the Code
 
@@ -308,7 +308,9 @@ This section performs tests for publication bias, including a funnel plot, rank 
 
 ## Funnel Plot
 
-The funnel plot visually represents the distribution of effect sizes and their standard errors, allowing for the identification of potential publication bias. Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
+The funnel plot visually represents the distribution of effect sizes and their standard errors, allowing for the identification of potential publication bias.
+
+After running this code, the funnel plot will appear as shown on page 9 of this handbook.
 
 ### Explanation of the Code
 
@@ -334,6 +336,8 @@ funnel(tradmetaresults, legend = TRUE, xlab = "Hedge's g")
 ```
 
 ## Optional: Saving the Funnel Plot as a Separate File
+
+Saving the funnel plot as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
 
 ### Explanation of the Code
 
@@ -492,8 +496,6 @@ rma(
 
 This section generates a forest plot that includes moderators to visually represent the effect sizes and confidence intervals for each study included in the meta-analysis.
 
-The plot is saved as a PDF file for easy sharing and presentation.
-
 The forest plot includes the following features:
 
 -   Arrangement of studies by effect sizes and types of moderators
@@ -505,6 +507,8 @@ The forest plot includes the following features:
 -   Custom labels for the studies
 
 -   Summary effect sizes for each moderator
+
+After running this code, the forest plot of moderators will appear as shown on page 18 of this handbook.
 
 ## Explanation of the Code
 
@@ -657,6 +661,8 @@ text(x = 3.5, y = 23, "g [95% CI]", font = 2)
 ```
 
 ## Optional: Saving the Forest Plot of Moderators as a Separate File
+
+Saving the forest plot of moderators as a PDF file allows for easy sharing and presentation, and allows adjustment to the plot's dimensions.
 
 ### Explanation of the Code
 

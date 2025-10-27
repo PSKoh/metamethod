@@ -166,10 +166,6 @@ After running this code, the forest plot will appear as shown on page 7 of this 
 
 ## Explanation of the Code
 
--   The `cairo_pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file. Specifically, the `cairo_pdf` function is used for font compatibility and in this case, it is for the author's names.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
 -   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
 -   The `order` argument specifies the arrangement of studies, with "obs" indicating that the studies should be arranged by effect sizes. To organise by column, replace "obs" with the specific column in the data frame.
@@ -199,8 +195,6 @@ After running this code, the forest plot will appear as shown on page 7 of this 
 -   The `x` and `y` arguments in the `text()` function adjust the position of the headers, with the `x` argument specifying the horizontal arrangement of the columns and the `y` argument specifying the vertical arrangement of the columns.
 
 -   The `font` argument adjusts the font size.
-
--   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r, fig.width = 14, fig.height = 35}
 ### Forest Plot --------------
@@ -262,9 +256,9 @@ Saving the forest plot as a PDF file allows for easy sharing and presentation, a
 
 ### Explanation of the Code
 
--   To save the forest plot as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
+-   To save the forest plot as a PDF file, the plotting code can be enclosed within `cairo_pdf()` and `dev.off()` functions:
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+-   The `cairo_pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file. Specifically, the `cairo_pdf` function is used for font compatibility and in this case, it is for the author's names.
 
 -   The `width` and `height` arguments adjust the dimensions of the PDF file.
 
@@ -321,10 +315,6 @@ After running this code, the funnel plot will appear as shown on page 10 of this
 
 ### Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
 -   The `par()` function is used to adjust the margins of the funnel plot, with the `mar` argument specifying the bottom, left, top, and right margins.
 
 -   The `funnel()` function is used to create the funnel plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
@@ -332,8 +322,6 @@ After running this code, the funnel plot will appear as shown on page 10 of this
 -   The `legend` argument specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
 
 -   The `xlab` argument specifies the confidence interval label for the funnel plot, in this case, "Fisher's Z".
-
--   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r}
 ### Tests for Publication Bias --------------
@@ -477,10 +465,6 @@ After running this code, the forest plot of moderators will appear as shown on p
 
 ## Explanation of the Code
 
--   The `cairo_pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file. Specifically, the `cairo_pdf` function is used for font compatibility and in this case, it is for the author's names.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
 -   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
 -   The `rows` argument specifies the arrangement of studies by publication type, and in ascending order of effect sizes per publication type.
@@ -520,8 +504,6 @@ After running this code, the forest plot of moderators will appear as shown on p
 -   The `subset` argument is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
 -   The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` argument specifying the position of the summary in the plot.
-
--   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r, fig.width = 13, fig.height = 35}
 ### Forest Plot of Moderators --------------
@@ -621,9 +603,9 @@ Saving this forest plot of moderators as a PDF file allows for easy sharing and 
 
 ### Explanation of the Code
 
--   To save the forest plot of moderators as a PDF file, the plotting code can be enclosed within `pdf()` and `dev.off()` functions:
+-   To save the forest plot of moderators as a PDF file, the plotting code can be enclosed within `cairo_pdf()` and `dev.off()` functions:
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
+-   The `cairo_pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file. Specifically, the `cairo_pdf` function is used for font compatibility and in this case, it is for the author's names.
 
 -   The `width` and `height` arguments adjust the dimensions of the PDF file.
 

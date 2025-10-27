@@ -512,10 +512,6 @@ After running this code, the forest plot of moderators will appear as shown on p
 
 ## Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
 -   The `forest()` function is used to create the forest plot, and the `tradmetaresults` object contains the results of the meta-analysis.
 
 -   The `rows` argument specifies the arrangement of studies by creativity measure type, and in ascending order of effect sizes per creativity measure type.
@@ -557,8 +553,6 @@ After running this code, the forest plot of moderators will appear as shown on p
 -   The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` argument specifying the position of the summary in the plot.
 
 -   The `c()` function within the `text()` function creates a vector of x-positions, where the labels "Dslx" and "Ctrl" will be placed. The first x-value (-3.8) determines the horizontal position of the "Dslx" label, and the second x-value (-3.3) positions the "Ctrl" label.
-
--   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r, fig.width = 11, fig.height = 6.5}
 ### Forest Plot of Moderators --------------

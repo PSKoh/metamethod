@@ -184,10 +184,6 @@ After running this code, the forest plot will appear as shown on page 8 of this 
 
 ## Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
 -   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
 -   The `order` argument specifies the arrangement of studies, with "obs" indicating that the studies should be arranged by effect sizes. To organise by column, replace "obs" with the specific column in the data frame.
@@ -219,8 +215,6 @@ After running this code, the forest plot will appear as shown on page 8 of this 
 -   The `x` and `y` arguments in the `text()` function adjust the position of the headers, with the `x` argument specifying the horizontal arrangement of the columns and the `y` argument specifying the vertical arrangement of the columns.
 
 -   The `font` argument adjusts the font size.
-
--   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r, fig.width = 15, fig.height = 40}
 ### Forest Plot --------------
@@ -352,10 +346,6 @@ After running this code, the funnel plot will appear as shown on page 11 of this
 
 ### Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
 -   The `par()` function is used to adjust the margins of the funnel plot, with the `mar` argument specifying the bottom, left, top, and right margins.
 
 -   The `funnel()` function is used to create the funnel plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
@@ -363,8 +353,6 @@ After running this code, the funnel plot will appear as shown on page 11 of this
 -   The `legend` argument specifies whether to include a legend in the plot. TRUE indicates that a legend should be included, FALSE indicates that it should not.
 
 -   The `xlab` argument specifies the confidence interval label for the funnel plot, in this case, "Hedge's g".
-
--   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r}
 ### Tests for Publication Bias --------------
@@ -544,10 +532,6 @@ After running this code, the forest plot with moderators will appear as shown on
 
 ## Explanation of the Code
 
--   The `pdf()` function starts the graphics device driver to create PDF files, and the `file` argument specifies the name of the file.
-
--   The `width` and `height` arguments adjust the dimensions of the PDF file.
-
 -   The `forest()` function is used to create the forest plot, and the `mlmmetaresults` object contains the results of the meta-analysis.
 
 -   The `rows` argument specifies the arrangement of studies by publication type, and in ascending order of effect sizes per publication type.
@@ -591,8 +575,6 @@ After running this code, the forest plot with moderators will appear as shown on
 -   The `subset` argument is used to specify the subset of data for categorical moderators, allowing for separate analyses for each category.
 
 -   The `addpoly()` function is used to add summary effect sizes for each of the moderators, with the `row` argument specifying the position of the summary in the plot.
-
--   The `dev.off()` function is used to close the graphics device and finalize the plot as a saved file.
 
 ```{r, fig.width = 15, fig.height = 45}
 ### Forest Plot of Moderators --------------
